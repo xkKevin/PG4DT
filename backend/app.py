@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
-app = Flask(__name__, static_folder='../dist/static',
+app = Flask(__name__, static_folder='./static',
             template_folder='../dist')
 CORS(app, supports_credentials=True)  # 解决跨域问题
 
