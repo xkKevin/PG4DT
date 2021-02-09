@@ -1,4 +1,4 @@
-export function drawArrow(g,pos,width,height,urls) {
+export function drawIcon(g,pos,width,height,urls) {
     g.append('image')
         .attr('href',urls)
         .attr('x',pos[0])

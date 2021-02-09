@@ -4,8 +4,10 @@
 </template>
 
 <script>
-  import {mutate} from './assets/js/utils/sum.js'
+  import {create_column} from './assets/js/glyph/create_column.js'
   import {extractCols} from "./assets/js/utils/extractContextualCols"
+  import {create_row} from "./assets/js/glyph/create_row";
+  import {generateData} from "./assets/js/utils/generateData";
   import * as d3 from 'd3'
   export default {
     name:'App',
@@ -30,7 +32,7 @@
         output_table_file: "data2.csv",
         input_table_name: "t1",
         output_table_name: "t2",
-        original_col: [0,1],  // 也可以写成数字，如 [1, 3]
+        original_col: [],  // 也可以写成数字，如 [1, 3]
         new_col: 'd',
         operation: 'sum'
       }
@@ -46,60 +48,31 @@
       async function preparation(transform_specs){
         let data1_csv = await getTable('http://localhost/static/d1.csv')
         let data2_csv = await getTable('http://localhost/static/d2.csv')
-        let res = generateData(data1_csv,data2_csv)
+
+        //提取出满足条件的矩阵
+        let res = generateData(data1_csv,data2_csv,oriCol,newCol)
         let curCol = []
+        //curCol记录的是input glyph的所有列（包括explicit/implicit列和contextual列）
+        //在input table中的位置
         oriCol.forEach(idx => {
           curCol.push(res.m1[0].indexOf(data1_csv[0][idx]))
         })
 
-        mutate(res.m1,res.m2,curCol,rule,t1_name,t2_name)
+        //创建列
+        create_column(res.m1,res.m2,curCol,rule,t1_name,t2_name)
+
+        //创建行，不需要提取contextual行，所以转化为矩阵的过程比较简单
+        // let m1 = [], m2 = []
+        // data1_csv.forEach(d => {
+        //   if(m1.length <= 3)m1.push(d)
+        // })
+        // data2_csv.forEach(d => {
+        //   if(m2.length <= 4)m2.push(d)
+        // })
+        // create_row(m1,m2,rule,t1_name,t2_name,-1)
       }
 
       preparation(transform_specs)
-
-      function generateData(data1_csv,data2_csv){
-        let inExpOrImpCol = []
-        oriCol.forEach(d => {
-          inExpOrImpCol.push(data1_csv[0][d])
-        })
-
-        let contextualCols = extractCols(Array.from(data1_csv[0]),inExpOrImpCol,inExpOrImpCol.concat(newCol))
-        let cols1 = contextualCols
-
-        let m1 = [],m2 = []
-        oriCol.forEach(c => {
-          cols1.push(data1_csv[0][c])
-        })
-        m1.push(Array.from(cols1))
-        cols1.push(newCol)
-        m2.push(Array.from(cols1))
-
-        m1[0].sort(function(a,b){
-          return data1_csv[0].indexOf(a) - data1_csv[0].indexOf(b)
-        })
-        m2[0].sort(function(a,b){
-          return data2_csv[0].indexOf(a) - data2_csv[0].indexOf(b)
-        })
-
-        for(let row = 1;row <= Math.min(3,data1_csv.length - 1);row ++){
-          let tempRow = []
-          for(let col = 0;col < data1_csv[0].length;col++){
-            if(m1[0].indexOf(data1_csv[0][col]) != -1)tempRow.push(data1_csv[row][col])
-          }
-          m1.push(tempRow)
-        }
-
-        for(let row = 1;row <= Math.min(3,data2_csv.length - 1);row ++){
-          let tempRow = []
-          for(let col = 0;col < data2_csv[0].length;col++){
-            if(m2[0].indexOf(data2_csv[0][col]) != -1)tempRow.push(data2_csv[row][col])
-          }
-          m2.push(tempRow)
-        }
-        return {m1,m2}
-        //input table中列在m1中的位置
-
-      }
     }
   }
 </script>

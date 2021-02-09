@@ -23,4 +23,4 @@ pnpm-debug.log*
 *.sw?
 
 # backend
-/backend/__pycache__
+#/backend/__pycache__

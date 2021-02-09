@@ -3,7 +3,7 @@ import {drawTable} from "../utils/createTable"
 import {drawHighLightCol} from "../utils/highLightCol"
 import {drawDashRect} from "../utils/dashedRect"
 import {drawLine} from "../utils/dashedLine"
-import {drawArrow} from "../utils/arrow"
+import {drawIcon} from "../utils/icon"
 import {drawOperationName} from "../utils/operationName";
 
 export function create_column(m1,m2,expOrImpCols,rule,t1_name,t2_name){
@@ -22,32 +22,35 @@ export function create_column(m1,m2,expOrImpCols,rule,t1_name,t2_name){
     let height = d3.select('#mainsvg').attr('height')
     let colWidth = width / (m2[0].length * 2 + 1)
     let colHeight = height / (m1.length + 5)
-
     let colFontSize = 1.5
     let cellFontSize = 1
     const g = d3.select('#mainsvg').append('g')
         .attr('transform',`translate(10,10)`)
 
-    drawTable(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight,"t1",colFontSize,cellFontSize)
+    drawTable(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'col')
     drawDashRect(g,[m1[0].length * colWidth,colHeight],m1.length * colHeight,colWidth)
 
     // 添加加号和箭头
     let plusUrl = require('../../images/plus.png')
-    drawArrow(g,[m1[0].length * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],colWidth,colHeight,plusUrl)
+    drawIcon(g,[m1[0].length * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],colWidth,colHeight,plusUrl)
     let arrowUrl = require('../../images/arrow.png')
-    drawArrow(g,[(m1[0].length + 1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],colWidth,colHeight,arrowUrl)
+    drawIcon(g,[(m1[0].length + 1.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
-    let inColLenAndMid = drawHighLightCol(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight)
     let outputExpOrImp = Array.from(expOrImpCols)
     outputExpOrImp.push(m2[0].length - 1)
-    drawTable(g,m2,outputExpOrImp,[(m2[0].length + 1) * colWidth,colHeight],colWidth,colHeight,"t2",colFontSize,cellFontSize)
-    let outColLenAndMid = drawHighLightCol(g,m2,[m2[0].length - 1],[(m2[0].length + 1) * colWidth,colHeight],colWidth,colHeight)
+    drawTable(g,m2,outputExpOrImp,[(m2[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col')
 
+
+    let inColLenAndMid = drawHighLightCol(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight)
+    let yOfLine = (m1.length + 2) * colHeight
     //画两个表之间的连线
-    let yOfLine = inColLenAndMid.len == 1 ? (m1.length + 2) * colHeight : (m1.length + 3) * colHeight
-    drawLine(g,[inColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine],true)
-    if(inColLenAndMid.len != 1){
-        drawLine(g,[outColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine - colHeight],true)
+    if(inColLenAndMid.len != 0){
+        let outColLenAndMid = drawHighLightCol(g,m2,[m2[0].length - 1],[(m2[0].length + 1) * colWidth,colHeight],colWidth,colHeight)
+        yOfLine = inColLenAndMid.len == 1 ? (m1.length + 2) * colHeight : (m1.length + 3) * colHeight
+        drawLine(g,[inColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine],true)
+        if(inColLenAndMid.len != 1){
+            drawLine(g,[outColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine - colHeight],true)
+        }
     }
     drawOperationName(g,[width / 2,yOfLine],`Mutate:'${rule}'`,'1.2em',colFontSize)
 }
