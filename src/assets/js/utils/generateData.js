@@ -1,21 +1,20 @@
 import {extractCols} from "./extractContextualCols";
 
-export function generateData(data1_csv,data2_csv,oriCol,newCol){
-    let inExpOrImpCol = []
-    oriCol.forEach(d => {
-        inExpOrImpCol.push(data1_csv[0][d])
-    })
+export function generateDataForCreate(data1_csv, data2_csv, inExpOrImpCol, outExpOrImpCol){
 
-    let contextualCols = extractCols(Array.from(data1_csv[0]),inExpOrImpCol,inExpOrImpCol.concat(newCol))
-    let cols1 = contextualCols
+    let contextualCols = extractCols(Array.from(data1_csv[0]),inExpOrImpCol,outExpOrImpCol)
 
-    let m1 = [],m2 = []
-    oriCol.forEach(c => {
-        cols1.push(data1_csv[0][c])
+    let m1 = [[]],m2 = [[]]
+    inExpOrImpCol.forEach(idx => {
+        m1[0].push(data1_csv[0][idx])
     })
-    m1.push(Array.from(cols1))
-    cols1.push(newCol)
-    m2.push(Array.from(cols1))
+    outExpOrImpCol.forEach(idx => {
+        m2[0].push(data2_csv[0][idx])
+    })
+    contextualCols.forEach(val => {
+        m1[0].push(val)
+        m2[0].push(val)
+    })
 
     m1[0].sort(function(a,b){
         return data1_csv[0].indexOf(a) - data1_csv[0].indexOf(b)
