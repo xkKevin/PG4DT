@@ -163,9 +163,7 @@ def remove_quote(params):
 
 
 def generate_transform_specs(data_path, script_name):
-    # data_path = r"E:\other\notebook\transformers\research\parameter_glyph\code5"
-    # script_name = "code5.txt" # "code5_test.txt"
-    
+    # 以下是测试：
     original_codes = [
         '''A = read.table(file = "sd.csv", "sdf.sss")''',
         '''B <- separate(data=  A, T, into=c('ha', 'G'))''',
@@ -177,7 +175,11 @@ def generate_transform_specs(data_path, script_name):
 #         '''D = unite(B, "z", x,y, remove = FALSE)'''
 #         '''D = left_join(x=A, B, by = c("first",`third`))'''
 #         '''D = mutate(C, E=2*T+P, .keep="unused")'''
-        '''D = arrange(B, desc(`Channel`))'''
+#         '''D = arrange(B, desc(`Channel`))'''
+#         '''D = merge(x=A, B, by = c("first",`third`))'''
+#         '''D = rbind(1:4, C)'''
+#         '''D=subset(x= B, P> 2*T)'''
+        '''D = distinct(B, 'T', `MORPH394`)'''
     ]
     col_states = {1: ['ID', 'T', 'P.1', 'P.2', 'Q.1'],
                  2: ['ID', 'T', 'MORPH394', 'P'],
@@ -190,7 +192,6 @@ def generate_transform_specs(data_path, script_name):
     
     original_codes, col_states, group_states = execScript(data_path, script_name)
 
-    
     p = re.compile("\s*(.+?)\s*(=|<-)\s*(.+?)\s*[(](.+)[)]")
     p_match_num = re.compile("table(.+)\.csv")
     p_match_c = re.compile("c\s*\((.+)\)")
@@ -421,7 +422,7 @@ def generate_transform_specs(data_path, script_name):
                 tmp = tmp.union(set([i for i in col_states[input_line_num] if i in parseCondition(pv)]))
             specs["input_explict_col"] = list(tmp)
             if group_states.get(input_line_num):
-                specs["input_implict_col"] = [group_states[input_line_num][0]]
+                specs["input_implict_col"] = [group_states[input_line_num][-1]]
                 specs["operation_rule"] = "Group:%s, Summarize:%s" % (specs["input_implict_col"][0], ",".join(rule))
             else:
                 specs["operation_rule"] = "Summarize:" + ",".join(rule)
@@ -543,29 +544,122 @@ def generate_transform_specs(data_path, script_name):
             
             var2table[output_tbl] = specs["output_table_file"]
 
-        # 13 combine tables
-        elif func in ('rbind', "bind_rows"):
-            specs["type"] = "extend"
-            specs["output_tbl"] = output_tbl
-            specs["input_tbls"], specs["other_args"] = getOtherArgs(params, ['.id', 'deparse.level'])
-            print(specs)
+        elif func == 'merge':
+            specs["type"] = "combine_tables_extend"
+            specs["input_table_name"] = []
+            pi = 0
+            if params.get('x'):
+                specs["input_table_name"].append(params['x'])
+            else:
+                specs["input_table_name"].append(params['none'][pi])
+                pi += 1
+            if params.get('y'):
+                specs["input_table_name"].append(params['y'])
+            else:
+                specs["input_table_name"].append(params['none'][pi])
+                pi += 1
+            specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "table%d.csv" % line_num
+            if not params.get("all") or remove_quote(params.get("all")) in ("F", "FALSE"):
+                specs["operation_rule"] = "Extend"
+            elif params.get("all") in ("T", "TRUE"):
+                specs["operation_rule"] = "Extend"
+                
+            var2table[output_tbl] = specs["output_table_file"]
+            
+        elif func == 'rbind':
+            # 既可以连接两表，也可以Create Rows
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "table%d.csv" % line_num
+            if var2table.get(params['none'][0]) and var2table.get(params['none'][1]):
+                specs["type"] = "combine_tables_extend"
+                specs["input_table_name"] = [params['none'][0], params['none'][1]]
+                specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
+                specs["operation_rule"] = "Extend"
+            else:
+                if var2table.get(params['none'][0]):
+                    specs["input_table_name"] = params['none'][0]
+                elif var2table.get(params['none'][1]):
+                    specs["input_table_name"] = params['none'][1]
+                specs["type"] = "create_rows_create"
+                specs["input_table_file"] = var2table[specs["input_table_name"]]
+                specs["operation_rule"] = "Create Row"
+
+            var2table[output_tbl] = specs["output_table_file"]
+            
+        elif func == "bind_rows":
+            specs["type"] = "combine_tables_extend"
+            specs["input_table_name"] = [params['none'][0], params['none'][1]]
+            specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["operation_rule"] = "Extend"
+            
+            var2table[output_tbl] = specs["output_table_file"]
+            
+        elif func == "subset":
+            # 先不考虑subset和select，涉及到separate
+            specs["type"] = 'delete_rows_filter'
+            pi = 0
+            if params.get('x'):
+                specs["input_table_name"] = params['x']
+            else:
+                specs["input_table_name"] = params['none'][pi]
+                pi += 1
+            specs["input_table_file"] = var2table[specs["input_table_name"]]
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "table%d.csv" % line_num
+            # condition = r[3].replace(params['none'][0],"").strip().strip(",").strip()
+            condition = ",".join(r[3].strip().split(",")[1:]).strip()
+            specs["input_explict_col"] = [i for i in col_states[line_num] if i in parseCondition(condition)]
+            specs["operation_rule"] = 'Filter: ' + condition
+            
+            var2table[output_tbl] = specs["output_table_file"]
+            
+        elif func == 'unique':
+            specs["type"] = 'delete_rows_deduplicate'
+            pi = 0
+            if params.get('.data'):
+                specs["input_table_name"] = params['.data']
+            else:
+                specs["input_table_name"] = params['none'][pi]
+                pi += 1
+            specs["input_table_file"] = var2table[specs["input_table_name"]]
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["operation_rule"] = "Delete Dupliate Row"
+            
+            var2table[output_tbl] = specs["output_table_file"]
+            
+        elif func == 'distinct':
+            specs["type"] = 'delete_rows_deduplicate'
+            pi = 0
+            if params.get('x'):
+                specs["input_table_name"] = params['x']
+            else:
+                specs["input_table_name"] = params['none'][pi]
+                pi += 1
+            specs["input_table_file"] = var2table[specs["input_table_name"]]
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "table%d.csv" % line_num
+            specs["input_explict_col"] = remove_quote(params['none'][pi:])
+            specs["operation_rule"] = "Delete Dupliate Row"
+            
+            var2table[output_tbl] = specs["output_table_file"]
 
         elif func in ('supplement'):
             print('supplement')
 
-        elif func in ('inner_join'):
-            specs["type"] = "match"
-            specs["output_tbl"] = output_tbl
-            specs["input_tbls"] = params
-            print(specs)
-
         elif func in ('as.data.frame', "ungroup", "group_by"):
-            pass
+            var2table[output_tbl] = "table%d.csv" % line_num
 
         else: # default, could also just omit condition or 'if True'
             print("The function, %s, is not currently supported!" % func)
             
-        transform_specs.append(specs)
+        # print(func, specs)
+        if specs:
+            transform_specs.append(specs)
         
     return transform_specs
  

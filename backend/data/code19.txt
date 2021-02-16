@@ -1,0 +1,9 @@
+library(tidyr)
+library(dplyr)
+
+p19_input1= read.table("benchmark19.txt", header = T, sep = ",", check.names=F)
+TBL_7=gather(p19_input1,MORPH38,value,`12:10`,`12:20`,`12:30`)
+TBL_3=group_by(TBL_7,`MORPH38`,`value`)
+TBL_1=summarise(TBL_3,MORPH39=n())
+morpheus=spread(TBL_1,`MORPH38`,`MORPH39`)
+morpheus=as.data.frame(morpheus)
