@@ -145,6 +145,9 @@ def remove_quote(params):
     params 既可以是一个list，也可以是字符串
     若是list则返回一个list，若是字符串，也返回一个字符串
     '''
+
+    if not params:
+        return params
     if type(params) == str:
         params = params.strip()
         if params[0] in ('"', "'", "`"):
@@ -223,6 +226,8 @@ def generate_transform_specs(data_path, script_name):
         params = parseArgs(r[3])  # 得到无名参数none和有名参数的dict
 
         specs = {}
+
+        print(params)
         
         if func == 'read.table':
             specs["type"] = 'create_tables'
@@ -530,6 +535,8 @@ def generate_transform_specs(data_path, script_name):
             var2table[output_tbl] = specs["output_table_file"]
             
         elif func == 'arrange':
+            print(params)
+
             # 暂时先做单列排序
             specs["type"] = 'transform_tables_sort'
             specs["input_table_name"] = params['none'][0]

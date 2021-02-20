@@ -1,5 +1,6 @@
 //参数：g、explicit\implicit列、单元格的长和宽
 export function drawHighLightCol(g,matrix,expOrImpCols,pos,colWidth,colHeight,borderColor='#92D882') {
+    expOrImpCols = Array.from(new Set(expOrImpCols))
     let highlightCols = []
     let start = 0,end = 1
     let len = 0,midPoint = 0
@@ -38,7 +39,7 @@ export function drawHighLightCol(g,matrix,expOrImpCols,pos,colWidth,colHeight,bo
     }
 
     midPoint = pos[0] + (highlightCols[0][1] + highlightCols[0][0] + 1) / 2 * colWidth
-    //画input表的水平线
+    //画表的水平线
     if(highlightCols.length != 1){
         //把每一个组的竖线用水平线连起来
         g.append("line")

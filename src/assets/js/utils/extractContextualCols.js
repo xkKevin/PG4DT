@@ -1,5 +1,6 @@
 export function extractCols(inputCols,inExpOrImpCols,outExpOrImpCols){
-    //输入的是value，不是index
+    //规定：inputCols是input table的第一列
+    //输入的是index，不是value
     let inGroups = []
     let inStart = 0
     let inEnd = 0
@@ -7,7 +8,7 @@ export function extractCols(inputCols,inExpOrImpCols,outExpOrImpCols){
     let ITL = inputCols.length
     let res = []
     //如果transformation不涉及任何explicit/implicit column，返回前min(ITL, 3) 列
-    if(inExpOrImpCols.length == 0){
+    if(inExpOrImpCols.length === 0 && outExpOrImpCols.length === 0){
         res = inputCols.slice(0,Math.min(ITL,3))
         return res
     }
@@ -15,16 +16,17 @@ export function extractCols(inputCols,inExpOrImpCols,outExpOrImpCols){
     //依据explicit/implicit col分组
     //还要考虑input table中没有contextual cols的情况
     let contextualLen = inputCols.length - inExpOrImpCols.length
-    if(contextualLen == 0)return []
+    if(contextualLen === 0)return []
+
     while(inStart <= inEnd && inEnd < inputCols.length){
-        if(inputCols[inEnd] == inExpOrImpCols[inPos]){
-            if(inStart != inEnd)inGroups.push(inputCols.slice(inStart,inEnd))
+        if(inEnd === inExpOrImpCols[inPos]){
+            if(inStart !== inEnd)inGroups.push(inputCols.slice(inStart,inEnd))
             inStart = inEnd + 1
             inPos += 1
         }
         inEnd += 1
     }
-    if(inStart != inEnd){
+    if(inStart !== inEnd){
         inGroups.push(inputCols.slice(inStart,inEnd))
     }
 
@@ -39,7 +41,7 @@ export function extractCols(inputCols,inExpOrImpCols,outExpOrImpCols){
             OGL += 1
         }
         pos = (pos + 1) % groupLen
-        if(pos == 0) loop += 1
+        if(pos === 0) loop += 1
     }
     return res
 }
