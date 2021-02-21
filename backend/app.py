@@ -52,19 +52,21 @@ def generate_transform_specs():
 
     return jsonify({'transform_specs': transform_specs})
     transform_specs = [{
-                         'type': 'separate_rows',
+                         'type': 'transform_tables_fold',
                          'input_table_file': ["d1.csv"],
-                         'output_table_file': ["d2.csv","d3.csv"],
-                         'input_table_name': "t1",
-                         'output_table_name': "t2",
-                         'input_explict_col': [1],
-                         'output_explict_col': [1,2],
+                         'output_table_file': ["d2.csv"],
+                         'input_table_name': ["t1","t2"],
+                         'output_table_name': "t3",
+                         'input_explict_col': ["男","女"],
+                         'output_explict_col': ["性别","值"],
                          'input_explict_row': [3],
                          'output_explict_row': [],
                          'input_implict_col': [0],
                          'operation_rule': 'sum',
                          'replace_value':'3' #该字段用于指定被替换特定值
                        }]
+
+
 
 
 # 由于Flask只能开启一个static_folder，要想访问其他静态数据，则重新开启一个路由以专门访问数据

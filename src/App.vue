@@ -200,6 +200,17 @@ import {generateDataForSeparateColumn} from "./assets/js/utils/generateDataForSe
 import {separate_columns} from "./assets/js/glyph/separate_columns";
 import {generateDataForSeparateRows} from "./assets/js/utils/generateDataForSeparateRows";
 import {separate_rows} from "./assets/js/glyph/separate_rows";
+import {generateDataForTablesExtend} from "./assets/js/utils/generateDataForTablesExtend";
+import {combine_tables_extend} from "./assets/js/glyph/combine_tables_extend";
+import {generateDataForLeftJoin} from "./assets/js/utils/generateDataForLeftJoin";
+import {combine_tables_left_join} from "./assets/js/glyph/combine_tables_left_join";
+import {generateDataForFullJoin} from "./assets/js/utils/generateDataForFullJoin";
+import {combine_tables_full_join} from "./assets/js/glyph/combine_tables_full_join";
+import {generateDataForInnerJoin} from "./assets/js/utils/generateDataForInnerJoin";
+import {combine_tables_inner_join} from "./assets/js/glyph/combine_tables_inner_join";
+import {generateDataForFold} from "./assets/js/utils/generateDateForFold";
+import {transform_tables_fold} from "./assets/js/glyph/transform_tables_fold";
+import {transform_tables_unfold} from "./assets/js/glyph/transform_tables_unfold";
 
 export default {
   name: "App",
@@ -358,12 +369,11 @@ export default {
         let input_explict_col = [],output_explict_col = []
         let input_explict_row = [],output_explict_row = []
         let input_implict_col = []
-        let input_table_name,output_table_name
+        let input_table_name,output_table_name,input_table_name2,output_table_name2
         let replace_value
         let res
         // console.log(`http://localhost/data/${transform_specs[i].input_table_file}`)
         if(transform_specs[i].input_table_file){
-          if(transform_specs[i].input_table_file){
             if(typeof transform_specs[i].input_table_file === 'string')
               dataIn1_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file}`)
             else{
@@ -371,7 +381,6 @@ export default {
               if(transform_specs[i].input_table_file.length > 1)
                 dataIn2_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file[1]}`)
             }
-          }
         }
         if(transform_specs[i].output_table_file){
           if(typeof transform_specs[i].output_table_file === 'string'){
@@ -394,7 +403,7 @@ export default {
         }
         if(transform_specs[i].output_explict_col){
           if(typeof transform_specs[i].output_explict_col === 'string'){
-            output_explict_col = [dataIn1_csv[0].indexOf(transform_specs[i].output_explict_col)]
+            output_explict_col = [dataOut1_csv[0].indexOf(transform_specs[i].output_explict_col)]
           }else{
             for(let col = 0;col < transform_specs[i].output_explict_col.length;col++){
               output_explict_col.push(dataOut1_csv[0].indexOf(transform_specs[i].output_explict_col[col]))
@@ -408,10 +417,22 @@ export default {
           output_explict_row = transform_specs[i].output_explict_row
         }
         if(transform_specs[i].input_table_name){
-          input_table_name = transform_specs[i].input_table_name
+          if(typeof transform_specs[i].input_table_name === 'string')
+            input_table_name = transform_specs[i].input_table_name
+          else{
+            input_table_name = transform_specs[i].input_table_name[0]
+            if(transform_specs[i].input_table_name.length > 1)
+              input_table_name2 = transform_specs[i].input_table_name[1]
+          }
         }
         if(transform_specs[i].output_table_name){
-          output_table_name = transform_specs[i].output_table_name
+          if(typeof transform_specs[i].output_table_name === 'string')
+            output_table_name = transform_specs[i].output_table_name
+          else{
+            output_table_name = transform_specs[i].output_table_name[0]
+            if(transform_specs[i].output_table_name.length > 1)
+              output_table_name2 = transform_specs[i].output_table_name[1]
+          }
         }
         if(transform_specs[i].replace_value){
           replace_value = transform_specs[i].replace_value
@@ -464,7 +485,7 @@ export default {
             break
           case 'delete_columns_select_remove':
             res = generateDataForDeleteColumn(dataIn1_csv,dataOut1_csv,input_explict_col,[])
-            delete_column(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors)
+            delete_column(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,i)
             break
           case 'delete_columns_duplicate':
             let dupCols = getDuplicatedColumns(dataIn1_csv)
@@ -483,7 +504,7 @@ export default {
             res = generateDataForRows(dataIn1_csv,dataOut1_csv,'delete',input_explict_row)
             let deletePos = input_explict_row === 1 ? 0 :
                     input_explict_row === dataIn1_csv.length - 1 ? -1 : 1
-            delete_row(res.m1,res.m2,"Delete row",input_table_name,output_table_name,deletePos,-1,res.inIndex,res.outIndex,i)
+            delete_row(res.m1,res.m2,rule,input_table_name,output_table_name,deletePos,-1,res.inIndex,res.outIndex,i)
             break
           // case 'delete_rows_filter_keep':
           //   res = generateDataForFilterRowKeep(dataIn1_csv,dataOut1_csv,input_explict_row)
@@ -511,7 +532,6 @@ export default {
           case 'transform_tables_sort':
             //暂定为只对数值类型进行排序
             res = generateDataForTableSort(dataIn1_csv,dataOut1_csv,input_explict_col,rule)
-            console.log(res)
             transform_tables_sort(res.m1,res.m2,rule,input_table_name,output_table_name,i)
             break
           case 'transform_columns_replace_na':
@@ -581,14 +601,37 @@ export default {
             break
           case 'separate_columns':
             res = generateDataForSeparateColumn(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            separate_columns(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,output_explict_col)
+            separate_columns(res.m1,res.m2,rule,input_table_name,output_table_name,res.inExp,res.outExp,i)
             break
           case 'separate_rows':
             res = generateDataForSeparateRows(dataIn1_csv,dataOut1_csv,input_explict_col)
             separate_rows(res.m1,res.m2,rule,input_table_name,output_table_name,res.outColors,i)
             break
-                // case 'combine_tables_extend':
-
+          case 'combine_tables_extend':
+            res = generateDataForTablesExtend(dataIn1_csv,dataIn2_csv,dataOut1_csv)
+            combine_tables_extend(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.outColors,i)
+            break
+          case 'combine_tables_left_join':
+            //需要确定空值的表示形式，暂时以''表示空值
+            res = generateDataForLeftJoin(dataIn1_csv,dataIn2_csv,dataOut1_csv,input_explict_col,'')
+            combine_tables_left_join(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.naCol,res.naPos,res.inColors2,i)
+            break
+          case 'combine_tables_full_join':
+            res = generateDataForFullJoin(dataIn1_csv,dataIn2_csv,dataOut1_csv,input_explict_col,'')
+            combine_tables_full_join(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.naCol,res.naPos,res.inColors2,i)
+            break
+          case 'combine_tables_inner_join':
+            res = generateDataForInnerJoin(dataIn1_csv,dataIn2_csv,dataOut1_csv,input_explict_col,'')
+            combine_tables_inner_join(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.inColors2,res.outColor,i)
+            break
+          case 'transform_tables_fold':
+            res = generateDataForFold(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
+            transform_tables_fold(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col.length,i)
+            break
+          case 'transform_tables_unfold':
+            res = generateDataForFold(dataOut1_csv,dataIn1_csv,output_explict_col,input_explict_col)
+            transform_tables_unfold(res.m2,res.m1,rule,input_table_name,output_table_name,i)
+            break
         }
       }
     }

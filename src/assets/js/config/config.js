@@ -3,7 +3,7 @@ const svgSize = {
     'height':'200'
 }
 const fontSize = {
-    'colFontSize':1,
+    'colFontSize':0.6,
     'cellFontSize':0.5
 }
 export {svgSize,fontSize}

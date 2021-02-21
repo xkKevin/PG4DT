@@ -3,7 +3,7 @@
 //insertPos表示插入行的位置
 //keepPos表示保存行的位置
 //deletePos表示删除列的位置
-export function drawTableForRow(g,matrix,pos,colWidth,colHeight,table_name,colFontSize = 1.5,cellFontSize = 1,rowColor = [],naRow = [],naCol = []) {
+export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colFontSize = 1.5,cellFontSize = 1,inExpLen) {
     let maxCharsPerCol = Math.floor(colWidth / 16 / colFontSize)
     let maxCharsPerCell = Math.floor(colWidth / 16 / cellFontSize)
     let colors = ['#5AABAC','#F07A66','#F8BA4B','#AAA1CC','#445050','#C9C9C9']
@@ -19,16 +19,17 @@ export function drawTableForRow(g,matrix,pos,colWidth,colHeight,table_name,colFo
         //dCol表示删除列时，output glyph中当前列需要左移的位置
         if(row === 0){
             for(let col = 0; col < matrix[0].length; col ++){
+                let color = inExpLen > 2 ? colors[1] :
+                    col === 0 ? 'gray' : colors[1]
                 g.append('rect')
                     .attr('width',colWidth)
                     .attr('height',colHeight)
-                    .attr('fill','gray')
+                    .attr('fill',color)
                     .attr('opacity',0.8)
                     .attr('stroke-width','1px')
                     .attr('stroke','black')
                     .attr('x',pos[0] + col * colWidth)
                     .attr('y',pos[1] + row * colHeight)
-
                 g.append('text')
                     .attr('x',pos[0] + col * colWidth)
                     .attr('y',pos[1] + row * colHeight)
@@ -43,13 +44,7 @@ export function drawTableForRow(g,matrix,pos,colWidth,colHeight,table_name,colFo
         }
         else{
             for(let col = 0; col < matrix[0].length; col ++){
-                let color = rowColor.length == 0 ? colors[row - 1] : colors[rowColor[row - 1]]
-                if(naRow.length !== 0){
-                    if(naRow.indexOf(row) !== -1){
-                        if(naCol[naRow.indexOf(row)] === col)
-                        color = 'white'
-                    }
-                }
+                let color = col === 0 ? colors[0] : colors[2]
                 g.append('rect')
                     .attr('width',colWidth)
                     .attr('height',colHeight)
