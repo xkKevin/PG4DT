@@ -45,5 +45,5 @@ export function separate_columns(m1, m2, rule, t1_name, t2_name, inExpOrImp, out
             drawLine(g,[outColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine - colHeight],true)
         }
     }
-    drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)
+    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }

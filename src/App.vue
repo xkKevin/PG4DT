@@ -354,6 +354,7 @@ export default {
         .get(path, { params: { script_content:this.editor.getValue(), language:this.language } })
         .then((response) => {
           // 生成glyphs的操作
+          console.log(response.data.transform_specs)
           document.getElementById('glyphs').innerHTML = ''
           this.preparation(response.data.transform_specs)
         })
@@ -372,15 +373,14 @@ export default {
         let input_table_name,output_table_name,input_table_name2,output_table_name2
         let replace_value
         let res
-        // console.log(`http://localhost/data/${transform_specs[i].input_table_file}`)
         if(transform_specs[i].input_table_file){
-            if(typeof transform_specs[i].input_table_file === 'string')
-              dataIn1_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file}`)
-            else{
-              dataIn1_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file[0]}`)
-              if(transform_specs[i].input_table_file.length > 1)
-                dataIn2_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file[1]}`)
-            }
+          if(typeof transform_specs[i].input_table_file === 'string') {
+            dataIn1_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file}`)
+          } else{
+            dataIn1_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file[0]}`)
+            if(transform_specs[i].input_table_file.length > 1)
+              dataIn2_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file[1]}`)
+          }
         }
         if(transform_specs[i].output_table_file){
           if(typeof transform_specs[i].output_table_file === 'string'){
@@ -437,8 +437,17 @@ export default {
         if(transform_specs[i].replace_value){
           replace_value = transform_specs[i].replace_value
         }
+        // if(transform_specs[i].input_implict_col){
+        //   input_implict_col = transform_specs[i].input_implict_col
+        // }
         if(transform_specs[i].input_implict_col){
-          input_implict_col = transform_specs[i].input_implict_col
+          if(typeof transform_specs[i].input_implict_col === 'string'){
+            input_implict_col = [dataIn1_csv[0].indexOf(transform_specs[i].input_implict_col)]
+          }else{
+            for(let col = 0;col < transform_specs[i].input_implict_col.length;col++){
+              input_implict_col.push(dataIn1_csv[0].indexOf(transform_specs[i].input_implict_col[col]))
+            }
+          }
         }
         switch (transform_specs[i].type) {
           case 'create_tables':
@@ -469,19 +478,19 @@ export default {
             dataOut1_csv.forEach(d => {
               if(m2.length <= 4)m2.push(d)
             })
-            create_row(m1,m2,rule,input_table_name,output_table_name,1)
+            create_row(m1,m2,rule,input_table_name,output_table_name,1,i)
             break
           case 'create_rows_insert':
             res = generateDataForInsertRows(dataIn1_csv,dataOut1_csv,output_explict_row[0])
-            create_row_insert(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,res.inIdx,res.outIdx)
+            create_row_insert(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,res.inIdx,res.outIdx,i)
             break
           case 'delete_tables':
             res = generateData(dataIn1_csv,dataOut1_csv,[],[])
-            delete_table(res.m1,rule,input_table_name)
+            delete_table(res.m1,rule,input_table_name,i)
             break
           case 'delete_columns_select_keep':
             res = generateDataForKeepColumns(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            delete_column(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors)
+            delete_column(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,i)
             break
           case 'delete_columns_select_remove':
             res = generateDataForDeleteColumn(dataIn1_csv,dataOut1_csv,input_explict_col,[])
@@ -502,8 +511,8 @@ export default {
             break
           case 'delete_rows_filter':
             res = generateDataForRows(dataIn1_csv,dataOut1_csv,'delete',input_explict_row)
-            let deletePos = input_explict_row === 1 ? 0 :
-                    input_explict_row === dataIn1_csv.length - 1 ? -1 : 1
+            let deletePos = input_explict_row[0] === 1 ? 0 :
+                    input_explict_row[0] === dataIn1_csv.length - 1 ? -1 : 1
             delete_row(res.m1,res.m2,rule,input_table_name,output_table_name,deletePos,-1,res.inIndex,res.outIndex,i)
             break
           // case 'delete_rows_filter_keep':
@@ -523,7 +532,7 @@ export default {
             break
           case 'delete_rows_slice':
             res = generateDataForFilterRow(dataIn1_csv,dataOut1_csv,input_explict_col[0])
-            delete_filter(res.m1,res.m2,rule,input_table_name,output_table_name,res.outColors)
+            delete_filter(res.m1,res.m2,rule,input_table_name,output_table_name,res.outColors,i)
             break
           case 'transform_tables_rearrange':
             res = generateDataForColumnRearrange(dataIn1_csv,dataOut1_csv,output_explict_col)
@@ -536,44 +545,48 @@ export default {
             break
           case 'transform_columns_replace_na':
             res = generateDataForReplace(dataIn1_csv,dataOut1_csv,input_explict_col)
-            transform_columns_replace_na(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,res.naRow)
+            transform_columns_replace_na(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,res.naRow,i)
             break
           case 'transform_columns_replace':
             //没有实现阴影效果
             res = generateDataForReplace(dataIn1_csv,dataOut1_csv,input_explict_col,replace_value)
-            transform_columns_replace_na(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,res.naRow)
+            transform_columns_replace_na(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,res.naRow,i)
             break
           case 'transform_columns_mutate':
             res = generateDataForMutate_cover(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,output_explict_col)
+            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,output_explict_col,i)
             break
           case 'transform_columns_extract':
             res = generateDataForMutate_cover(dataIn1_csv,dataOut1_csv,input_explict_col,input_explict_col)
-            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,input_explict_col)
+            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,input_explict_col,i)
             break
           case 'transform_columns_merge':
             res = generateDataForMutate_cover(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,output_explict_col)
+            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,output_explict_col,i)
             break
           case 'transform_columns_rename':
             res = generateDataForColumnRename(dataIn1_csv,dataOut1_csv,input_explict_col)
-            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,input_explict_col)
+            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,input_explict_col,i)
             break
           case 'combine_columns_merge':
             res = generateDataForMergeColumns(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            combine_columns_merge(res.m1,res.m2,rule,input_table_name,output_table_name,res.newInExpOrImp,res.newOutExpOrImp,res.outColors)
+            combine_columns_merge(res.m1,res.m2,rule,input_table_name,output_table_name,res.newInExpOrImp,res.newOutExpOrImp,res.outColors,i)
             break
           case 'combine_columns_mutate':
             res = generateDataForMergeColumns(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            combine_columns_merge(res.m1,res.m2,rule,input_table_name,output_table_name,res.newInExpOrImp,res.newOutExpOrImp,res.outColors)
+            combine_columns_merge(res.m1,res.m2,rule,input_table_name,output_table_name,res.newInExpOrImp,res.newOutExpOrImp,res.outColors,i)
             break
           case 'combine_rows_sum':
             res = generateDataForRowsSum(dataIn1_csv,dataOut1_csv)
-            combine_rows_sum(res.m1,res.m2,rule,input_table_name,output_table_name)
+            combine_rows_sum(res.m1,res.m2,rule,input_table_name,output_table_name,i)
             break
           case 'combine_rows_summarize':
+            //这个操作再看看
+            if(input_explict_col.length === 0){
+              input_explict_col = Array.from(new Array(dataIn1_csv[0].length), (x,i) => i)
+            }
             res = generateDataForGroupSummarize(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col,input_implict_col)
-            combine_rows_sum(res.m1,res.m2,rule,input_table_name,output_table_name)
+            combine_rows_sum(res.m1,res.m2,rule,input_table_name,output_table_name,i)
             break
           case 'combine_rows_interpolate':
             res = generateDataForRowInterpolate(dataIn1_csv,dataOut1_csv,input_explict_col)
@@ -625,10 +638,18 @@ export default {
             combine_tables_inner_join(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.inColors2,res.outColor,i)
             break
           case 'transform_tables_fold':
+            // console.log(dataIn1_csv)
+            // console.log(input_explict_col)
             res = generateDataForFold(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
             transform_tables_fold(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col.length,i)
             break
           case 'transform_tables_unfold':
+            output_explict_col = []
+            for(let col = 0;col < dataOut1_csv[0].length;col++){
+              if(dataIn1_csv[0].indexOf(dataOut1_csv[0][col]) === -1){
+                output_explict_col.push(col)
+              }
+            }
             res = generateDataForFold(dataOut1_csv,dataIn1_csv,output_explict_col,input_explict_col)
             transform_tables_unfold(res.m2,res.m1,rule,input_table_name,output_table_name,i)
             break

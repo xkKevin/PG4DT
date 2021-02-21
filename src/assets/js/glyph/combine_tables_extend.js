@@ -6,7 +6,6 @@ import {fontSize, svgSize} from "../config/config";
 
 export function combine_tables_extend(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColors,name){
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    // svg.setAttribute('style', 'border: 1px solid black');
     svg.setAttribute('id', `mainsvg${name}`);
     svg.setAttribute('width', svgSize.width);
     svg.setAttribute('height', svgSize.height);

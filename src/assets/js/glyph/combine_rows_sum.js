@@ -1,31 +1,24 @@
 import * as d3 from 'd3'
-import {drawTable} from "../utils/createTable"
-import {drawHighLightCol} from "../utils/highLightCol"
-import {drawDashRect} from "../utils/dashedRect"
-import {drawLine} from "../utils/dashedLine"
 import {drawIcon} from "../utils/icon"
 import {drawOperationName} from "../utils/operationName";
 import {drawTableForColumn} from "../utils/createTableForColumn";
+import {fontSize, svgSize} from "../config/config";
 
-export function combine_rows_sum(m1,m2,rule,t1_name,t2_name){
-    //输入：
-    //input和output的矩阵
-    //input矩阵中的哪些列进行sum操作
+export function combine_rows_sum(m1,m2,rule,t1_name,t2_name,name){
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute('style', 'border: 1px solid black');
-    svg.setAttribute('id', 'mainsvg');
-    svg.setAttribute('width', '400');
-    svg.setAttribute('height', '300');
+    svg.setAttribute('id', `mainsvg${name}`);
+    svg.setAttribute('width', svgSize.width);
+    svg.setAttribute('height', svgSize.height);
     svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    document.body.appendChild(svg);
+    document.getElementById('glyphs').appendChild(svg)
 
-    let width = d3.select('#mainsvg').attr('width') - 20
-    let height = d3.select('#mainsvg').attr('height')
-    let colWidth = width / (m2[0].length * 2 + 1)
-    let colHeight = height / (m1.length + 5)
-    let colFontSize = 1.5
-    let cellFontSize = 1
-    const g = d3.select('#mainsvg').append('g')
+    let width = d3.select(`#mainsvg${name}`).attr('width') - 20
+    let height = d3.select(`#mainsvg${name}`).attr('height')
+    let colWidth = width / (m2[0].length + m1[0].length + 1)
+    let colHeight = height / (m1.length + 7)
+    let colFontSize = fontSize.colFontSize
+    let cellFontSize = fontSize.cellFontSize
+    const g = d3.select(`#mainsvg${name}`).append('g')
         .attr('transform',`translate(10,10)`)
 
     drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
@@ -39,5 +32,5 @@ export function combine_rows_sum(m1,m2,rule,t1_name,t2_name){
 
     let yOfLine = (m1.length + 2) * colHeight
 
-    drawOperationName(g,[width / 2,yOfLine],`Mutate:'${rule}'`,'1.2em',colFontSize)
+    drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)
 }

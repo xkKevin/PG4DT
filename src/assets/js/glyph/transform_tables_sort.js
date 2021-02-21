@@ -38,5 +38,5 @@ export function transform_tables_sort(m1, m2, rule, t1_name, t2_name,name) {
     }
     drawIcon(g,[(m1[0].length + 1 + sortedCol + 0.6) * colWidth,1.4 * colHeight],0.5 * colWidth,0.5 * colHeight,orderUrl)
     let yOfLine = (m1.length + 2) * colHeight
-    drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)
+    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }

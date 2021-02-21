@@ -16,8 +16,8 @@ export function transform_tables_unfold(m1,m2,rule,t1_name,t2_name,inExpLen,name
 
     let width = d3.select(`#mainsvg${name}`).attr('width') - 20
     let height = d3.select(`#mainsvg${name}`).attr('height')
-    let colWidth = width / (2 * m1[0].length + 1)
-    let colHeight = height / (m2.length + 3)
+    let colWidth = width / (m1[0].length + m2[0].length + 1)
+    let colHeight = height / (m1.length + 7)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
     const g = d3.select(`#mainsvg${name}`).append('g')
@@ -30,5 +30,5 @@ export function transform_tables_unfold(m1,m2,rule,t1_name,t2_name,inExpLen,name
     drawTableForFold(g,m2,[(m1[0].length + 1) * colWidth,2 * colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,inExpLen)
 
     let yOfLine = (m1.length + 2) * colHeight
-    drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)
+    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }

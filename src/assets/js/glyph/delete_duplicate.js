@@ -17,7 +17,7 @@ export function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name
     svg.setAttribute('width', svgSize.width);
     svg.setAttribute('height', svgSize.height);
     svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    document.body.appendChild(svg);
+    document.getElementById('glyphs').appendChild(svg)
 
     let width = d3.select(`#mainsvg${name}`).attr('width') - 20
     let height = d3.select(`#mainsvg${name}`).attr('height')
@@ -61,5 +61,5 @@ export function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name
             drawLine(g,[outColLenAndMid.midPoint,yOfLine],[outColLenAndMid.midPoint,yOfLine - colHeight],true)
         }
     }
-    drawOperationName(g,[width / 2,yOfLine],`Mutate:'${rule}'`,'1.2em',colFontSize)
+    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }

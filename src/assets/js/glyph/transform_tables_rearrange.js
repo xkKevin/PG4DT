@@ -29,5 +29,5 @@ export function transform_tables_rearrange(m1, m2, rule, t1_name, t2_name,inColo
 
     drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColor)
     let yOfLine = (m1.length + 2) * colHeight
-    drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)
+    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }

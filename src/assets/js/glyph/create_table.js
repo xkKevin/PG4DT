@@ -1,5 +1,4 @@
 import * as d3 from 'd3'
-import {drawTable} from "../utils/createTable"
 import {drawDashRect} from "../utils/dashedRect"
 import {drawIcon} from "../utils/icon"
 import {drawOperationName} from "../utils/operationName";
@@ -39,5 +38,5 @@ export function create_table(matrix,rule,t1_name,name){
     drawTableForColumn(g,matrix,[(matrix[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
 
     let yOfLine = (matrix.length + 2) * colHeight
-    drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)
+    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }

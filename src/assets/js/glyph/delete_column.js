@@ -37,5 +37,5 @@ export function delete_column(m1,m2,rule,t1_name,t2_name,inColors,outColors,name
 
     let yOfLine = (m1.length + 2) * colHeight
 
-    drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)
+    drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }
