@@ -140,78 +140,75 @@ import axios from "axios";
 import * as d3 from "d3";
 import * as monaco from "monaco-editor"; // https://www.cnblogs.com/xuhaoliang/p/13803230.html
 
-import {create_column} from './assets/js/glyph/create_column.js'
-import {create_row} from "./assets/js/glyph/create_row";
-import {generateData} from "./assets/js/utils/generateData";
-import {delete_column} from "./assets/js/glyph/delete_column";
-import {delete_table} from "./assets/js/glyph/delete_table";
-import {delete_duplicate} from "./assets/js/glyph/delete_duplicate";
-import {delete_dropna} from "./assets/js/glyph/delete_dropna";
-import {delete_row} from "./assets/js/glyph/delete_row";
-import {generateDataForRows} from "./assets/js/utils/generateDateForRows";
-import {delete_duplicate_row_partColumn} from "./assets/js/glyph/delete_duplicate_row_partColumn";
-import {generateDataForDeleteDuplicateRows} from "./assets/js/utils/generateDataForDeleteDuplicateRows";
-import {generateDataForDeleteDuplicateRows_fullRow} from "./assets/js/utils/generateDataForDeleteDuplicateRows_fullRow";
-import {delete_duplicate_row_fullColumn} from "./assets/js/glyph/delete_duplicated_row_fullColumn";
-import {delete_filter} from "./assets/js/glyph/delete_filter";
-import {generateDataForFilter_keep} from "./assets/js/utils/generateDataForFilter_keep";
-import {generateDataForFilter_delete} from "./assets/js/utils/generateDataForFilter_delete";
-import {generateDataForInsertRows} from "./assets/js/utils/generateDataForInsertRow";
-import {create_row_insert} from "./assets/js/glyph/create_row_insert";
-import {generateDataForDeleteColumn} from "./assets/js/utils/generateDataForDeleteColumn";
-import {generateDataForKeepColumns} from "./assets/js/utils/generateDataForKeepColumns";
-import {getDuplicatedColumns} from "./assets/js/utils/getDuplicatedColumns";
-import {getNaCol} from "./assets/js/utils/getNaCol";
-import {generateDataForDeleteNaColumn} from "./assets/js/utils/generateDataForDeleteNaColumn";
-import {generateDataForFilterRowKeep} from "./assets/js/utils/generateDataForFilterRowKeep";
-import {delete_row_keep} from "./assets/js/glyph/delete_row_keep";
-import {getDuplicatedRows} from "./assets/js/utils/getDupicateRows";
-import {generateDataForFilterRow} from "./assets/js/utils/generateDataForFilterRow";
-import {create_table} from "./assets/js/glyph/create_table";
-import {generateDataForCreateTable} from "./assets/js/utils/generateDataForCreateTable";
-import {generateDataForCreateColumns} from "./assets/js/utils/generateDataForCreateColumns";
-import {getCsv} from "./assets/js/utils/getCsv";
-import {generateDataForColumnRearrange} from "./assets/js/utils/generateDataForColumnRearrange";
-import {transform_tables_rearrange} from "./assets/js/glyph/transform_tables_rearrange";
-import {generateDataForTableSort} from "./assets/js/utils/generateDataForTableSort";
-import {transform_tables_sort} from "./assets/js/glyph/transform_tables_sort";
-import {generateDataForReplace} from "./assets/js/utils/generateDataForReplace";
-import {transform_columns_replace_na} from "./assets/js/glyph/transform_columns_replace_na";
-import {generateDataForMutate_cover} from "./assets/js/utils/generateDataForMutate_cover";
-import {transform_columns_mutate} from "./assets/js/glyph/transform_columns_mutate";
-import {generateDataForColumnRename} from "./assets/js/utils/generateDataForColumnRename";
-import {generateDataForMergeColumns} from "./assets/js/utils/generateDataForMergeColumns";
-import {combine_columns_merge} from "./assets/js/glyph/combine_columns_merge";
-import {generateDataForRowsSum} from "./assets/js/utils/generateDataForRowsSum";
-import {combine_rows_sum} from "./assets/js/glyph/combine_rows_sum";
-import {generateDataForGroupSummarize} from "./assets/js/utils/generateDataForGroupSummarize";
-import {generateDataForRowInterpolate} from "./assets/js/utils/generateDataForRowInterpolate";
-import {combine_rows_interpolate} from "./assets/js/glyph/combine_rows_interpolate";
-import {generateDataForEditRow} from "./assets/js/utils/generateDataForEditRow";
-import {transform_rows_edit} from "./assets/js/glyph/transform_rows_edit";
-import {generateDataForSeparateSubset} from "./assets/js/utils/generateDataForSeparateSubset";
-import {separate_tables_subset} from "./assets/js/glyph/separate_tables_subset";
-import {generateDataForSeparateDecompose} from "./assets/js/utils/generateDataForSeparateDecompose";
-import {separate_tables_decompose} from "./assets/js/glyph/separate_tables_decompose";
-import {generateDataForSeparateDecompose_q} from "./assets/js/utils/generateDataForSeparateDecompose_q";
-import {generateDataForSeparateSplit} from "./assets/js/utils/generateDataForSeparateSplit";
-import {separate_tables_split} from "./assets/js/glyph/separate_tables_split";
-import {generateDataForSeparateColumn} from "./assets/js/utils/generateDataForSeparateColumn";
-import {separate_columns} from "./assets/js/glyph/separate_columns";
-import {generateDataForSeparateRows} from "./assets/js/utils/generateDataForSeparateRows";
-import {separate_rows} from "./assets/js/glyph/separate_rows";
-import {generateDataForTablesExtend} from "./assets/js/utils/generateDataForTablesExtend";
-import {combine_tables_extend} from "./assets/js/glyph/combine_tables_extend";
-import {generateDataForLeftJoin} from "./assets/js/utils/generateDataForLeftJoin";
-import {combine_tables_left_join} from "./assets/js/glyph/combine_tables_left_join";
-import {generateDataForFullJoin} from "./assets/js/utils/generateDataForFullJoin";
-import {combine_tables_full_join} from "./assets/js/glyph/combine_tables_full_join";
-import {generateDataForInnerJoin} from "./assets/js/utils/generateDataForInnerJoin";
-import {combine_tables_inner_join} from "./assets/js/glyph/combine_tables_inner_join";
-import {generateDataForFold} from "./assets/js/utils/generateDateForFold";
-import {transform_tables_fold} from "./assets/js/glyph/transform_tables_fold";
-import {transform_tables_unfold} from "./assets/js/glyph/transform_tables_unfold";
-import {showTableName} from "./assets/js/config/config";
+import {create_table} from "./assets/js/glyph/createTables";
+import {create_row, create_row_insert} from "./assets/js/glyph/createRows";
+import {delete_table} from "./assets/js/glyph/deleteTables";
+import {create_column} from "./assets/js/glyph/createColumns";
+import {delete_column, delete_dropna, delete_duplicate} from "./assets/js/glyph/deleteColumns";
+import {
+  delete_duplicate_row_partColumn, delete_filter,
+  delete_row
+} from "./assets/js/glyph/deleteRows";
+import {
+  transform_tables_fold,
+  transform_tables_rearrange,
+  transform_tables_sort, transform_tables_unfold
+} from "./assets/js/glyph/transformTables";
+import {transform_columns_mutate, transform_columns_replace_na} from "./assets/js/glyph/transformColumns";
+import {combine_columns_merge} from "./assets/js/glyph/combineColumns";
+import {combine_rows_interpolate, combine_rows_sum} from "./assets/js/glyph/combineRows";
+import {transform_rows_edit} from "./assets/js/glyph/transformRows";
+import {
+  separate_tables_decompose,
+  separate_tables_split,
+  separate_tables_subset
+} from "./assets/js/glyph/separateTables";
+import {separate_columns} from "./assets/js/glyph/separateColumns";
+import {separate_rows} from "./assets/js/glyph/separateRows";
+import {
+  combine_tables_extend,
+  combine_tables_full_join, combine_tables_inner_join,
+  combine_tables_left_join
+} from "./assets/js/glyph/combineTables";
+import {generateDataForCreateTable} from "./assets/js/utils/genDataForCreateTables";
+import {generateData, generateDataForCreateColumns} from "./assets/js/utils/genDataForCreateColumns";
+import {generateDataForInsertRows} from "./assets/js/utils/genDataForCreateRows";
+import {
+  generateDataForDeleteColumn,
+  generateDataForDeleteNaColumn,
+  generateDataForKeepColumns
+} from "./assets/js/utils/genDataForDeleteColumns";
+import {getDuplicatedColumns} from "./assets/js/utils/common/getDuplicatedColumns";
+import {
+  generateDataForDeleteDuplicateRows,
+  generateDataForFilterRow,
+  generateDataForRows
+} from "./assets/js/utils/genDataForDeleteRows";
+import {
+  generateDataForColumnRearrange,
+  generateDataForFold,
+  generateDataForTableSort
+} from "./assets/js/utils/genDataForTransformTable";
+import {
+  generateDataForColumnRename,
+  generateDataForMutate_cover,
+  generateDataForReplace
+} from "./assets/js/utils/genDataForTransformColumns";
+import {generateDataForMergeColumns} from "./assets/js/utils/genDataForCombineColumns";
+import {generateDataForGroupSummarize, generateDataForRowInterpolate} from "./assets/js/utils/genDataForCombineRows";
+import {generateDataForEditRow} from "./assets/js/utils/genDataForTransformRows";
+import {
+  generateDataForSeparateDecompose, generateDataForSeparateDecompose_q, generateDataForSeparateSplit,
+  generateDataForSeparateSubset
+} from "./assets/js/utils/genDataForSeparateTables";
+import {generateDataForSeparateColumn} from "./assets/js/utils/genDataForSeparateColumns";
+import {generateDataForSeparateRows} from "./assets/js/utils/genDataForSeparateRows";
+import {
+  generateDataForFullJoin, generateDataForInnerJoin,
+  generateDataForLeftJoin,
+  generateDataForTablesExtend
+} from "./assets/js/utils/genDataForCombineTables";
+import {getCsv} from "./assets/js/utils/common/getCsv";
 
 export default {
   name: "App",
@@ -440,9 +437,6 @@ export default {
         if(transform_specs[i].replace_value){
           replace_value = transform_specs[i].replace_value
         }
-        // if(transform_specs[i].input_implict_col){
-        //   input_implict_col = transform_specs[i].input_implict_col
-        // }
         if(transform_specs[i].input_implict_col){
           if(typeof transform_specs[i].input_implict_col === 'string'){
             input_implict_col = [dataIn1_csv[0].indexOf(transform_specs[i].input_implict_col)]
@@ -523,15 +517,11 @@ export default {
           //   delete_row_keep(res.m1,res.m2,rule,input_table_name,output_table_name,res.inIndex,res.outIndex,res.inColors,res.outColors)
           //   break
 
-          // case 'delete_rows_duplicate_partColumn':
-          //   let dupRows = getDuplicatedRows(dataIn1_csv,input_explict_col[0])
-          //   res = generateDataForDeleteDuplicateRows(dataIn1_csv,dataOut1_csv,dupRows,input_explict_col[0])
-          //   delete_duplicate_row_partColumn(res.m1,res.m2,rule,input_table_name,output_table_name,res.outColors)
-          //   break
           case 'delete_rows_deduplicate':
-            let dupRows = getDuplicatedRows(dataIn1_csv)
-            res = generateDataForDeleteDuplicateRows_fullRow(dataIn1_csv,dataOut1_csv,dupRows)
-            delete_duplicate_row_fullColumn(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,i,this.show_table_name)
+            if(input_explict_col.length === 0)
+              input_explict_col = Array.from(new Array(dataIn1_csv[0].length),(x,i) => i)
+            res = generateDataForDeleteDuplicateRows(dataIn1_csv,dataOut1_csv,input_explict_col)
+            delete_duplicate_row_partColumn(res.m1,res.m2,rule,input_table_name,output_table_name,res.outColors,i,this.show_table_name)
             break
           case 'delete_rows_slice':
             res = generateDataForFilterRow(dataIn1_csv,dataOut1_csv,input_explict_col[0])
@@ -579,10 +569,10 @@ export default {
             res = generateDataForMergeColumns(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
             combine_columns_merge(res.m1,res.m2,rule,input_table_name,output_table_name,res.newInExpOrImp,res.newOutExpOrImp,res.outColors,i,this.show_table_name)
             break
-          case 'combine_rows_sum':
-            res = generateDataForRowsSum(dataIn1_csv,dataOut1_csv)
-            combine_rows_sum(res.m1,res.m2,rule,input_table_name,output_table_name,i,this.show_table_name)
-            break
+          // case 'combine_rows_sum':
+          //   res = generateDataForRowsSum(dataIn1_csv,dataOut1_csv)
+          //   combine_rows_sum(res.m1,res.m2,rule,input_table_name,output_table_name,i,this.show_table_name)
+          //   break
           case 'combine_rows_summarize':
             //这个操作再看看
             if(input_explict_col.length === 0){
@@ -641,8 +631,6 @@ export default {
             combine_tables_inner_join(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.inColors2,res.outColor,i,this.show_table_name)
             break
           case 'transform_tables_fold':
-            // console.log(dataIn1_csv)
-            // console.log(input_explict_col)
             res = generateDataForFold(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
             transform_tables_fold(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col.length,i,this.show_table_name)
             break
@@ -676,68 +664,6 @@ export default {
   */
   mounted() {
     this.initData();
-    /*
-    function getTable(path) {
-      return new Promise((resolve, reject) => {
-        d3.csv(path).then((data) => {
-          let tempData = [];
-          tempData.push(Array.from(data.columns));
-          data.forEach((d) => {
-            tempData.push(Array.from(Object.values(d)));
-          });
-          resolve(tempData);
-        });
-      });
-    }
-
-    let transform_specs = {
-      type: "create_column_mutate",
-      input_table_file: "data1.csv",
-      output_table_file: "data2.csv",
-      input_table_name: "t1",
-      output_table_name: "t2",
-      original_col: [], // 也可以写成数字，如 [1, 3]
-      new_col: "d",
-      operation: "sum",
-    };
-
-    let t1 = transform_specs.input_table_file;
-    let t2 = transform_specs.output_table_file;
-    let rule = transform_specs.operation;
-    let t1_name = transform_specs.input_table_name;
-    let t2_name = transform_specs.output_table_name;
-    let oriCol = transform_specs.original_col;
-    let newCol = transform_specs.new_col;
-
-    async function preparation(transform_specs) {
-      let data1_csv = await getTable("http://localhost/static/d1.csv");
-      let data2_csv = await getTable("http://localhost/static/d2.csv");
-
-      //提取出满足条件的矩阵
-      let res = generateData(data1_csv, data2_csv, oriCol, newCol);
-      let curCol = [];
-      //curCol记录的是input glyph的所有列（包括explicit/implicit列和contextual列）
-      //在input table中的位置
-      oriCol.forEach((idx) => {
-        curCol.push(res.m1[0].indexOf(data1_csv[0][idx]));
-      });
-
-      //创建列
-      create_column(res.m1, res.m2, curCol, rule, t1_name, t2_name);
-
-      //创建行，不需要提取contextual行，所以转化为矩阵的过程比较简单
-      // let m1 = [], m2 = []
-      // data1_csv.forEach(d => {
-      //   if(m1.length <= 3)m1.push(d)
-      // })
-      // data2_csv.forEach(d => {
-      //   if(m2.length <= 4)m2.push(d)
-      // })
-      // create_row(m1,m2,rule,t1_name,t2_name,-1)
-    }
-
-    preparation(transform_specs);
-    */
   },
 };
 </script>
