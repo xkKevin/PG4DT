@@ -6,11 +6,15 @@ import {drawLine} from "../utils/dashedLine"
 import {drawIcon} from "../utils/icon"
 import {drawOperationName} from "../utils/operationName";
 import {fontSize, svgSize} from "../config/config";
-export function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name) {
+export function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name,showTableName) {
     //输入：
     //
     //
     //oriExpOrImpCols中可能含有重复值，因为用indexOf找下标时，只会找到第一个
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     // svg.setAttribute('style', 'border: 1px solid black');
     svg.setAttribute('id', `mainsvg${name}`);

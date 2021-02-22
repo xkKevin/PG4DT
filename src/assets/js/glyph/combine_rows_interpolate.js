@@ -4,13 +4,17 @@ import {drawOperationName} from "../utils/operationName";
 import {drawTableForColumn} from "../utils/createTableForColumn";
 import {fontSize, svgSize} from "../config/config";
 
-export function combine_rows_interpolate(m1,m2,rule,t1_name,t2_name,naPos,name) {
+export function combine_rows_interpolate(m1,m2,rule,t1_name,t2_name,naPos,name,showTableName) {
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute('id', `mainsvg${name}`);
     svg.setAttribute('width', svgSize.width);
     svg.setAttribute('height', svgSize.height);
     svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    document.body.appendChild(svg);
+    document.getElementById('glyphs').appendChild(svg)
 
     let width = d3.select(`#mainsvg${name}`).attr('width') - 20
     let height = d3.select(`#mainsvg${name}`).attr('height')

@@ -5,7 +5,11 @@ import {fontSize, svgSize} from "../config/config";
 import {drawTableForFold} from "../utils/createFoldTable";
 import {drawTableForColumn} from "../utils/createTableForColumn";
 
-export function transform_tables_unfold(m1,m2,rule,t1_name,t2_name,inExpLen,name){
+export function transform_tables_unfold(m1,m2,rule,t1_name,t2_name,inExpLen,name,showTableName){
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     // svg.setAttribute('style', 'border: 1px solid black');
     svg.setAttribute('id', `mainsvg${name}`);
@@ -25,9 +29,9 @@ export function transform_tables_unfold(m1,m2,rule,t1_name,t2_name,inExpLen,name
 
     drawTableForColumn(g,m1,[0, colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     let arrowUrl = require('../../images/arrow.png')
-    drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight],0.8 * colWidth, colHeight,arrowUrl)
+    drawIcon(g,[(m2[0].length + 0.1) * colWidth, (1 + m2.length / 2) * colHeight + (m1.length - 3) / 2 * colHeight],0.8 * colWidth, colHeight,arrowUrl)
 
-    drawTableForFold(g,m2,[(m1[0].length + 1) * colWidth,2 * colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,inExpLen)
+    drawTableForFold(g,m2,[(m1[0].length + 1) * colWidth,(m1.length - 1) / 2 * colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,inExpLen)
 
     let yOfLine = (m1.length + 2) * colHeight
     drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)

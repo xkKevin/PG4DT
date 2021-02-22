@@ -5,10 +5,10 @@ import {drawOperationName} from "../utils/operationName";
 import {drawTableForColumn} from "../utils/createTableForColumn";
 import {fontSize, svgSize} from "../config/config";
 
-export function create_table(matrix,rule,t1_name,name){
-    //输入：
-    //input和output的矩阵
-    //input矩阵中的哪些列进行sum操作
+export function create_table(matrix,rule,t1_name,name,showTableName){
+    if(!showTableName){
+        t1_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     // svg.setAttribute('style', 'border: 1px solid black');
     svg.setAttribute('id', `mainsvg${name}`);

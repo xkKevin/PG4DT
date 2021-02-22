@@ -6,10 +6,14 @@ import {drawOperationName} from "../utils/operationName";
 import {drawTableForColumn} from "../utils/createTableForColumn";
 import {fontSize, svgSize} from "../config/config";
 
-export function separate_columns(m1, m2, rule, t1_name, t2_name, inExpOrImp, outExpOrImp,name){
+export function separate_columns(m1, m2, rule, t1_name, t2_name, inExpOrImp, outExpOrImp,name,showTableName){
     //输入：
     //input和output的矩阵
     //input矩阵中的哪些列进行sum操作
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute('id', `mainsvg${name}`);
     svg.setAttribute('width', svgSize.width);

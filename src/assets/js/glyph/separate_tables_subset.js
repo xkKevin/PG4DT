@@ -4,7 +4,12 @@ import {drawOperationName} from "../utils/operationName";
 import {drawTableForRow} from "../utils/createTableForRow";
 import {fontSize, svgSize} from "../config/config";
 
-export function separate_tables_subset(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColor1,outColor2,name){
+export function separate_tables_subset(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColor1,outColor2,name,showTableName){
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+        t3_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     // svg.setAttribute('style', 'border: 1px solid black');
     svg.setAttribute('id', `mainsvg${name}`);

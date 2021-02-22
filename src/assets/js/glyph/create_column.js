@@ -1,5 +1,4 @@
 import * as d3 from 'd3'
-import {drawTable} from "../utils/createTable"
 import {drawHighLightCol} from "../utils/highLightCol"
 import {drawDashRect} from "../utils/dashedRect"
 import {drawLine} from "../utils/dashedLine"
@@ -8,11 +7,12 @@ import {drawOperationName} from "../utils/operationName";
 import {drawTableForColumn} from "../utils/createTableForColumn";
 import {fontSize, svgSize} from "../config/config";
 
-export function create_column(m1,m2,rule,t1_name,t2_name,inExp,outExp,name){
+export function create_column(m1,m2,rule,t1_name,t2_name,inExp,outExp,name,showTableName){
 
-    //输入：
-    //input和output的矩阵
-    //input矩阵中的哪些列进行sum操作
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute('id', `mainsvg${name}`);
     svg.setAttribute('width', svgSize.width);
@@ -41,7 +41,7 @@ export function create_column(m1,m2,rule,t1_name,t2_name,inExp,outExp,name){
     drawIcon(g,[(m1[0].length + 1.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     // drawTable(g,m2,outputExpOrImp,[(m2[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col')
-    drawTableForColumn(g,m2,[(m2[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
+    drawTableForColumn(g,m2,[(m2[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize)
 
     let inColLenAndMid = drawHighLightCol(g,m1,inExp,[0,colHeight],colWidth,colHeight)
     let yOfLine = (m1.length + 2) * colHeight

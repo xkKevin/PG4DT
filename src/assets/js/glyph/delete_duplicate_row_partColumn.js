@@ -3,9 +3,13 @@ import {drawDashRect} from "../utils/dashedRect"
 import {drawIcon} from "../utils/icon"
 import {drawOperationName} from "../utils/operationName";
 import {drawTableForRow} from "../utils/createTableForRow";
-import {fontSize, svgSize} from "../config/config";
+import {fontSize,svgSize} from "../config/config";
 
-export function delete_duplicate_row_partColumn(m1, m2, rule, t1_name, t2_name,outColors) {
+export function delete_duplicate_row_partColumn(m1, m2, rule, t1_name, t2_name,outColors,showTableName) {
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute('id', `mainsvg${name}`);
     svg.setAttribute('width', svgSize.width);

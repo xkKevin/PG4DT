@@ -1,15 +1,15 @@
 import * as d3 from "d3";
-import {drawTable} from "../utils/createTable";
 import {drawDashRect} from "../utils/dashedRect";
 import {drawIcon} from "../utils/icon";
 import {drawOperationName} from "../utils/operationName";
 import {drawTableForColumn} from "../utils/createTableForColumn";
 import {fontSize, svgSize} from "../config/config";
 
-export function delete_dropna(m1,m2,rule,t1_name,t2_name,inColors,outColors,naPos,name) {
-    //输入：
-    //input和output的矩阵
-    //input矩阵中的哪些列进行sum操作
+export function delete_dropna(m1,m2,rule,t1_name,t2_name,inColors,outColors,naPos,name,showTableName) {
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute('id', `mainsvg${name}`);
     svg.setAttribute('width', svgSize.width);

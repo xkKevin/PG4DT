@@ -6,11 +6,15 @@ import {drawDashRect} from "../utils/dashedRect";
 import {drawTableForRow} from "../utils/createTableForRow";
 import {fontSize, svgSize} from "../config/config";
 
-export function delete_row_keep(m1,m2,rule,t1_name,t2_name,inIds,outIds,inColors,outColors,name) {
+export function delete_row_keep(m1,m2,rule,t1_name,t2_name,inIds,outIds,inColors,outColors,name,showTableName) {
     //输入：
     //input和output的矩阵
     //insertPos表示新行的位置，默认值为-1，表示在最后插入，0表示在首行，1表示在中间某行
     //在最后插入时，即insertPos为-1时，默认不显示行号
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     // svg.setAttribute('style', 'border: 1px solid black');
     svg.setAttribute('id', `mainsvg${name}`);

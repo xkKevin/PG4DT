@@ -6,7 +6,11 @@ import {drawTableForRow} from "../utils/createTableForRow";
 import {drawIndex} from "../utils/setIndex";
 import {fontSize, svgSize} from "../config/config";
 
-export function create_row_insert(m1, m2, rule, t1_name, t2_name,inColor,outColor,inIdx,outIdx,name) {
+export function create_row_insert(m1, m2, rule, t1_name, t2_name,inColor,outColor,inIdx,outIdx,name,showTableName) {
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute('id', `mainsvg${name}`);
     svg.setAttribute('width', svgSize.width);

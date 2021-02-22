@@ -4,7 +4,10 @@ import {drawOperationName} from "../utils/operationName";
 import {drawTableForRow} from "../utils/createTableForRow";
 import {fontSize, svgSize} from "../config/config";
 
-export function separate_tables_decompose(m1,m2s,rule,t1_name,name){
+export function separate_tables_decompose(m1,m2s,rule,t1_name,name,showTableName){
+    if(!showTableName){
+        t1_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     // svg.setAttribute('style', 'border: 1px solid black');
     svg.setAttribute('id', `mainsvg${name}`);

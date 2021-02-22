@@ -6,11 +6,15 @@ import {drawOperationName} from "../utils/operationName";
 import {drawDashRect} from "../utils/dashedRect";
 import {fontSize, svgSize} from "../config/config";
 
-export function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name) {
+export function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName) {
     //输入：
     //input和output的矩阵
     //insertPos表示新行的位置，默认值为-1，表示在最后插入，0表示在首行，1表示在中间某行
     //在最后插入时，即insertPos为-1时，默认不显示行号
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute('id', `mainsvg${name}`);
     svg.setAttribute('width', svgSize.width);

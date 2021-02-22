@@ -6,7 +6,11 @@ import {drawOperationName} from "../utils/operationName";
 import {drawTableForColumn} from "../utils/createTableForColumn";
 import {fontSize, svgSize} from "../config/config";
 
-export function combine_columns_merge(m1,m2,rule,t1_name,t2_name,inExpOrImp,outExpOrImp,outColors,name){
+export function combine_columns_merge(m1,m2,rule,t1_name,t2_name,inExpOrImp,outExpOrImp,outColors,name,showTableName){
+    if(!showTableName){
+        t1_name = ''
+        t2_name = ''
+    }
     //输入：
     //input和output的矩阵
     //input矩阵中的哪些列进行sum操作
@@ -15,7 +19,7 @@ export function combine_columns_merge(m1,m2,rule,t1_name,t2_name,inExpOrImp,outE
     svg.setAttribute('width', svgSize.width);
     svg.setAttribute('height', svgSize.height);
     svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    document.body.appendChild(svg);
+    document.getElementById('glyphs').appendChild(svg)
 
     let width = d3.select(`#mainsvg${name}`).attr('width') - 20
     let height = d3.select('#mainsvg').attr('height')
