@@ -7,7 +7,6 @@ export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colF
     let maxCharsPerCol = Math.floor(colWidth / 16 / colFontSize)
     let maxCharsPerCell = Math.floor(colWidth / 16 / cellFontSize)
     let colors = ['#5AABAC','#F07A66','#F8BA4B','#AAA1CC','#445050','#C9C9C9']
-    console.log('tableName: ',table_name)
     g.append('text')
         .attr('x',pos[0])
         .attr('y',pos[1] - colHeight)
@@ -19,8 +18,8 @@ export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colF
     for(let row = 0; row < matrix.length; row++){
         if(row === 0){
             for(let col = 0; col < matrix[0].length; col ++){
-                let color = inExpLen > 2 ? colors[1] :
-                    col === 0 ? 'gray' : colors[1]
+                let color = col === 0 ? 'gray' : colors[1]
+                if(inExpLen > 2)color = colors[0]
                 g.append('rect')
                     .attr('width',colWidth)
                     .attr('height',colHeight)
@@ -45,6 +44,7 @@ export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colF
         else{
             for(let col = 0; col < matrix[0].length; col ++){
                 let color = col === 0 ? colors[0] : colors[2]
+                if(inExpLen > 2)color = colors[1]
                 g.append('rect')
                     .attr('width',colWidth)
                     .attr('height',colHeight)

@@ -104,7 +104,8 @@ function transform_tables_fold(m1,m2,rule,t1_name,t2_name,inExpLen,name,showTabl
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g, [(m1[0].length + 0.1) * colWidth, (1 + m1.length / 2) * colHeight + (m2.length - 3) / 2 * colHeight], 0.8 * colWidth, colHeight, arrowUrl)
 
-    drawTableForColumn(g, m2, [(m1[0].length + 1) * colWidth, colHeight], colWidth, colHeight, t2_name, colFontSize, cellFontSize)
+    let tempColor = inExpLen > 2 ? [0,1] : []
+    drawTableForColumn(g, m2, [(m1[0].length + 1) * colWidth, colHeight], colWidth, colHeight, t2_name, colFontSize, cellFontSize,tempColor)
 
     let yOfLine = (m2.length + 2) * colHeight
     drawOperationName(g, [width / 2, yOfLine], rule, '1.2em', colFontSize)

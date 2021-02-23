@@ -58,7 +58,10 @@ def execScript(data_path, script_name, Rscript_path = r"D:\tool\R-4.0.3\bin\Rscr
     with open(script_exec_name, "w", ) as fp:
         fp.write(codes)
         
-    os.system(Rscript_path + " " + script_exec_name)
+    if(os.system(Rscript_path + " " + script_exec_name)):
+        # 0表示执行成功，否则表示执行失败
+        os.chdir(original_cwd) # 修改回原来的工作目录
+        raise Exception("Failed to execute the current script!")  # 如果执行失败，抛出异常
     
     col_states = {}  # key对应代码的行号，value对应此行代码执行完之后的table中的列
     group_states = {} # key为行号，value为分组的列
@@ -182,7 +185,8 @@ def generate_transform_specs(data_path, script_name):
 #         '''D = merge(x=A, B, by = c("first",`third`))'''
 #         '''D = rbind(1:4, C)'''
 #         '''D=subset(x= B, P> 2*T)'''
-        '''D = distinct(B, 'T', `MORPH394`)'''
+#         '''D = distinct(B, 'T', `MORPH394`)'''
+        '''llll <- cbind(E  =  c(8:14), T = 1, B)'''
     ]
     col_states = {1: ['ID', 'T', 'P.1', 'P.2', 'Q.1'],
                  2: ['ID', 'T', 'MORPH394', 'P'],
@@ -652,6 +656,28 @@ def generate_transform_specs(data_path, script_name):
             specs["output_table_file"] = "table%d.csv" % line_num
             specs["input_explict_col"] = remove_quote(params['none'][pi:])
             specs["operation_rule"] = "Delete Dupliate Row"
+            
+            var2table[output_tbl] = specs["output_table_file"]
+
+        elif func == 'cbind':
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "table%d.csv" % line_num 
+            if len(params['none']) and var2table.get(params['none'][0]):
+                specs["type"] = 'create_columns_create'
+                specs["input_table_name"] = remove_quote(params['none'][0])
+                specs["input_table_file"] = var2table[specs["input_table_name"]]
+                specs["output_explict_col"] = []
+                for pk, pv in params.items():
+                    pk = remove_quote(pk)
+                    if pk in ('none', "deparse.level"):
+                        continue
+                    specs["output_explict_col"].append(pk)
+
+                specs["operation_rule"] = 'Create Column: ' + ",".join(specs["output_explict_col"])
+            else:
+                specs["type"] = 'create_tables'
+                specs["operation_rule"] = 'Create Manually'
+                var2table[output_tbl] = specs["output_table_file"]
             
             var2table[output_tbl] = specs["output_table_file"]
 
