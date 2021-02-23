@@ -124,9 +124,7 @@
                 </el-switch>
               </div>
             </el-row>
-            <div id="glyphs" >
-              Here is a set of glyphs!
-            </div>
+            <div id="glyphs">Here is a set of glyphs!</div>
           </el-footer>
         </el-container>
       </el-col>
@@ -135,80 +133,103 @@
 </template>
 
 <script>
-
 import axios from "axios";
 import * as d3 from "d3";
 import * as monaco from "monaco-editor"; // https://www.cnblogs.com/xuhaoliang/p/13803230.html
 
-import {create_table} from "./assets/js/glyph/createTables";
-import {create_row, create_row_insert} from "./assets/js/glyph/createRows";
-import {delete_table} from "./assets/js/glyph/deleteTables";
-import {create_column} from "./assets/js/glyph/createColumns";
-import {delete_column, delete_dropna, delete_duplicate} from "./assets/js/glyph/deleteColumns";
+import { create_table } from "./assets/js/glyph/createTables";
+import { create_row, create_row_insert } from "./assets/js/glyph/createRows";
+import { delete_table } from "./assets/js/glyph/deleteTables";
+import { create_column } from "./assets/js/glyph/createColumns";
 import {
-  delete_duplicate_row_partColumn, delete_filter,
-  delete_row
+  delete_column,
+  delete_dropna,
+  delete_duplicate,
+} from "./assets/js/glyph/deleteColumns";
+import {
+  delete_duplicate_row_partColumn,
+  delete_filter,
+  delete_row,
 } from "./assets/js/glyph/deleteRows";
 import {
   transform_tables_fold,
   transform_tables_rearrange,
-  transform_tables_sort, transform_tables_unfold
+  transform_tables_sort,
+  transform_tables_unfold,
 } from "./assets/js/glyph/transformTables";
-import {transform_columns_mutate, transform_columns_replace_na} from "./assets/js/glyph/transformColumns";
-import {combine_columns_merge} from "./assets/js/glyph/combineColumns";
-import {combine_rows_interpolate, combine_rows_sum} from "./assets/js/glyph/combineRows";
-import {transform_rows_edit} from "./assets/js/glyph/transformRows";
+import {
+  transform_columns_mutate,
+  transform_columns_replace_na,
+} from "./assets/js/glyph/transformColumns";
+import { combine_columns_merge } from "./assets/js/glyph/combineColumns";
+import {
+  combine_rows_interpolate,
+  combine_rows_sum,
+} from "./assets/js/glyph/combineRows";
+import { transform_rows_edit } from "./assets/js/glyph/transformRows";
 import {
   separate_tables_decompose,
   separate_tables_split,
-  separate_tables_subset
+  separate_tables_subset,
 } from "./assets/js/glyph/separateTables";
-import {separate_columns} from "./assets/js/glyph/separateColumns";
-import {separate_rows} from "./assets/js/glyph/separateRows";
+import { separate_columns } from "./assets/js/glyph/separateColumns";
+import { separate_rows } from "./assets/js/glyph/separateRows";
 import {
   combine_tables_extend,
-  combine_tables_full_join, combine_tables_inner_join,
-  combine_tables_left_join
+  combine_tables_full_join,
+  combine_tables_inner_join,
+  combine_tables_left_join,
 } from "./assets/js/glyph/combineTables";
-import {generateDataForCreateTable} from "./assets/js/utils/genDataForCreateTables";
-import {generateData, generateDataForCreateColumns} from "./assets/js/utils/genDataForCreateColumns";
-import {generateDataForInsertRows} from "./assets/js/utils/genDataForCreateRows";
+import { generateDataForCreateTable } from "./assets/js/utils/genDataForCreateTables";
+import {
+  generateData,
+  generateDataForCreateColumns,
+} from "./assets/js/utils/genDataForCreateColumns";
+import { generateDataForInsertRows } from "./assets/js/utils/genDataForCreateRows";
 import {
   generateDataForDeleteColumn,
   generateDataForDeleteNaColumn,
-  generateDataForKeepColumns
+  generateDataForKeepColumns,
 } from "./assets/js/utils/genDataForDeleteColumns";
-import {getDuplicatedColumns} from "./assets/js/utils/common/getDuplicatedColumns";
+import { getDuplicatedColumns } from "./assets/js/utils/common/getDuplicatedColumns";
 import {
   generateDataForDeleteDuplicateRows,
   generateDataForFilterRow,
-  generateDataForRows
+  generateDataForRows,
 } from "./assets/js/utils/genDataForDeleteRows";
 import {
   generateDataForColumnRearrange,
   generateDataForFold,
-  generateDataForTableSort
+  generateDataForTableSort,
 } from "./assets/js/utils/genDataForTransformTable";
 import {
   generateDataForColumnRename,
   generateDataForMutate_cover,
-  generateDataForReplace
+  generateDataForReplace,
 } from "./assets/js/utils/genDataForTransformColumns";
-import {generateDataForMergeColumns} from "./assets/js/utils/genDataForCombineColumns";
-import {generateDataForGroupSummarize, generateDataForRowInterpolate} from "./assets/js/utils/genDataForCombineRows";
-import {generateDataForEditRow} from "./assets/js/utils/genDataForTransformRows";
+import { generateDataForMergeColumns } from "./assets/js/utils/genDataForCombineColumns";
 import {
-  generateDataForSeparateDecompose, generateDataForSeparateDecompose_q, generateDataForSeparateSplit,
-  generateDataForSeparateSubset
+  generateDataForGroupSummarize,
+  generateDataForRowInterpolate,
+} from "./assets/js/utils/genDataForCombineRows";
+import { generateDataForEditRow } from "./assets/js/utils/genDataForTransformRows";
+import {
+  generateDataForSeparateDecompose,
+  generateDataForSeparateDecompose_q,
+  generateDataForSeparateSplit,
+  generateDataForSeparateSubset,
 } from "./assets/js/utils/genDataForSeparateTables";
-import {generateDataForSeparateColumn} from "./assets/js/utils/genDataForSeparateColumns";
-import {generateDataForSeparateRows} from "./assets/js/utils/genDataForSeparateRows";
+import { generateDataForSeparateColumn } from "./assets/js/utils/genDataForSeparateColumns";
+import { generateDataForSeparateRows } from "./assets/js/utils/genDataForSeparateRows";
 import {
-  generateDataForFullJoin, generateDataForInnerJoin,
+  generateDataForFullJoin,
+  generateDataForInnerJoin,
   generateDataForLeftJoin,
-  generateDataForTablesExtend
+  generateDataForTablesExtend,
 } from "./assets/js/utils/genDataForCombineTables";
-import {getCsv} from "./assets/js/utils/common/getCsv";
+import { getCsv } from "./assets/js/utils/common/getCsv";
+
+const request_api = ""
 
 export default {
   name: "App",
@@ -220,6 +241,7 @@ export default {
       all_tables: [
         "benchmark5.txt",
         "benchmark19.txt",
+        "test.txt",
         "table1.csv",
         "table2.csv",
         "table3.csv",
@@ -324,7 +346,7 @@ export default {
           type: "error", // success/warning/info/error
         });
       } else {
-        const table_path = "http://localhost/data/" + table_file;
+        const table_path = `${request_api}/data/${table_file}`;
         d3.csv(table_path).then((data) => {
           this.table_name = table_file;
           this.tableData = data;
@@ -333,7 +355,7 @@ export default {
       }
     },
     getScriptData(script_content = "", language = "") {
-      const path = "http://localhost/getScriptData";
+      const path = `${request_api}/getScriptData`;
       axios
         .get(path, { params: { script_content, language } })
         .then((response) => {
@@ -347,306 +369,931 @@ export default {
     },
     generateGlyphs() {
       // console.log(this.editor.getValue(), this.language);
-      const path = "http://localhost/generate_transform_specs";
+      const path = `${request_api}/generate_transform_specs`;
       axios
-        .get(path, { params: { script_content:this.editor.getValue(), language:this.language } })
+        .get(path, {
+          params: {
+            script_content: this.editor.getValue(),
+            language: this.language,
+          },
+        })
         .then((response) => {
           // 生成glyphs的操作
-          console.log(response.data.transform_specs)
-          document.getElementById('glyphs').innerHTML = ''
-          this.preparation(response.data.transform_specs)
+          if (response.data.error_info) {
+            this.$message({
+              message: response.data.error_info,
+              type: "error", // success/warning/info/error
+            });
+          } else{
+            console.log(response.data.transform_specs);
+            document.getElementById("glyphs").innerHTML = "";
+            this.preparation(response.data.transform_specs);
+          }
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    controlShow(state){
-      this.show_table_name = state
+    controlShow(state) {
+      this.show_table_name = state;
     },
-    async preparation(transform_specs){
-      for(let i = 0;i < transform_specs.length; i++){
-        let rule = transform_specs[i].operation_rule
-        let dataIn1_csv,dataIn2_csv,dataOut1_csv,dataOut2_csv
-        let input_explict_col = [],output_explict_col = []
-        let input_explict_row = [],output_explict_row = []
-        let input_implict_col = []
-        let input_table_name,output_table_name,input_table_name2,output_table_name2
-        let replace_value
-        let res
-        if(transform_specs[i].input_table_file){
-          if(typeof transform_specs[i].input_table_file === 'string') {
-            dataIn1_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file}`)
-          } else{
-            dataIn1_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file[0]}`)
-            if(transform_specs[i].input_table_file.length > 1)
-              dataIn2_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file[1]}`)
+    async preparation(transform_specs) {
+      for (let i = 0; i < transform_specs.length; i++) {
+        let rule = transform_specs[i].operation_rule;
+        let dataIn1_csv, dataIn2_csv, dataOut1_csv, dataOut2_csv;
+        let input_explict_col = [],
+          output_explict_col = [];
+        let input_explict_row = [],
+          output_explict_row = [];
+        let input_implict_col = [];
+        let input_table_name,
+          output_table_name,
+          input_table_name2,
+          output_table_name2;
+        let replace_value;
+        let res;
+        if (transform_specs[i].input_table_file) {
+          if (typeof transform_specs[i].input_table_file === "string") {
+            dataIn1_csv = await getCsv(
+              `${request_api}/data/${transform_specs[i].input_table_file}`
+            );
+          } else {
+            dataIn1_csv = await getCsv(
+              `${request_api}/data/${transform_specs[i].input_table_file[0]}`
+            );
+            if (transform_specs[i].input_table_file.length > 1)
+              dataIn2_csv = await getCsv(
+                `${request_api}/data/${transform_specs[i].input_table_file[1]}`
+              );
           }
         }
-        if(transform_specs[i].output_table_file){
-          if(typeof transform_specs[i].output_table_file === 'string'){
-            dataOut1_csv = await getCsv(`http://localhost/data/${transform_specs[i].output_table_file}`)
-          }
-          else{
-            dataOut1_csv = await getCsv(`http://localhost/data/${transform_specs[i].output_table_file[0]}`)
-            if(transform_specs[i].output_table_file.length > 1)
-              dataOut2_csv = await getCsv(`http://localhost/data/${transform_specs[i].output_table_file[1]}`)
+        if (transform_specs[i].output_table_file) {
+          if (typeof transform_specs[i].output_table_file === "string") {
+            dataOut1_csv = await getCsv(
+              `${request_api}/data/${transform_specs[i].output_table_file}`
+            );
+          } else {
+            dataOut1_csv = await getCsv(
+              `${request_api}/data/${transform_specs[i].output_table_file[0]}`
+            );
+            if (transform_specs[i].output_table_file.length > 1)
+              dataOut2_csv = await getCsv(
+                `${request_api}/data/${transform_specs[i].output_table_file[1]}`
+              );
           }
         }
-        if(transform_specs[i].input_explict_col){
-          if(typeof transform_specs[i].input_explict_col === 'string'){
-            input_explict_col = [dataIn1_csv[0].indexOf(transform_specs[i].input_explict_col)]
-          }else{
-            for(let col = 0;col < transform_specs[i].input_explict_col.length;col++){
-              input_explict_col.push(dataIn1_csv[0].indexOf(transform_specs[i].input_explict_col[col]))
+        if (transform_specs[i].input_explict_col) {
+          if (typeof transform_specs[i].input_explict_col === "string") {
+            input_explict_col = [
+              dataIn1_csv[0].indexOf(transform_specs[i].input_explict_col),
+            ];
+          } else {
+            for (
+              let col = 0;
+              col < transform_specs[i].input_explict_col.length;
+              col++
+            ) {
+              input_explict_col.push(
+                dataIn1_csv[0].indexOf(
+                  transform_specs[i].input_explict_col[col]
+                )
+              );
             }
           }
         }
-        if(transform_specs[i].output_explict_col){
-          if(typeof transform_specs[i].output_explict_col === 'string'){
-            output_explict_col = [dataOut1_csv[0].indexOf(transform_specs[i].output_explict_col)]
-          }else{
-            for(let col = 0;col < transform_specs[i].output_explict_col.length;col++){
-              output_explict_col.push(dataOut1_csv[0].indexOf(transform_specs[i].output_explict_col[col]))
+        if (transform_specs[i].output_explict_col) {
+          if (typeof transform_specs[i].output_explict_col === "string") {
+            output_explict_col = [
+              dataOut1_csv[0].indexOf(transform_specs[i].output_explict_col),
+            ];
+          } else {
+            for (
+              let col = 0;
+              col < transform_specs[i].output_explict_col.length;
+              col++
+            ) {
+              output_explict_col.push(
+                dataOut1_csv[0].indexOf(
+                  transform_specs[i].output_explict_col[col]
+                )
+              );
             }
           }
         }
-        if(transform_specs[i].input_explict_row){
-          input_explict_row = transform_specs[i].input_explict_row
+        if (transform_specs[i].input_explict_row) {
+          input_explict_row = transform_specs[i].input_explict_row;
         }
-        if(transform_specs[i].output_explict_row){
-          output_explict_row = transform_specs[i].output_explict_row
+        if (transform_specs[i].output_explict_row) {
+          output_explict_row = transform_specs[i].output_explict_row;
         }
-        if(transform_specs[i].input_table_name){
-          if(typeof transform_specs[i].input_table_name === 'string')
-            input_table_name = transform_specs[i].input_table_name
-          else{
-            input_table_name = transform_specs[i].input_table_name[0]
-            if(transform_specs[i].input_table_name.length > 1)
-              input_table_name2 = transform_specs[i].input_table_name[1]
+        if (transform_specs[i].input_table_name) {
+          if (typeof transform_specs[i].input_table_name === "string")
+            input_table_name = transform_specs[i].input_table_name;
+          else {
+            input_table_name = transform_specs[i].input_table_name[0];
+            if (transform_specs[i].input_table_name.length > 1)
+              input_table_name2 = transform_specs[i].input_table_name[1];
           }
         }
-        if(transform_specs[i].output_table_name){
-          if(typeof transform_specs[i].output_table_name === 'string')
-            output_table_name = transform_specs[i].output_table_name
-          else{
-            output_table_name = transform_specs[i].output_table_name[0]
-            if(transform_specs[i].output_table_name.length > 1)
-              output_table_name2 = transform_specs[i].output_table_name[1]
+        if (transform_specs[i].output_table_name) {
+          if (typeof transform_specs[i].output_table_name === "string")
+            output_table_name = transform_specs[i].output_table_name;
+          else {
+            output_table_name = transform_specs[i].output_table_name[0];
+            if (transform_specs[i].output_table_name.length > 1)
+              output_table_name2 = transform_specs[i].output_table_name[1];
           }
         }
-        if(transform_specs[i].replace_value){
-          replace_value = transform_specs[i].replace_value
+        if (transform_specs[i].replace_value) {
+          replace_value = transform_specs[i].replace_value;
         }
-        if(transform_specs[i].input_implict_col){
-          if(typeof transform_specs[i].input_implict_col === 'string'){
-            input_implict_col = [dataIn1_csv[0].indexOf(transform_specs[i].input_implict_col)]
-          }else{
-            for(let col = 0;col < transform_specs[i].input_implict_col.length;col++){
-              input_implict_col.push(dataIn1_csv[0].indexOf(transform_specs[i].input_implict_col[col]))
+        if (transform_specs[i].input_implict_col) {
+          if (typeof transform_specs[i].input_implict_col === "string") {
+            input_implict_col = [
+              dataIn1_csv[0].indexOf(transform_specs[i].input_implict_col),
+            ];
+          } else {
+            for (
+              let col = 0;
+              col < transform_specs[i].input_implict_col.length;
+              col++
+            ) {
+              input_implict_col.push(
+                dataIn1_csv[0].indexOf(
+                  transform_specs[i].input_implict_col[col]
+                )
+              );
             }
           }
         }
         switch (transform_specs[i].type) {
-          case 'create_tables':
-            res = generateDataForCreateTable(dataOut1_csv)
-            create_table(res,rule,output_table_name,i,this.show_table_name)
-            break
-          case 'create_columns_merge':
-            res = generateDataForCreateColumns(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            create_column(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,i,this.show_table_name)
-            break
-          case 'create_columns_extract':
-            res = generateData(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            create_column(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,i,this.show_table_name)
-            break
-          case 'create_columns_mutate':
-            res = generateData(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            create_column(res.m1,res.m2,rule,input_table_name,output_table_name,res.inExp,res.outExp,i,this.show_table_name)
-            break
-          case 'create_columns_create':
-            res = generateData(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            create_column(res.m1,res.m2,rule,input_table_name,output_table_name,res.inExp,res.outExp,i,this.show_table_name)
-            break
-          case 'create_rows_create':
-            let m1 = [], m2 = []
-            dataIn1_csv.forEach(d => {
-              if(m1.length <= 3)m1.push(d)
-            })
-            dataOut1_csv.forEach(d => {
-              if(m2.length <= 4)m2.push(d)
-            })
-            create_row(m1,m2,rule,input_table_name,output_table_name,1,i,this.show_table_name)
-            break
-          case 'create_rows_insert':
-            res = generateDataForInsertRows(dataIn1_csv,dataOut1_csv,output_explict_row[0])
-            create_row_insert(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,res.inIdx,res.outIdx,i,this.show_table_name)
-            break
-          case 'delete_tables':
-            res = generateData(dataIn1_csv,dataOut1_csv,[],[])
-            delete_table(res.m1,rule,input_table_name,i,this.show_table_name)
-            break
-          case 'delete_columns_select_keep':
-            res = generateDataForKeepColumns(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            delete_column(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,i,this.show_table_name)
-            break
-          case 'delete_columns_select_remove':
-            res = generateDataForDeleteColumn(dataIn1_csv,dataOut1_csv,input_explict_col,[])
-            delete_column(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,i,this.show_table_name)
-            break
-          case 'delete_columns_duplicate':
-            let dupCols = getDuplicatedColumns(dataIn1_csv)
-            res = generateData(dataIn1_csv,dataOut1_csv,dupCols,[dupCols[0]])
-            let curCol = []
-            dupCols.forEach((value,idx) => {
-              curCol.push(res.m1[0].indexOf(dataIn1_csv[0][value]))
-            })
-            delete_duplicate(res.m1,res.m2,curCol,rule,input_table_name,output_table_name,i,this.show_table_name)
-            break
-          case 'delete_columns_dropna':
-            res = generateDataForDeleteNaColumn(dataIn1_csv,dataOut1_csv)
-            delete_dropna(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,[res.Row,res.Col],i,this.show_table_name)
-            break
-          case 'delete_rows_filter':
-            res = generateDataForRows(dataIn1_csv,dataOut1_csv,'delete',input_explict_row)
-            let deletePos = input_explict_row[0] === 1 ? 0 :
-                    input_explict_row[0] === dataIn1_csv.length - 1 ? -1 : 1
-            delete_row(res.m1,res.m2,rule,input_table_name,output_table_name,deletePos,-1,res.inIndex,res.outIndex,i,this.show_table_name)
-            break
+          case "create_tables":
+            res = generateDataForCreateTable(dataOut1_csv);
+            create_table(res, rule, output_table_name, i, this.show_table_name);
+            break;
+          case "create_columns_merge":
+            res = generateDataForCreateColumns(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            create_column(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              input_explict_col,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "create_columns_extract":
+            res = generateData(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            create_column(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              input_explict_col,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "create_columns_mutate":
+            res = generateData(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            create_column(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.inExp,
+              res.outExp,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "create_columns_create":
+            res = generateData(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            create_column(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.inExp,
+              res.outExp,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "create_rows_create":
+            let m1 = [],
+              m2 = [];
+            dataIn1_csv.forEach((d) => {
+              if (m1.length <= 3) m1.push(d);
+            });
+            dataOut1_csv.forEach((d) => {
+              if (m2.length <= 4) m2.push(d);
+            });
+            create_row(
+              m1,
+              m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              1,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "create_rows_insert":
+            res = generateDataForInsertRows(
+              dataIn1_csv,
+              dataOut1_csv,
+              output_explict_row[0]
+            );
+            create_row_insert(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.inColors,
+              res.outColors,
+              res.inIdx,
+              res.outIdx,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "delete_tables":
+            res = generateData(dataIn1_csv, dataOut1_csv, [], []);
+            delete_table(
+              res.m1,
+              rule,
+              input_table_name,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "delete_columns_select_keep":
+            res = generateDataForKeepColumns(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            delete_column(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.inColors,
+              res.outColors,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "delete_columns_select_remove":
+            res = generateDataForDeleteColumn(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              []
+            );
+            delete_column(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.inColors,
+              res.outColors,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "delete_columns_duplicate":
+            let dupCols = getDuplicatedColumns(dataIn1_csv);
+            res = generateData(dataIn1_csv, dataOut1_csv, dupCols, [
+              dupCols[0],
+            ]);
+            let curCol = [];
+            dupCols.forEach((value, idx) => {
+              curCol.push(res.m1[0].indexOf(dataIn1_csv[0][value]));
+            });
+            delete_duplicate(
+              res.m1,
+              res.m2,
+              curCol,
+              rule,
+              input_table_name,
+              output_table_name,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "delete_columns_dropna":
+            res = generateDataForDeleteNaColumn(dataIn1_csv, dataOut1_csv);
+            delete_dropna(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.inColors,
+              res.outColors,
+              [res.Row, res.Col],
+              i,
+              this.show_table_name
+            );
+            break;
+          case "delete_rows_filter":
+            res = generateDataForRows(
+              dataIn1_csv,
+              dataOut1_csv,
+              "delete",
+              input_explict_row
+            );
+            let deletePos =
+              input_explict_row[0] === 1
+                ? 0
+                : input_explict_row[0] === dataIn1_csv.length - 1
+                ? -1
+                : 1;
+            delete_row(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              deletePos,
+              -1,
+              res.inIndex,
+              res.outIndex,
+              i,
+              this.show_table_name
+            );
+            break;
           // case 'delete_rows_filter_keep':
           //   res = generateDataForFilterRowKeep(dataIn1_csv,dataOut1_csv,input_explict_row)
           //   delete_row_keep(res.m1,res.m2,rule,input_table_name,output_table_name,res.inIndex,res.outIndex,res.inColors,res.outColors)
           //   break
 
-          case 'delete_rows_deduplicate':
-            if(input_explict_col.length === 0)
-              input_explict_col = Array.from(new Array(dataIn1_csv[0].length),(x,i) => i)
-            res = generateDataForDeleteDuplicateRows(dataIn1_csv,dataOut1_csv,input_explict_col)
-            delete_duplicate_row_partColumn(res.m1,res.m2,rule,input_table_name,output_table_name,res.outColors,i,this.show_table_name)
-            break
-          case 'delete_rows_slice':
-            res = generateDataForFilterRow(dataIn1_csv,dataOut1_csv,input_explict_col[0])
-            delete_filter(res.m1,res.m2,rule,input_table_name,output_table_name,res.outColors,i,this.show_table_name)
-            break
-          case 'transform_tables_rearrange':
-            res = generateDataForColumnRearrange(dataIn1_csv,dataOut1_csv,output_explict_col)
-            transform_tables_rearrange(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,i,this.show_table_name)
-            break
-          case 'transform_tables_sort':
+          case "delete_rows_deduplicate":
+            if (input_explict_col.length === 0)
+              input_explict_col = Array.from(
+                new Array(dataIn1_csv[0].length),
+                (x, i) => i
+              );
+            res = generateDataForDeleteDuplicateRows(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col
+            );
+            delete_duplicate_row_partColumn(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.outColors,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "delete_rows_slice":
+            res = generateDataForFilterRow(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col[0]
+            );
+            delete_filter(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.outColors,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_tables_rearrange":
+            res = generateDataForColumnRearrange(
+              dataIn1_csv,
+              dataOut1_csv,
+              output_explict_col
+            );
+            transform_tables_rearrange(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.inColors,
+              res.outColors,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_tables_sort":
             //暂定为只对数值类型进行排序
-            res = generateDataForTableSort(dataIn1_csv,dataOut1_csv,input_explict_col,rule)
-            transform_tables_sort(res.m1,res.m2,rule,input_table_name,output_table_name,i,this.show_table_name)
-            break
-          case 'transform_columns_replace_na':
-            res = generateDataForReplace(dataIn1_csv,dataOut1_csv,input_explict_col)
-            transform_columns_replace_na(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,res.naRow,i,this.show_table_name)
-            break
-          case 'transform_columns_replace':
+            res = generateDataForTableSort(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              rule
+            );
+            transform_tables_sort(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_columns_replace_na":
+            res = generateDataForReplace(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col
+            );
+            transform_columns_replace_na(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              input_explict_col,
+              res.naRow,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_columns_replace":
             //没有实现阴影效果
-            res = generateDataForReplace(dataIn1_csv,dataOut1_csv,input_explict_col,replace_value)
-            transform_columns_replace_na(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,res.naRow,i,this.show_table_name)
-            break
-          case 'transform_columns_mutate':
-            res = generateDataForMutate_cover(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,output_explict_col,i,this.show_table_name)
-            break
-          case 'transform_columns_extract':
-            res = generateDataForMutate_cover(dataIn1_csv,dataOut1_csv,input_explict_col,input_explict_col)
-            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,input_explict_col,i,this.show_table_name)
-            break
-          case 'transform_columns_merge':
-            res = generateDataForMutate_cover(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,output_explict_col,i,this.show_table_name)
-            break
-          case 'transform_columns_rename':
-            res = generateDataForColumnRename(dataIn1_csv,dataOut1_csv,input_explict_col)
-            transform_columns_mutate(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,input_explict_col,i,this.show_table_name)
-            break
-          case 'combine_columns_merge':
-            res = generateDataForMergeColumns(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            combine_columns_merge(res.m1,res.m2,rule,input_table_name,output_table_name,res.newInExpOrImp,res.newOutExpOrImp,res.outColors,i,this.show_table_name)
-            break
-          case 'combine_columns_mutate':
-            res = generateDataForMergeColumns(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            combine_columns_merge(res.m1,res.m2,rule,input_table_name,output_table_name,res.newInExpOrImp,res.newOutExpOrImp,res.outColors,i,this.show_table_name)
-            break
+            res = generateDataForReplace(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              replace_value
+            );
+            transform_columns_replace_na(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              input_explict_col,
+              res.naRow,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_columns_mutate":
+            res = generateDataForMutate_cover(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            transform_columns_mutate(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              input_explict_col,
+              output_explict_col,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_columns_extract":
+            res = generateDataForMutate_cover(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              input_explict_col
+            );
+            transform_columns_mutate(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              input_explict_col,
+              input_explict_col,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_columns_merge":
+            res = generateDataForMutate_cover(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            transform_columns_mutate(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              input_explict_col,
+              output_explict_col,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_columns_rename":
+            res = generateDataForColumnRename(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col
+            );
+            transform_columns_mutate(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              input_explict_col,
+              input_explict_col,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "combine_columns_merge":
+            res = generateDataForMergeColumns(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            combine_columns_merge(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.newInExpOrImp,
+              res.newOutExpOrImp,
+              res.outColors,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "combine_columns_mutate":
+            res = generateDataForMergeColumns(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            combine_columns_merge(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.newInExpOrImp,
+              res.newOutExpOrImp,
+              res.outColors,
+              i,
+              this.show_table_name
+            );
+            break;
           // case 'combine_rows_sum':
           //   res = generateDataForRowsSum(dataIn1_csv,dataOut1_csv)
           //   combine_rows_sum(res.m1,res.m2,rule,input_table_name,output_table_name,i,this.show_table_name)
           //   break
-          case 'combine_rows_summarize':
+          case "combine_rows_summarize":
             //这个操作再看看
-            if(input_explict_col.length === 0){
-              input_explict_col = Array.from(new Array(dataIn1_csv[0].length), (x,i) => i)
+            if (input_explict_col.length === 0) {
+              input_explict_col = Array.from(
+                new Array(dataIn1_csv[0].length),
+                (x, i) => i
+              );
             }
-            res = generateDataForGroupSummarize(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col,input_implict_col)
-            combine_rows_sum(res.m1,res.m2,rule,input_table_name,output_table_name,i,this.show_table_name)
-            break
-          case 'combine_rows_interpolate':
-            res = generateDataForRowInterpolate(dataIn1_csv,dataOut1_csv,input_explict_col)
-            combine_rows_interpolate(res.m1,res.m2,rule,input_table_name,output_table_name,res.naPos,i,this.show_table_name)
-            break
-          case 'transform_rows_edit':
-            res = generateDataForEditRow(dataIn1_csv,dataOut1_csv,input_explict_row)
-            transform_rows_edit(res.m1,res.m2,rule,input_table_name,output_table_name,res.rowIndex,i,this.show_table_name)
-            break
-          case 'separate_tables_subset':
-            res = generateDataForSeparateSubset(dataIn1_csv,dataOut1_csv,input_explict_col)
-            separate_tables_subset(res.m1,res.m2,res.m3,rule,input_table_name,output_table_name,output_table_name,res.outColor1,res.outColor2,i,this.show_table_name)
-            break
-          case 'separate_tables_decompose':
-            res = generateDataForSeparateDecompose(dataIn1_csv,input_explict_col)
-            separate_tables_decompose(res.m1,res.tables,rule,input_table_name,i,this.show_table_name)
-            break
-          case 'separate_tables_decompose_q':
-            res = generateDataForSeparateDecompose_q(dataIn1_csv,dataOut1_csv,dataOut2_csv,input_explict_col)
-            separate_tables_subset(res.m1,res.m2,res.m3,rule,input_table_name,output_table_name,output_table_name,res.outColor1,res.outColor2,i,this.show_table_name)
-            break
-          case 'separate_tables_split':
-            res = generateDataForSeparateSplit(dataIn1_csv,input_explict_col,input_implict_col)
-            separate_tables_split(res.m1,res.m2,res.m3,rule,input_table_name,output_table_name,output_table_name,res.colors1,res.colors2,i,this.show_table_name)
-            break
-          case 'separate_columns':
-            res = generateDataForSeparateColumn(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            separate_columns(res.m1,res.m2,rule,input_table_name,output_table_name,res.inExp,res.outExp,i,this.show_table_name)
-            break
-          case 'separate_rows':
-            res = generateDataForSeparateRows(dataIn1_csv,dataOut1_csv,input_explict_col)
-            separate_rows(res.m1,res.m2,rule,input_table_name,output_table_name,res.outColors,i,this.show_table_name)
-            break
-          case 'combine_tables_extend':
-            res = generateDataForTablesExtend(dataIn1_csv,dataIn2_csv,dataOut1_csv)
-            combine_tables_extend(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.outColors,i,this.show_table_name)
-            break
-          case 'combine_tables_left_join':
+            res = generateDataForGroupSummarize(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col,
+              input_implict_col
+            );
+            combine_rows_sum(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "combine_rows_interpolate":
+            res = generateDataForRowInterpolate(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col
+            );
+            combine_rows_interpolate(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.naPos,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_rows_edit":
+            res = generateDataForEditRow(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_row
+            );
+            transform_rows_edit(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.rowIndex,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "separate_tables_subset":
+            res = generateDataForSeparateSubset(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col
+            );
+            separate_tables_subset(
+              res.m1,
+              res.m2,
+              res.m3,
+              rule,
+              input_table_name,
+              output_table_name,
+              output_table_name,
+              res.outColor1,
+              res.outColor2,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "separate_tables_decompose":
+            res = generateDataForSeparateDecompose(
+              dataIn1_csv,
+              input_explict_col
+            );
+            separate_tables_decompose(
+              res.m1,
+              res.tables,
+              rule,
+              input_table_name,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "separate_tables_decompose_q":
+            res = generateDataForSeparateDecompose_q(
+              dataIn1_csv,
+              dataOut1_csv,
+              dataOut2_csv,
+              input_explict_col
+            );
+            separate_tables_subset(
+              res.m1,
+              res.m2,
+              res.m3,
+              rule,
+              input_table_name,
+              output_table_name,
+              output_table_name,
+              res.outColor1,
+              res.outColor2,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "separate_tables_split":
+            res = generateDataForSeparateSplit(
+              dataIn1_csv,
+              input_explict_col,
+              input_implict_col
+            );
+            separate_tables_split(
+              res.m1,
+              res.m2,
+              res.m3,
+              rule,
+              input_table_name,
+              output_table_name,
+              output_table_name,
+              res.colors1,
+              res.colors2,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "separate_columns":
+            res = generateDataForSeparateColumn(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            separate_columns(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.inExp,
+              res.outExp,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "separate_rows":
+            res = generateDataForSeparateRows(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col
+            );
+            separate_rows(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              res.outColors,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "combine_tables_extend":
+            res = generateDataForTablesExtend(
+              dataIn1_csv,
+              dataIn2_csv,
+              dataOut1_csv
+            );
+            combine_tables_extend(
+              res.m1,
+              res.m2,
+              res.m3,
+              rule,
+              input_table_name,
+              input_table_name2,
+              output_table_name,
+              res.outColors,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "combine_tables_left_join":
             //需要确定空值的表示形式，暂时以''表示空值
-            res = generateDataForLeftJoin(dataIn1_csv,dataIn2_csv,dataOut1_csv,input_explict_col,'')
-            combine_tables_left_join(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.naCol,res.naPos,res.inColors2,i,this.show_table_name)
-            break
-          case 'combine_tables_full_join':
-            res = generateDataForFullJoin(dataIn1_csv,dataIn2_csv,dataOut1_csv,input_explict_col,'')
-            combine_tables_full_join(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.naCol,res.naPos,res.inColors2,i),this.show_table_name
-            break
-          case 'combine_tables_inner_join':
-            res = generateDataForInnerJoin(dataIn1_csv,dataIn2_csv,dataOut1_csv,input_explict_col,'')
-            combine_tables_inner_join(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.inColors2,res.outColor,i,this.show_table_name)
-            break
-          case 'transform_tables_fold':
-            res = generateDataForFold(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            transform_tables_fold(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col.length,i,this.show_table_name)
-            break
-          case 'transform_tables_unfold':
-            output_explict_col = []
-            for(let col = 0;col < dataOut1_csv[0].length;col++){
-              if(dataIn1_csv[0].indexOf(dataOut1_csv[0][col]) === -1){
-                output_explict_col.push(col)
+            res = generateDataForLeftJoin(
+              dataIn1_csv,
+              dataIn2_csv,
+              dataOut1_csv,
+              input_explict_col,
+              ""
+            );
+            combine_tables_left_join(
+              res.m1,
+              res.m2,
+              res.m3,
+              rule,
+              input_table_name,
+              input_table_name2,
+              output_table_name,
+              res.naCol,
+              res.naPos,
+              res.inColors2,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "combine_tables_full_join":
+            res = generateDataForFullJoin(
+              dataIn1_csv,
+              dataIn2_csv,
+              dataOut1_csv,
+              input_explict_col,
+              ""
+            );
+            combine_tables_full_join(
+              res.m1,
+              res.m2,
+              res.m3,
+              rule,
+              input_table_name,
+              input_table_name2,
+              output_table_name,
+              res.naCol,
+              res.naPos,
+              res.inColors2,
+              i
+            ),
+              this.show_table_name;
+            break;
+          case "combine_tables_inner_join":
+            res = generateDataForInnerJoin(
+              dataIn1_csv,
+              dataIn2_csv,
+              dataOut1_csv,
+              input_explict_col,
+              ""
+            );
+            combine_tables_inner_join(
+              res.m1,
+              res.m2,
+              res.m3,
+              rule,
+              input_table_name,
+              input_table_name2,
+              output_table_name,
+              res.inColors2,
+              res.outColor,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_tables_fold":
+            res = generateDataForFold(
+              dataIn1_csv,
+              dataOut1_csv,
+              input_explict_col,
+              output_explict_col
+            );
+            transform_tables_fold(
+              res.m1,
+              res.m2,
+              rule,
+              input_table_name,
+              output_table_name,
+              input_explict_col.length,
+              i,
+              this.show_table_name
+            );
+            break;
+          case "transform_tables_unfold":
+            output_explict_col = [];
+            for (let col = 0; col < dataOut1_csv[0].length; col++) {
+              if (dataIn1_csv[0].indexOf(dataOut1_csv[0][col]) === -1) {
+                output_explict_col.push(col);
               }
             }
-            res = generateDataForFold(dataOut1_csv,dataIn1_csv,output_explict_col,input_explict_col)
-            transform_tables_unfold(res.m2,res.m1,rule,input_table_name,output_table_name,i,this.show_table_name)
-            break
+            res = generateDataForFold(
+              dataOut1_csv,
+              dataIn1_csv,
+              output_explict_col,
+              input_explict_col
+            );
+            transform_tables_unfold(
+              res.m2,
+              res.m1,
+              rule,
+              input_table_name,
+              output_table_name,
+              i,
+              this.show_table_name
+            );
+            break;
         }
       }
-    }
+    },
   },
   /* # 同时监听到两个值的变化再执行方法
   computed: {
