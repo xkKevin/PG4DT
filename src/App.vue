@@ -1279,6 +1279,7 @@ export default {
               rule,
               input_table_name,
               output_table_name,
+              input_explict_col.length,
               i,
               this.show_table_name
             );
