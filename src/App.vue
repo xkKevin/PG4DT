@@ -143,7 +143,7 @@ import * as monaco from "monaco-editor"; // https://www.cnblogs.com/xuhaoliang/p
 import {create_table} from "./assets/js/glyph/createTables";
 import {create_row, create_row_insert} from "./assets/js/glyph/createRows";
 import {delete_table} from "./assets/js/glyph/deleteTables";
-import {create_column} from "./assets/js/glyph/createColumns";
+import {create_column, create_column_create} from "./assets/js/glyph/createColumns";
 import {delete_column, delete_dropna, delete_duplicate} from "./assets/js/glyph/deleteColumns";
 import {
   delete_duplicate_row_partColumn, delete_filter,
@@ -171,7 +171,7 @@ import {
   combine_tables_left_join
 } from "./assets/js/glyph/combineTables";
 import {generateDataForCreateTable} from "./assets/js/utils/genDataForCreateTables";
-import {generateData, generateDataForCreateColumns} from "./assets/js/utils/genDataForCreateColumns";
+import {generateData, generateDataForCreateColumns, generateDataForCreateColumns_create} from "./assets/js/utils/genDataForCreateColumns";
 import {generateDataForInsertRows} from "./assets/js/utils/genDataForCreateRows";
 import {
   generateDataForDeleteColumn,
@@ -374,13 +374,17 @@ export default {
         let replace_value
         let res
         if(transform_specs[i].input_table_file){
+
           if(typeof transform_specs[i].input_table_file === 'string') {
             dataIn1_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file}`)
+            console.log(transform_specs[i].input_table_file)
+            console.log(dataIn1_csv)
           } else{
             dataIn1_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file[0]}`)
             if(transform_specs[i].input_table_file.length > 1)
               dataIn2_csv = await getCsv(`http://localhost/data/${transform_specs[i].input_table_file[1]}`)
           }
+          if(i === 1)console.log(dataIn1_csv)
         }
         if(transform_specs[i].output_table_file){
           if(typeof transform_specs[i].output_table_file === 'string'){
@@ -393,13 +397,13 @@ export default {
           }
         }
         if(transform_specs[i].input_explict_col){
-          if(typeof transform_specs[i].input_explict_col === 'string'){
-            input_explict_col = [dataIn1_csv[0].indexOf(transform_specs[i].input_explict_col)]
-          }else{
-            for(let col = 0;col < transform_specs[i].input_explict_col.length;col++){
-              input_explict_col.push(dataIn1_csv[0].indexOf(transform_specs[i].input_explict_col[col]))
-            }
+          console.log("1: ",dataIn1_csv[0])
+          for(let col = 0;col < transform_specs[i].input_explict_col.length;col++){
+            console.log(transform_specs[i].input_explict_col[col])
+            input_explict_col.push(dataIn1_csv[0].indexOf(transform_specs[i].input_explict_col[col]))
           }
+          console.log('backend out: ',transform_specs[i].input_explict_col)
+          console.log('input_explict_col: ',input_explict_col)
         }
         if(transform_specs[i].output_explict_col){
           if(typeof transform_specs[i].output_explict_col === 'string'){
@@ -409,6 +413,8 @@ export default {
               output_explict_col.push(dataOut1_csv[0].indexOf(transform_specs[i].output_explict_col[col]))
             }
           }
+          console.log('backend out: ',transform_specs[i].output_explict_col)
+          console.log('output_explict_col: ',output_explict_col)
         }
         if(transform_specs[i].input_explict_row){
           input_explict_row = transform_specs[i].input_explict_row
@@ -455,6 +461,8 @@ export default {
             res = generateDataForCreateColumns(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
             create_column(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,i,this.show_table_name)
             break
+          
+          //下面两个create_columns存在显示非exp/imp列的值的问题
           case 'create_columns_extract':
             res = generateData(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
             create_column(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col,i,this.show_table_name)
@@ -464,8 +472,8 @@ export default {
             create_column(res.m1,res.m2,rule,input_table_name,output_table_name,res.inExp,res.outExp,i,this.show_table_name)
             break
           case 'create_columns_create':
-            res = generateData(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
-            create_column(res.m1,res.m2,rule,input_table_name,output_table_name,res.inExp,res.outExp,i,this.show_table_name)
+            res = generateDataForCreateColumns_create(dataIn1_csv,dataOut1_csv,output_explict_col)
+            create_column_create(res.m1,res.m2,rule,input_table_name,output_table_name,i,this.show_table_name)
             break
           case 'create_rows_create':
             let m1 = [], m2 = []
@@ -507,10 +515,8 @@ export default {
             delete_dropna(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,[res.Row,res.Col],i,this.show_table_name)
             break
           case 'delete_rows_filter':
-            res = generateDataForRows(dataIn1_csv,dataOut1_csv,'delete',input_explict_row)
-            let deletePos = input_explict_row[0] === 1 ? 0 :
-                    input_explict_row[0] === dataIn1_csv.length - 1 ? -1 : 1
-            delete_row(res.m1,res.m2,rule,input_table_name,output_table_name,deletePos,-1,res.inIndex,res.outIndex,i,this.show_table_name)
+            res = generateDataForRows(dataIn1_csv,dataOut1_csv,input_explict_col)
+            delete_row(res.m1,res.m2,rule,input_table_name,output_table_name,res.outColors,i,this.show_table_name)
             break
           // case 'delete_rows_filter_keep':
           //   res = generateDataForFilterRowKeep(dataIn1_csv,dataOut1_csv,input_explict_row)
@@ -521,7 +527,7 @@ export default {
             if(input_explict_col.length === 0)
               input_explict_col = Array.from(new Array(dataIn1_csv[0].length),(x,i) => i)
             res = generateDataForDeleteDuplicateRows(dataIn1_csv,dataOut1_csv,input_explict_col)
-            delete_duplicate_row_partColumn(res.m1,res.m2,rule,input_table_name,output_table_name,res.outColors,i,this.show_table_name)
+            delete_duplicate_row_partColumn(res.m1,res.m2,rule,input_table_name,output_table_name,res.inColors,res.outColors,i,this.show_table_name)
             break
           case 'delete_rows_slice':
             res = generateDataForFilterRow(dataIn1_csv,dataOut1_csv,input_explict_col[0])
@@ -631,7 +637,10 @@ export default {
             combine_tables_inner_join(res.m1,res.m2,res.m3,rule,input_table_name,input_table_name2,output_table_name,res.inColors2,res.outColor,i,this.show_table_name)
             break
           case 'transform_tables_fold':
+            console.log(dataIn1_csv)
+            console.log(dataOut1_csv)
             res = generateDataForFold(dataIn1_csv,dataOut1_csv,input_explict_col,output_explict_col)
+            console.log(res)
             transform_tables_fold(res.m1,res.m2,rule,input_table_name,output_table_name,input_explict_col.length,i,this.show_table_name)
             break
           case 'transform_tables_unfold':
@@ -642,7 +651,7 @@ export default {
               }
             }
             res = generateDataForFold(dataOut1_csv,dataIn1_csv,output_explict_col,input_explict_col)
-            transform_tables_unfold(res.m2,res.m1,rule,input_table_name,output_table_name,i,this.show_table_name)
+            transform_tables_unfold(res.m2,res.m1,rule,input_table_name,output_table_name,output_explict_col.length,i,this.show_table_name)
             break
         }
       }

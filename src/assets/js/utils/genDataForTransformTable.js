@@ -122,7 +122,7 @@ function generateDataForTableSort(dataIn1_csv,dataOut1_csv,sortedCol,order) {
 }
 
 function generateDataForFold(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrImpCol){
-
+    console.log("inFunc: ",inExpOrImpCol,outExpOrImpCol)
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpOrImpCol,outExpOrImpCol)
     let m1 = [[]],m2 = [[]]
     inExpOrImpCol.forEach(idx => {

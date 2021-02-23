@@ -49,14 +49,15 @@ def generate_transform_specs():
         with open(data_path + script_file, 'w', encoding='utf-8') as f:
             f.write(script_content)
         transform_specs = gts.generate_transform_specs(data_path, script_file)
+        # transform_specs = [{
+        #                     'type':'create_columns_create',
+        #                     'output_explict_col':['DDD'],
+        #                     'input_table_file':'d1.csv',
+        #                     'output_table_file':'d2.csv',
+        #                     'operation_rule':'test'
+        #                     }]
     return jsonify({'transform_specs': transform_specs})
-    transform_specs = [{
-                        'type':'delete_rows_deduplicate',
-                        'input_explict_col':['年龄','男'],
-                        'input_table_file':'d1.csv',
-                        'output_table_file':'d2.csv',
-                        'operation_rule':'test'
-                        }]
+    
 
 
 # 由于Flask只能开启一个static_folder，要想访问其他静态数据，则重新开启一个路由以专门访问数据

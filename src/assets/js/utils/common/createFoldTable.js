@@ -3,10 +3,11 @@
 //insertPos表示插入行的位置
 //keepPos表示保存行的位置
 //deletePos表示删除列的位置
-export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colFontSize = 1.5,cellFontSize = 1,inExpLen) {
+export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colFontSize = 1.5,cellFontSize = 1,inExpLen = 2) {
     let maxCharsPerCol = Math.floor(colWidth / 16 / colFontSize)
     let maxCharsPerCell = Math.floor(colWidth / 16 / cellFontSize)
     let colors = ['#5AABAC','#F07A66','#F8BA4B','#AAA1CC','#445050','#C9C9C9']
+    console.log('tableName: ',table_name)
     g.append('text')
         .attr('x',pos[0])
         .attr('y',pos[1] - colHeight)
@@ -16,7 +17,6 @@ export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colF
         .attr('fill','black')
         .attr('font-size',`${colFontSize}em`)
     for(let row = 0; row < matrix.length; row++){
-        //dCol表示删除列时，output glyph中当前列需要左移的位置
         if(row === 0){
             for(let col = 0; col < matrix[0].length; col ++){
                 let color = inExpLen > 2 ? colors[1] :
