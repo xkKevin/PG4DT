@@ -227,6 +227,7 @@ import {
   generateDataForFullJoin,
   generateDataForInnerJoin,
   generateDataForLeftJoin,
+  generateDataForLeftJoin_2,
   generateDataForTablesExtend,
 } from "./assets/js/utils/genDataForCombineTables";
 import { getCsv } from "./assets/js/utils/common/getCsv";
@@ -1161,12 +1162,12 @@ export default {
             break;
           case "combine_tables_left_join":
             //需要确定空值的表示形式，暂时以''表示空值
-            res = generateDataForLeftJoin(
+            res = generateDataForLeftJoin_2(
               dataIn1_csv,
               dataIn2_csv,
               dataOut1_csv,
               input_explict_col,
-              ""
+              'NA'
             );
             combine_tables_left_join(
               res.m1,
@@ -1178,7 +1179,9 @@ export default {
               output_table_name,
               res.naCol,
               res.naPos,
-              res.inColors2,
+              res.inColor1,
+              res.inColor2,
+              res.outColor,
               i,
               this.show_table_name
             );
@@ -1189,7 +1192,7 @@ export default {
               dataIn2_csv,
               dataOut1_csv,
               input_explict_col,
-              ""
+              'NA'
             );
             combine_tables_full_join(
               res.m1,

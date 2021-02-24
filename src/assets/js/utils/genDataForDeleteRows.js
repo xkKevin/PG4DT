@@ -37,6 +37,29 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
         return dataOut1_csv[0].indexOf(a) - dataOut1_csv[0].indexOf(b)
     })
 
+    if(dataIn1_csv.length === dataOut1_csv.length){
+        for(let row = 1;row <= Math.min(dataIn1_csv.length - 1,3);row++){
+            let tempRow = []
+            for(let col = 0;col < dataIn1_csv[0].length;col++){
+                if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
+                    if(inExpCols.indexOf(col) !== -1)
+                        tempRow.push(dataIn1_csv[row][col])
+                    else
+                        tempRow.push('')
+                }
+            }
+            m1.push(tempRow)
+            m2.push(tempRow)
+        }
+        for(let col = 0;col < m1[0].length;col++){
+            if(inExpCols.indexOf(dataIn1_csv[0].indexOf(m1[0][col])) === -1){
+                m1[0][col] = ''
+                m2[0][col] = ''
+            }
+        }
+        return {m1,m2,outColors}
+    }
+
     let sameRows = []
     let diffRow = -1
 
