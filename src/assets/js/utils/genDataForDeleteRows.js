@@ -52,7 +52,7 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
         row1 += 1
     }
 
-    console.log("diff: ",diffRow)
+    if(row2 === dataOut1_csv.length && diffRow === -1)diffRow = row1
     let rows = Array.from(sameRows)
     rows.push(diffRow)
     rows.sort()
@@ -80,9 +80,9 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
         }
     }else{
         if(diffRow < sameRows[0]){
-            outColors = [0]
-        }else { 
             outColors = [1]
+        }else { 
+            outColors = [0]
         }
     }
         
