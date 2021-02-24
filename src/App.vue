@@ -348,7 +348,7 @@ export default {
           type: "error", // success/warning/info/error
         });
       } else {
-        const table_path = `${request_api}/data/${table_file}`;
+        const table_path = `${request_api}/data/${table_file}?a=${Math.random()}`;
         d3.csv(table_path).then((data) => {
           this.table_name = table_file;
           this.tableData = data;
@@ -417,30 +417,30 @@ export default {
         if (transform_specs[i].input_table_file) {
           if (typeof transform_specs[i].input_table_file === "string") {
             dataIn1_csv = await getCsv(
-              `${request_api}/data/${transform_specs[i].input_table_file}`
+              `${request_api}/data/${transform_specs[i].input_table_file}?a=${Math.random()}`
             );
           } else {
             dataIn1_csv = await getCsv(
-              `${request_api}/data/${transform_specs[i].input_table_file[0]}`
+              `${request_api}/data/${transform_specs[i].input_table_file[0]}?a=${Math.random()}`
             );
             if (transform_specs[i].input_table_file.length > 1)
               dataIn2_csv = await getCsv(
-                `${request_api}/data/${transform_specs[i].input_table_file[1]}`
+                `${request_api}/data/${transform_specs[i].input_table_file[1]}?a=${Math.random()}`
               );
           }
         }
         if (transform_specs[i].output_table_file) {
           if (typeof transform_specs[i].output_table_file === "string") {
             dataOut1_csv = await getCsv(
-              `${request_api}/data/${transform_specs[i].output_table_file}`
+              `${request_api}/data/${transform_specs[i].output_table_file}?a=${Math.random()}`
             );
           } else {
             dataOut1_csv = await getCsv(
-              `${request_api}/data/${transform_specs[i].output_table_file[0]}`
+              `${request_api}/data/${transform_specs[i].output_table_file[0]}?a=${Math.random()}`
             );
             if (transform_specs[i].output_table_file.length > 1)
               dataOut2_csv = await getCsv(
-                `${request_api}/data/${transform_specs[i].output_table_file[1]}`
+                `${request_api}/data/${transform_specs[i].output_table_file[1]}?a=${Math.random()}`
               );
           }
         }
@@ -719,8 +719,9 @@ export default {
             res = generateDataForRows(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_row
+              input_explict_col
             );
+            console.log(res)
             delete_row(
               res.m1,
               res.m2,

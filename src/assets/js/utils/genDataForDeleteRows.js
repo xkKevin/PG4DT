@@ -10,12 +10,12 @@ function cmpRows(r1,r2,inExpCols) {
     return flag
 }
 function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
-    for(let col = 0;col < dataIn1_csv[0].length;col++){
-        if(inExpCols.indexOf(col) === -1 && dataIn1_csv[0].indexOf(dataIn1_csv[0][col]) !== col)dataIn1_csv[0][col] += '_'
-    }
-    for(let col = 0;col < dataOut1_csv[0].length;col++){
-        if(inExpCols.indexOf(col) === -1 && dataOut1_csv[0].indexOf(dataOut1_csv[0][col]) !== col)dataOut1_csv[0][col] += '_'
-    }
+    // for(let col = 0;col < dataIn1_csv[0].length;col++){
+    //     if(inExpCols.indexOf(col) === -1 && dataIn1_csv[0].indexOf(dataIn1_csv[0][col]) !== col)dataIn1_csv[0][col] += '_'
+    // }
+    // for(let col = 0;col < dataOut1_csv[0].length;col++){
+    //     if(inExpCols.indexOf(col) === -1 && dataOut1_csv[0].indexOf(dataOut1_csv[0][col]) !== col)dataOut1_csv[0][col] += '_'
+    // }
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpCols,inExpCols)
     let m1 = [[]],m2 = [[]]
     let outColors = []
@@ -52,7 +52,7 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
         row1 += 1
     }
 
-  
+    console.log("diff: ",diffRow)
     let rows = Array.from(sameRows)
     rows.push(diffRow)
     rows.sort()
@@ -69,6 +69,7 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
         m1.push(tempRow)
         if(rows[row] !== diffRow)m2.push(tempRow)
     }
+
     if(sameRows.length > 1){
         if(diffRow < sameRows[0]){
             outColors = [1,2]
