@@ -582,10 +582,6 @@ export default {
               dataOut1_csv,
               output_explict_col
             );
-            console.log(dataIn1_csv)
-            console.log(dataOut1_csv)
-            console.log(output_explict_col)
-            console.log(res)
             create_column_create(
               res.m1,
               res.m2,
@@ -723,26 +719,15 @@ export default {
             res = generateDataForRows(
               dataIn1_csv,
               dataOut1_csv,
-              "delete",
               input_explict_row
             );
-            let deletePos =
-              input_explict_row[0] === 1
-                ? 0
-                : input_explict_row[0] === dataIn1_csv.length - 1
-                ? -1
-                : 1;
             delete_row(
               res.m1,
               res.m2,
               rule,
               input_table_name,
               output_table_name,
-              deletePos,
-              -1,
-              res.inIndex,
-              res.outIndex,
-              i,
+              res.outColors,
               this.show_table_name
             );
             break;
