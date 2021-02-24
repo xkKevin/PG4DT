@@ -1273,13 +1273,17 @@ export default {
               output_explict_col,
               input_explict_col
             );
+            let diffVals = new Set()
+            for(let row = 1;row < dataIn1_csv.length;row++){
+              diffVals.add(dataIn1_csv[row][input_explict_col[0]])
+            }
             transform_tables_unfold(
               res.m2,
               res.m1,
               rule,
               input_table_name,
               output_table_name,
-              input_explict_col.length,
+              diffVals.size,
               i,
               this.show_table_name
             );
