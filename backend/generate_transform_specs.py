@@ -26,7 +26,7 @@ def execScript(data_path, script_name, Rscript_path = r"D:\tool\R-4.0.3\bin\Rscr
     
     original_codes = []  # 源脚本代码, 每个元素对应一行代码，行号从1开始
     codes = ""
-    p = re.compile("\s*(.+?)\s*(=|<-).+[(]")
+    p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*[\w\.]+?\s*[(]") # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的，其他符号将不会匹配，因此可以做到过滤注释
     
     deleteMatchFiles("./", starts="table", ends=".csv")
     deleteMatchFiles("./", ends="_exec.txt")
@@ -47,15 +47,15 @@ def execScript(data_path, script_name, Rscript_path = r"D:\tool\R-4.0.3\bin\Rscr
                 if codes[-1] != '\n':
                     codes += '\n'
                 codes += \
-'''if (is.data.frame({value})) {{
+'''if (is.data.frame({value}) | is.matrix({value})) {{
         write(paste(append(colnames({value}), {line_num}, after = 0), collapse=','), "colnames.txt", append=T)
         write.table({value}, file="table{line_num}.csv", sep=",", quote=FALSE, append=FALSE, na="NA", row.names=FALSE)
         if (is.grouped_df({value})) {{
             write(paste(append(group_vars({value}), "group{line_num}", after = 0), collapse=','), "colnames.txt", append=T)
         }}
-    }}\n'''.format(value=match_r[0][0],line_num=line_num)
+    }}\n'''.format(value=match_r[0][0],line_num=line_num)  # matrix和dataframe是两种不一样的table结构
 
-    with open(script_exec_name, "w", ) as fp:
+    with open(script_exec_name, "w", encoding='utf-8') as fp:
         fp.write(codes)
         
     if(os.system(Rscript_path + " " + script_exec_name)):
@@ -65,14 +65,15 @@ def execScript(data_path, script_name, Rscript_path = r"D:\tool\R-4.0.3\bin\Rscr
     
     col_states = {}  # key对应代码的行号，value对应此行代码执行完之后的table中的列
     group_states = {} # key为行号，value为分组的列
-    with open("colnames.txt", "r", ) as fp:
-        for line in fp.readlines():
-            line = line.strip("\n")
-            states = line.split(',')
-            if states[0].startswith("group"):
-                group_states[int(states[0][5:])] = states[1:]
-            else:
-                col_states[int(states[0])] = states[1:]
+    if os.path.exists("colnames.txt"):  # 考虑执行script没有table输出的情况
+        with open("colnames.txt", "r", ) as fp:
+            for line in fp.readlines():
+                line = line.strip("\n")
+                states = line.split(',')
+                if states[0].startswith("group"):
+                    group_states[int(states[0][5:])] = states[1:]
+                else:
+                    col_states[int(states[0])] = states[1:]
     
     os.chdir(original_cwd) # 修改回原来的工作目录
     return original_codes, col_states, group_states
@@ -199,7 +200,7 @@ def generate_transform_specs(data_path, script_name):
     
     original_codes, col_states, group_states = execScript(data_path, script_name)
 
-    p = re.compile("\s*(.+?)\s*(=|<-)\s*(.+?)\s*[(](.+)[)]")
+    p = re.compile("^\s*([\w\.]+?)\s*(=|<-)\s*([\w\.]+?)\s*[(](.+)[)]")  # 设置函数名和outputname必须是以 A-Za-z0-9_. 这些符号组成的
     p_match_num = re.compile("table(.+)\.csv")
     p_match_c = re.compile("c\s*\((.+)\)")
 
@@ -548,9 +549,9 @@ def generate_transform_specs(data_path, script_name):
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "table%d.csv" % line_num
             if params['none'][1].startswith("desc"):
-                specs["input_explict_col"] = remove_quote(params['none'][1][5:-1])
+                specs["input_explict_col"] = [remove_quote(params['none'][1][5:-1])]
             else:
-                specs["input_explict_col"] = remove_quote(params['none'][1])
+                specs["input_explict_col"] = [remove_quote(params['none'][1])]
             specs["operation_rule"] = "Sort: " + params['none'][1]
             
             var2table[output_tbl] = specs["output_table_file"]
@@ -681,10 +682,17 @@ def generate_transform_specs(data_path, script_name):
             
             var2table[output_tbl] = specs["output_table_file"]
 
-        elif func in ('supplement'):
-            print('supplement')
+        elif func == 'as.data.frame':
+            if not (len(params['none']) and var2table.get(params['none'][0])):
+                specs["output_table_name"] = output_tbl
+                specs["output_table_file"] = "table%d.csv" % line_num 
+                specs["type"] = 'create_tables'
+                specs["operation_rule"] = 'Create Manually'
+                var2table[output_tbl] = specs["output_table_file"]
+            else:  # 如果第一个无名参数本身就是table，那就不算是 create_tables
+                var2table[output_tbl] = "table%d.csv" % line_num 
 
-        elif func in ('as.data.frame', "ungroup", "group_by"):
+        elif func in ("ungroup", "group_by"):
             var2table[output_tbl] = "table%d.csv" % line_num
 
         else: # default, could also just omit condition or 'if True'

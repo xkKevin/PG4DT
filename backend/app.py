@@ -48,6 +48,7 @@ def generate_transform_specs():
         language = request.args.get("language", "r")
         with open(data_path + script_file, 'w', encoding='utf-8') as f:
             f.write(script_content)
+        # transform_specs = gts.generate_transform_specs(data_path, script_file)
         try:
             transform_specs = gts.generate_transform_specs(data_path, script_file)  # 判断是否有异常发生
         except Exception as e:
@@ -61,7 +62,7 @@ def generate_transform_specs():
 @app.route('/data/<path:filename>')
 def custom_static_folder(filename):
     # 因为当前flask运行的目录就在backend下，因此可以直接访问data/目录
-    return send_from_directory("data/", filename) 
+    return send_from_directory("data/", filename) # 这边接受的不会带参数
 
 
 if __name__ == '__main__':
