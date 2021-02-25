@@ -691,6 +691,22 @@ def generate_transform_specs(data_path, script_name):
                 var2table[output_tbl] = specs["output_table_file"]
             else:  # 如果第一个无名参数本身就是table，那就不算是 create_tables
                 var2table[output_tbl] = "table%d.csv" % line_num 
+        
+        elif func == 'rename':
+            specs["output_table_name"] = output_tbl
+            specs["output_table_file"] = "table%d.csv" % line_num 
+            specs["type"] = 'transform_columns_rename'
+            specs["input_table_name"] = remove_quote(params['none'][0])
+            specs["input_table_file"] = var2table[specs["input_table_name"]]
+            specs["input_explict_col"] = []
+            for pk, pv in params.items():
+                pv = remove_quote(pv)
+                if pk in ('none'):
+                    continue
+                specs["input_explict_col"].append(pv)
+            specs["operation_rule"] = 'Rename'
+            
+            var2table[output_tbl] = specs["output_table_file"]
 
         elif func in ("ungroup", "group_by"):
             var2table[output_tbl] = "table%d.csv" % line_num
