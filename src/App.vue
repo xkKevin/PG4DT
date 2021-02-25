@@ -656,7 +656,6 @@ export default {
               rule,
               input_table_name,
               output_table_name,
-              res.inColors,
               res.outColors,
               i,
               this.show_table_name
@@ -667,7 +666,6 @@ export default {
               dataIn1_csv,
               dataOut1_csv,
               input_explict_col,
-              []
             );
             delete_column(
               res.m1,
@@ -675,7 +673,6 @@ export default {
               rule,
               input_table_name,
               output_table_name,
-              res.inColors,
               res.outColors,
               i,
               this.show_table_name

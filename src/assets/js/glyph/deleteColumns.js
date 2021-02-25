@@ -8,7 +8,7 @@ import {drawTable} from "../utils/common/createTable";
 import {drawHighLightCol} from "../utils/common/highLightCol";
 import {drawLine} from "../utils/common/dashedLine";
 
-function delete_column(m1,m2,rule,t1_name,t2_name,inColors,outColors,name,showTableName) {
+function delete_column(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName) {
     //输入：
     //input和output的矩阵
     //input矩阵中的哪些列进行sum操作
@@ -33,7 +33,7 @@ function delete_column(m1,m2,rule,t1_name,t2_name,inColors,outColors,name,showTa
         .attr('transform',`translate(10,10)`)
 
     // drawTable(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'col')
-    drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,inColors)
+    drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     // 添加加号和箭头
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)

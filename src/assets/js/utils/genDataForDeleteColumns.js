@@ -1,24 +1,16 @@
 import {extractCols} from "./common/extractContextualCols";
 
-function generateDataForKeepColumns(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrImpCol){
+function generateDataForKeepColumns(dataIn1_csv, dataOut1_csv, inExpOrImpCol){
 
-    let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpOrImpCol,outExpOrImpCol)
-    let values = []
-    for(let col = 0;col < inExpOrImpCol.length;col++){
-        values.push(dataIn1_csv[0][inExpOrImpCol[col]])
-    }
+    let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpOrImpCol,inExpOrImpCol)
     for(let col = 0;col < dataIn1_csv.length;col++){
-        let idx = inExpOrImpCol.indexOf(col)
-        while(idx === -1 && values.indexOf(dataIn1_csv[0][idx]) !== -1)
+        if(dataIn1_csv[0].indexOf(dataIn1_csv[0][col]) !== col && inExpOrImpCol.indexOf(col) === -1)
             dataIn1_csv[0][col] += '_'
     }
-
-    let m1 = [[]],m2 = [[]]
-    let inColors,outColors = []
+    let m1 =[[]],m2 = [[]]
+    let outColors = []
     inExpOrImpCol.forEach(idx => {
         m1[0].push(dataIn1_csv[0][idx])
-    })
-    outExpOrImpCol.forEach(idx => {
         m2[0].push(dataOut1_csv[0][idx])
     })
     contextualCols.forEach(val => {
@@ -48,34 +40,24 @@ function generateDataForKeepColumns(dataIn1_csv, dataOut1_csv, inExpOrImpCol, ou
         m2.push(tempRow)
     }
 
-    for(let col = 0;col < m1[0].length;col ++)
-        if(values.indexOf(m1[0][col]) === -1)m1[0][col] = ''
+    for(let col = 0;col < m1[0].length;col ++){
+        if(inExpOrImpCol.indexOf(col) === -1)m1[0][col] = ''
+    }
 
-    inColors = Array.from(new Array(m1[0].length), (x,i) => i)
     for(let col = 0;col < m2[0].length;col++){
         outColors.push(m1[0].indexOf(m2[0][col]))
     }
-    return {m1,m2,inColors,outColors}
+    return {m1,m2,outColors}
 }
 
-function generateDataForDeleteColumn(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrImpCol){
+function generateDataForDeleteColumn(dataIn1_csv, dataOut1_csv, inExpOrImpCol){
 
-    let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpOrImpCol,outExpOrImpCol)
-    for(let col = 0;col < dataIn1_csv.length;col++){
-        if(col !== inExpOrImpCol[0] && dataIn1_csv[0][col] === dataIn1_csv[0][inExpOrImpCol[0]])
-            dataIn1_csv[0][col] += '_'
-    }
-    for(let col = 0;col < dataOut1_csv.length;col++){
-        if(col !== inExpOrImpCol[0] && dataOut1_csv[0][col] === dataIn1_csv[0][inExpOrImpCol[0]])
-            dataOut1_csv[0][col] += '_'
-    }
+    let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpOrImpCol,[])
+    //默认各列名字不相同
     let m1 = [[]],m2 = [[]]
-    let inColors,outColors
+    let outColors = []
     inExpOrImpCol.forEach(idx => {
         m1[0].push(dataIn1_csv[0][idx])
-    })
-    outExpOrImpCol.forEach(idx => {
-        m2[0].push(dataOut1_csv[0][idx])
     })
     contextualCols.forEach(val => {
         m1[0].push(val)
@@ -105,35 +87,16 @@ function generateDataForDeleteColumn(dataIn1_csv, dataOut1_csv, inExpOrImpCol, o
         m2.push(tempRow)
     }
 
-    for(let col = 0;col < m1[0].length;col ++)
-        if(m1[0][col] !== dataIn1_csv[0][inExpOrImpCol[0]])m1[0][col] = ''
-    for(let col = 0;col < m2[0].length;col ++)
-        if(m2[0][col] !== dataIn1_csv[0][inExpOrImpCol[0]])m2[0][col] = ''
-
-    if(m1[0].indexOf(dataIn1_csv[0][inExpOrImpCol[0]]) === 0){
-        if(m1[0].length === 3){
-            inColors = [0,1,2]
-            outColors = [1,2]
-        }else if(m1[0].length === 2){
-            inColors = [0,1]
-            outColors = [1]
-        }else{
-            inColors = [0]
-            outColors = []
-        }
-    }else if(m1[0].indexOf(dataIn1_csv[0][inExpOrImpCol[0]]) === 1){
-        if(m1[0].length === 3){
-            inColors = [0,1,2]
-            outColors = [0,2]
-        }else if(m1[0].length === 2){
-            inColors = [0,1]
-            outColors = [0]
-        }
-    }else{
-        inColors = [0,1,2]
-        outColors = [0,1]
+    for(let col = 0;col < m2[0].length;col++){
+        outColors.push(m1[0].indexOf(m2[0][col]))
     }
-    return {m1,m2,inColors,outColors}
+    for(let col = 0;col < m1[0].length;col++){
+        if(inExpOrImpCol.indexOf(dataIn1_csv[0].indexOf(m1[0][col])) === -1)m1[0][col] = ''
+    }
+    for(let col = 0;col < m2[0].length;col++){
+        m2[0][col] = ''
+    }
+    return {m1,m2,outColors}
 }
 function getDuplicatedColumns(data_csv) {
     let res = []
