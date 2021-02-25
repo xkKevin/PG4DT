@@ -647,8 +647,7 @@ export default {
             res = generateDataForKeepColumns(
               dataIn1_csv,
               dataOut1_csv,
-              input_explict_col,
-              output_explict_col
+              input_explict_col
             );
             delete_column(
               res.m1,

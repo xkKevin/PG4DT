@@ -163,11 +163,9 @@ function generateDataForReplace(dataIn1_csv, dataOut1_csv, inExpOrImpCol,replace
     }
 
     for(let col = 0;col < m1[0].length;col++){
-        if(m1[0][col] !== dataIn1_csv[0][inExpOrImpCol[0]]){
+        if(inExpOrImpCol.indexOf(dataIn1_csv[0].indexOf(m1[0][col])) === -1){
             m1[0][col] = ''
             m2[0][col] = ''
-        }else{
-            m2[0][col] = dataOut1_csv[0][inExpOrImpCol[0]]
         }
     }
     return {m1,m2}

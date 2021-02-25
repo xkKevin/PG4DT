@@ -1,7 +1,7 @@
 import {extractCols} from "./common/extractContextualCols";
 
 function generateDataForKeepColumns(dataIn1_csv, dataOut1_csv, inExpOrImpCol){
-
+    inExpOrImpCol.sort()
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpOrImpCol,inExpOrImpCol)
     for(let col = 0;col < dataIn1_csv.length;col++){
         if(dataIn1_csv[0].indexOf(dataIn1_csv[0][col]) !== col && inExpOrImpCol.indexOf(col) === -1)
@@ -9,8 +9,14 @@ function generateDataForKeepColumns(dataIn1_csv, dataOut1_csv, inExpOrImpCol){
     }
     let m1 =[[]],m2 = [[]]
     let outColors = []
+    let outExpOrImpCol = []
+    inExpOrImpCol.forEach(idx => {
+        outExpOrImpCol.push(dataOut1_csv[0].indexOf(dataIn1_csv[0][idx]))
+    })
     inExpOrImpCol.forEach(idx => {
         m1[0].push(dataIn1_csv[0][idx])
+    })
+    outExpOrImpCol.forEach(idx => {
         m2[0].push(dataOut1_csv[0][idx])
     })
     contextualCols.forEach(val => {
