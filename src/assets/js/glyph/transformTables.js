@@ -4,6 +4,7 @@ import {drawOperationName} from "../utils/common/operationName";
 import {drawTableForColumn} from "../utils/common/createTableForColumn";
 import {fontSize, svgSize} from "../config/config";
 import {drawTableForFold} from "../utils/common/createFoldTable";
+import {drawTableForRow} from "../utils/common/createTableForRow";
 
 function transform_tables_rearrange(m1, m2, rule, t1_name, t2_name,inColor,outColor,name,showTableName) {
     if(!showTableName){
@@ -37,7 +38,7 @@ function transform_tables_rearrange(m1, m2, rule, t1_name, t2_name,inColor,outCo
     drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }
 
-function transform_tables_sort(m1, m2, rule, t1_name, t2_name,name,showTableName) {
+function transform_tables_sort(m1, m2, rule, t1_name, t2_name,outColor,name,showTableName) {
     if(!showTableName){
         t1_name = ''
         t2_name = ''
@@ -59,12 +60,12 @@ function transform_tables_sort(m1, m2, rule, t1_name, t2_name,name,showTableName
     const g = d3.select(`#mainsvg${name}`).append('g')
         .attr('transform',`translate(10,10)`)
 
-    drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
+    drawTableForRow(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     // 添加箭头
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
-    drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize)
+    drawTableForRow(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColor)
     let orderUrl = rule.indexOf("desc") === -1 ? require('../../images/asce.png') : require('../../images/desc.png')
     let sortedCol = 0
     for(let col = 0;col < m2[0].length;col++){

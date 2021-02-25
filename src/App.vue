@@ -807,6 +807,7 @@ export default {
               rule,
               input_table_name,
               output_table_name,
+              res.outColor,
               i,
               this.show_table_name
             );

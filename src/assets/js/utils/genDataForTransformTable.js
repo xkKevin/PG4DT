@@ -106,6 +106,7 @@ function generateDataForTableSort(dataIn1_csv,dataOut1_csv,sortedCol,order) {
     for(let row = 1;row < m1.length;row++){
         colVal.push(m1[row][colInM1])
     }
+    let valBeforeSort = Array.from(colVal)
     if(order.indexOf("desc") !== -1){
         //暂定为只对数值类型进行排序
         colVal.sort((a,b)=>{
@@ -118,7 +119,18 @@ function generateDataForTableSort(dataIn1_csv,dataOut1_csv,sortedCol,order) {
     for(let row = 1;row < m2.length;row ++){
         m2[row][colInM1] = colVal[row - 1]
     }
-    return {m1,m2}
+    for(let idx = 0;idx < valBeforeSort.length;idx++){
+        while(valBeforeSort.indexOf(valBeforeSort[idx]) !== idx)valBeforeSort[idx] += '_'
+    }
+    for(let idx = 0;idx < colVal.length;idx++){
+        while(colVal.indexOf(colVal[idx]) !== idx)colVal[idx] += '_'
+    }
+    let outColor = []
+    for(let idx = 0;idx < colVal.length;idx++){
+        outColor.push(valBeforeSort.indexOf(colVal[idx]))
+    }
+   
+    return {m1,m2,outColor}
 }
 
 function generateDataForFold(dataIn1_csv, dataOut1_csv, inExpOrImpCol, outExpOrImpCol){
