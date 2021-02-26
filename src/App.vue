@@ -907,19 +907,21 @@ export default {
             );
             break;
           case "transform_columns_rename":
+            console.log(input_explict_col)
             res = generateDataForColumnRename(
               dataIn1_csv,
               dataOut1_csv,
               input_explict_col
             );
+            console.log(res)
             transform_columns_mutate(
               res.m1,
               res.m2,
               rule,
               input_table_name,
               output_table_name,
-              input_explict_col,
-              input_explict_col,
+              res.expAfter,
+              res.expAfter,
               i,
               this.show_table_name
             );

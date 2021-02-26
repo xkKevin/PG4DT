@@ -133,9 +133,9 @@ function generateDataForReplace(dataIn1_csv, dataOut1_csv, inExpOrImpCol,replace
 }
 
  function generateDataForColumnRename(dataIn1_csv, dataOut1_csv, inExpOrImpCol){
-
+    inExpOrImpCol.sort()
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpOrImpCol,inExpOrImpCol)
-
+    
     let m1 = [[]],m2 = [[]]
     inExpOrImpCol.forEach(idx => {
         m1[0].push(dataIn1_csv[0][idx])
@@ -155,7 +155,7 @@ function generateDataForReplace(dataIn1_csv, dataOut1_csv, inExpOrImpCol,replace
 
     for(let row = 1;row <= Math.min(3,dataIn1_csv.length - 1);row ++){
         let tempRow = []
-        for(let col = 0;col < m1[0].length;col++){
+        for(let col = 0;col < dataIn1_csv[0].length;col++){
             if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1)tempRow.push('')
         }
         m1.push(tempRow)
@@ -168,7 +168,12 @@ function generateDataForReplace(dataIn1_csv, dataOut1_csv, inExpOrImpCol,replace
             m2[0][col] = ''
         }
     }
-    return {m1,m2}
+
+    let expAfter = []
+    for(let col = 0;col < inExpOrImpCol.length;col++){
+        expAfter.push(m1[0].indexOf(dataIn1_csv[0][inExpOrImpCol[col]]))
+    }
+    return {m1,m2,expAfter}
 }
 
 export {generateDataForColumnRename,generateDataForMutate_cover,generateDataForReplace}
