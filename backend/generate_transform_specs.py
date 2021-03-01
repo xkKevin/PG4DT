@@ -10,7 +10,7 @@ def deleteMatchFiles(directory, starts="", ends=""):
                 os.remove(os.path.join(directory, fi))
 
 
-def execScript(data_path, script_name, Rscript_path = r"D:\tool\R-4.0.3\bin\Rscript"):
+def execScript(data_path, script_name, Rscript_path = "Rscript"):
     '''
     执行数据清洗脚本，对于每一步清洗操作，都会保存这一个状态下的table，同时保存所有清洗过程的列在一个文件内
     Return:
