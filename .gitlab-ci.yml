@@ -1,8 +1,13 @@
 variables:
   # path to remote docker image, e.g. registry.zjvis.org/zjvis/continuous-integration-demo
   IMAGE: $CI_REGISTRY_IMAGE
+  # Set up environment variables for climbing over the wall
+  # HTTP_PROXY: http://192.168.24.47:8118
+  # HTTPS_PROXY: http://192.168.24.47:8118
+  # NO_PROXY: azk8s.cn,zjvis.org,localhost,127.0.0.1,192.168.24.47
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
+
 
 # two stages: build, and then deploy
 stages:
@@ -11,12 +16,11 @@ stages:
 
 services:
 # add a docker engine service for building docker images
-- name: docker:19.03.9-dind
+- name: docker:dind
   command:
   - "dockerd-entrypoint.sh"
   - "--registry-mirror"
-  - "https://mwo4xfcp.mirror.aliyuncs.com"
-  - "--mtu=1300"
+  - "https://dockerhub.azk8s.cn" # Use azure k8s mirror
 
 # build docker image
 build:
@@ -48,6 +52,7 @@ deploy:
   # install dependencies
   - sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories && apk update --no-cache && apk add gettext
   # create a secret for deploy user & token
-  - kubectl -n $KUBE_NAMESPACE create secret docker-registry ${CI_PROJECT_NAME}-pull-secret --docker-server="$CI_REGISTRY" --docker-username="$CI_DEPLOY_USER" --docker-password="$CI_DEPLOY_PASSWORD" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run | kubectl apply -f -
+  - echo $KUBE_NAMESPACE $CI_PROJECT_NAME $CI_REGISTRY $GITLAB_DEPLOY_USER $GITLAB_DEPLOY_TOKEN $GITLAB_USER_EMAIL
+  - kubectl -n $KUBE_NAMESPACE create secret docker-registry ${CI_PROJECT_NAME}-pull-secret --docker-server="$CI_REGISTRY" --docker-username="$GITLAB_DEPLOY_USER" --docker-password="$GITLAB_DEPLOY_TOKEN" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run | kubectl apply -f -
   # deploy to K8s
   - envsubst < deployment.yaml | kubectl apply -f -

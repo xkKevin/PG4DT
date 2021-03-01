@@ -48,7 +48,8 @@ metadata:
   namespace: $KUBE_NAMESPACE
   annotations:
     kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: letsencrypt
+    certmanager.k8s.io/cluster-issuer: letsencrypt
+    certmanager.k8s.io/acme-challenge-type: http01
 spec:
   rules:
   - host: $HOST
