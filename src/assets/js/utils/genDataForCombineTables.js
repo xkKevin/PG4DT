@@ -460,6 +460,9 @@ function generateDataForFullJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOrI
     }
     if(diffRows.length === 1 && diffRows[0] !== -1){
         rows1.push(diffRows[0])
+        // if(sameRows[1] > 1){
+        //     rows2.push()
+        // }
     } else if(diffRows.length === 2){
         if(diffRows[0] !== -1)rows1.push(diffRows[0])
         rows2.push(diffRows[1])
@@ -528,6 +531,218 @@ function generateDataForFullJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOrI
     return {m1,m2,m3,naCol,naPos,inColors2}
 }
 
+function generateDataForFullJoin_2(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpCols,naVal){
+    let m1 = [[]],m2 =[[]],m3 = [[]]
+    inExpCols.forEach(idx =>{
+        m1[0].push(dataIn1_csv[0][idx])
+        m2[0].push(dataIn1_csv[0][idx])
+        m3[0].push(dataIn1_csv[0][idx])
+    })
+    for(let col = 0;col < dataIn1_csv[0].length;col++){
+        if(dataIn2_csv[0].indexOf(dataIn1_csv[0][col]) === -1){
+            m1[0].push(dataIn1_csv[0][col])
+            m3[0].push(dataIn1_csv[0][col])
+            break
+        }
+    }
+    for(let col = 0;col < dataIn2_csv[0].length;col++){
+        if(dataIn1_csv[0].indexOf(dataIn2_csv[0][col]) === -1){
+            m2[0].push(dataIn2_csv[0][col])
+            m3[0].push(dataIn2_csv[0][col])
+            break
+        }
+    }
+    m1[0].sort(function(a,b){
+        return dataIn1_csv[0].indexOf(a) - dataIn1_csv[0].indexOf(b)
+    })
+    m2[0].sort(function(a,b){
+        return dataIn2_csv[0].indexOf(a) - dataIn2_csv[0].indexOf(b)
+    })
+    m3[0].sort(function(a,b){
+        return dataOut1_csv[0].indexOf(a) - dataOut1_csv[0].indexOf(b)
+    })
+
+    let sameRows = [],notInD2 = -1,notInD1 = -1
+    for(let row1 = 1; row1 < dataIn1_csv.length; row1++){
+        let flag = true
+        for(let row2 = 1;row2 < dataIn2_csv.length; row2++){
+            if(cmpRows(dataIn1_csv[row1],dataIn2_csv[row2],inExpCols)){
+                flag = false
+                if(sameRows.length === 0){
+                    sameRows = [row1,row2]
+                    break
+                }
+            }
+        }
+        if(flag && notInD2 === -1)notInD2 = row1
+        if(sameRows.length === 2 && notInD2 !== -1)break
+    }
+
+    for(let row2 = 1; row2 < dataIn2_csv.length; row2++){
+        let flag = true
+        for(let row1 = 1;row1 < dataIn1_csv.length; row1++){
+            if(cmpRows(dataIn1_csv[row1],dataIn2_csv[row2],inExpCols)){
+                flag = false
+                break
+            }
+        }
+        if(flag){
+            notInD1 = row2
+            break
+        }
+    }
+
+    let rows1 = [],rows2 = [],rows3 = []
+    let sameRows2 = []
+    rows1.push(sameRows[0])
+    rows2.push(sameRows[1])
+    if(notInD1 !== -1 && notInD2 !== -1){
+        rows1.push(notInD2)
+        rows2.push(notInD1)
+    }else if(notInD2 !== -1){
+        rows1 = [sameRows[0],notInD2]
+        rows2 = [sameRows[1]]
+        if(sameRows[1] > 1){
+            rows2.push(sameRows[1] - 1)
+        }else if(sameRows[1] < dataIn2_csv.length - 1){
+            rows2.push(sameRows[1] + 1)
+        }
+    }else if(notInD1 !== -1){
+        rows2 = [sameRows[1],notInD1]
+        rows1 = [sameRows[0]]
+        if(sameRows[0] > 1){
+            rows1.push(sameRows[0] - 1)
+        }else if(sameRows[0] < dataIn1_csv.length - 1){
+            rows1.push(sameRows[0] + 1)
+        }
+    }else{
+        for(let row1 = 1; row1 < dataIn1_csv.length; row1++){
+            for(let row2 = 1;row2 < dataIn2_csv.length; row2++){
+                if(cmpRows(dataIn1_csv[row1],dataIn2_csv[row2],inExpCols) && !cmpRows(dataIn1_csv[row1],dataIn1_csv[sameRows[0]],inExpCols)){
+                    if(sameRows2.length === 0){
+                        rows1.push(row1)
+                        rows2.push(row2)
+                    }
+                }
+            }
+            if(rows1.length === 2)break
+        }
+    }
+    rows1.sort()
+    rows2.sort()
+    for(let row = 0;row < rows1.length;row++){
+        for(let row3 = 1;row3 < dataOut1_csv.length;row3 ++){
+            if(cmpRows(dataOut1_csv[row3],dataIn1_csv[rows1[row]],inExpCols)){
+                rows3.push(row3)
+                break
+            }
+        }
+    }
+    if(sameRows2.length === 0){
+        if(!cmpRows(dataIn2_csv[rows2[0]],dataIn2_csv[rows2[1]],inExpCols)){
+            for(let row = 0;row < rows2.length;row++){
+                for(let row3 = 1;row3 < dataOut1_csv.length;row3++){
+                    if(cmpRows(dataOut1_csv[row3],dataIn2_csv[rows2[row]],inExpCols)){
+                        rows3.push(row3)
+                        break
+                    }
+                }
+            }
+        }else{
+            for(let row3 = 1;row3 < dataOut1_csv.length;row3 ++){
+                if(cmpRows(dataOut1_csv[row3],dataIn2_csv[rows2[0]],inExpCols)){
+                    rows3.push(row3)
+                    break
+                }
+            }
+        }
+    }
+  
+    // rows3 = Array.from(new Set(rows3))
+    rows3.sort()
+
+    let inColor1 = [],inColor2 = [],outColor = []
+    let allRows = []
+    for(let r1 = 0;r1 < rows1.length;r1++){
+        let tempRow = []
+        for(let col = 0;col < dataIn1_csv[0].length;col++){
+            if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
+                if(inExpCols.indexOf(col) !== -1){
+                    tempRow.push(dataIn1_csv[rows1[r1]][col])
+                }else{
+                    tempRow.push('')
+                }
+            }
+        }
+        let isIn = false
+        for(let r = 0;r < allRows.length;r++){
+            if(cmpRows(allRows[r],tempRow,inExpCols)){
+                isIn = true
+                inColor1.push(r)
+            }
+        }
+        if(!isIn){
+            inColor1.push(allRows.length)
+            allRows.push(Array.from(tempRow))
+        }
+        m1.push(tempRow)
+    }
+    for(let r2 = 0;r2 < rows2.length;r2++){
+        let tempRow = []
+        for(let col = 0;col < dataIn2_csv[0].length;col++){
+            if(m2[0].indexOf(dataIn2_csv[0][col]) !== -1){
+                if(inExpCols.indexOf(col) !== -1){
+                    tempRow.push(dataIn2_csv[rows2[r2]][col])
+                }else{
+                    tempRow.push('')
+                }
+            }
+        }
+        let isIn = false
+        for(let r = 0;r < allRows.length;r++){
+            if(cmpRows(allRows[r],tempRow,inExpCols)){
+                isIn = true
+                inColor2.push(r)
+            }
+        }
+        if(!isIn){
+            inColor2.push(allRows.length)
+            allRows.push(Array.from(tempRow))
+        }
+        m2.push(tempRow)
+    }
+
+    let naPos = [],naCol = []
+    for(let r3 = 0;r3 < rows3.length;r3++){
+        let tempRow = []
+        for(let col = 0;col < dataOut1_csv[0].length;col++){
+            if(m3[0].indexOf(dataOut1_csv[0][col]) !== -1){
+                if(inExpCols.indexOf(col) !== -1){
+                    tempRow.push(dataOut1_csv[rows3[r3]][col])
+                }else{
+                    tempRow.push('')
+                }
+                if(dataOut1_csv[rows3[r3]][col] === naVal){
+                    naCol.push(col)
+                    naPos.push(r3 + 1)
+                }
+            }
+        }
+        let isIn = false
+        for(let r = 0;r < allRows.length;r++){
+            if(cmpRows(allRows[r],tempRow,inExpCols)){
+                isIn = true
+                outColor.push(r)
+            }
+        }
+        if(!isIn){
+            outColor.push(allRows.length)
+            allRows.push(Array.from(tempRow))
+        }
+        m3.push(tempRow)
+    }
+    return {m1,m2,m3,inColor1,inColor2,outColor,naPos,naCol}
+}
 
 function generateDataForInnerJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOrImpCol){
     let m1 = [[]],m2 = [[]],m3 = [[]]
@@ -661,5 +876,5 @@ function generateDataForInnerJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOr
     return {m1,m2,m3,inColors2,outColor}
 }
 
-export {generateDataForInnerJoin,generateDataForFullJoin,generateDataForLeftJoin,generateDataForTablesExtend,generateDataForLeftJoin_2}
+export {generateDataForInnerJoin,generateDataForFullJoin,generateDataForLeftJoin,generateDataForTablesExtend,generateDataForLeftJoin_2,generateDataForFullJoin_2}
 

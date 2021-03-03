@@ -225,6 +225,7 @@ import { generateDataForSeparateColumn } from "./assets/js/utils/genDataForSepar
 import { generateDataForSeparateRows } from "./assets/js/utils/genDataForSeparateRows";
 import {
   generateDataForFullJoin,
+  generateDataForFullJoin_2,
   generateDataForInnerJoin,
   generateDataForLeftJoin,
   generateDataForLeftJoin_2,
@@ -907,13 +908,11 @@ export default {
             );
             break;
           case "transform_columns_rename":
-            console.log(input_explict_col)
             res = generateDataForColumnRename(
               dataIn1_csv,
               dataOut1_csv,
               input_explict_col
             );
-            console.log(res)
             transform_columns_mutate(
               res.m1,
               res.m2,
@@ -1186,13 +1185,14 @@ export default {
             );
             break;
           case "combine_tables_full_join":
-            res = generateDataForFullJoin(
+            res = generateDataForFullJoin_2(
               dataIn1_csv,
               dataIn2_csv,
               dataOut1_csv,
               input_explict_col,
               'NA'
             );
+            console.log(res)
             combine_tables_full_join(
               res.m1,
               res.m2,
@@ -1203,8 +1203,11 @@ export default {
               output_table_name,
               res.naCol,
               res.naPos,
-              res.inColors2,
-              i
+              res.inColor1,
+              res.inColor2,
+              res.outColor,
+              i,
+              this.show_table_name
             ),
               this.show_table_name;
             break;

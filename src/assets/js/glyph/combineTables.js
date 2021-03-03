@@ -39,7 +39,7 @@ function combine_tables_extend(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColors,n
     drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)
 }
 
-function combine_tables_full_join(m1,m2,m3,rule,t1_name,t2_name,t3_name,naCol,naRow,inColors2,name,showTableName){
+function combine_tables_full_join(m1,m2,m3,rule,t1_name,t2_name,t3_name,naCol,naRow,inColors1,inColors2,outColors,name,showTableName){
     if(!showTableName){
         t1_name = ''
         t2_name = ''
@@ -62,13 +62,13 @@ function combine_tables_full_join(m1,m2,m3,rule,t1_name,t2_name,t3_name,naCol,na
     const g = d3.select(`#mainsvg${name}`).append('g')
         .attr('transform',`translate(10,10)`)
 
-    drawTableForRow(g,m1,[0, colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
+    drawTableForRow(g,m1,[0, colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,inColors1)
     drawTableForRow(g,m2,[0, 2.5 * colHeight + m1.length * colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,inColors2)
 
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(Math.max(m1[0].length,m2[0].length) + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2 + colHeight * 2],0.8 * colWidth, colHeight,arrowUrl)
 
-    drawTableForRow(g,m3,[(Math.max(m1[0].length,m2[0].length) + 1) * colWidth,3 * colHeight],colWidth,colHeight,t3_name,colFontSize,cellFontSize,[],naRow,naCol)
+    drawTableForRow(g,m3,[(Math.max(m1[0].length,m2[0].length) + 1) * colWidth,3 * colHeight],colWidth,colHeight,t3_name,colFontSize,cellFontSize,outColors,naRow,naCol)
 
     let yOfLine = (m1.length + m2.length + 3) * colHeight
     drawOperationName(g,[width / 2,yOfLine],`${rule}`,'1.2em',colFontSize)
