@@ -1304,8 +1304,7 @@ export default {
 </script>
 
 <style>
-#app {
-}
+
 .el-col,
 .el-header,
 .el-aside,
