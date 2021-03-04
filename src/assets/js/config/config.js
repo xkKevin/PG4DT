@@ -1,6 +1,6 @@
 const svgSize = {
-    'width':'250',
-    'height':'200'
+    'width':'200',
+    'height':'150'
 }
 const fontSize = {
     'colFontSize':0.6,
