@@ -4,11 +4,11 @@ const svgSize = {
 }
 const fontSize = {
     'colFontSize':0.6,
-    'cellFontSize':0.6
+    'cellFontSize':0.5
 }
 
 const nodeSize = {
-    'width':50,
-    'height':30
+    'width':65,
+    'height':60
 }
 export {svgSize,fontSize,nodeSize}

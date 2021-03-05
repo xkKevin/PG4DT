@@ -30,12 +30,13 @@ export function create_table(matrix,rule,t1_name,name,showTableName,pos){
     let width = svgSize.width
     let height = svgSize.height
     let colWidth = width / (matrix[0].length * 2 + 1)
-    let colHeight = height / (matrix.length + 5)
+    let colHeight = height / (matrix.length + 3)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
 
     const g = d3.select(`#mainsvg`).append('g')
         .attr('transform',`translate(${pos[0]},${pos[1]})`)
+        .attr("id",`glyph${name}`)
 
     drawDashRect(g,[0,colHeight],matrix.length * colHeight,matrix[0].length * colWidth)
 

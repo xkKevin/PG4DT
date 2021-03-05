@@ -7,30 +7,39 @@ import {drawDashRect} from "../utils/common/dashedRect";
 import {fontSize, svgSize} from "../config/config";
 import {drawTableForRow} from "../utils/common/createTableForRow";
 
-function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName) {
-    //输入：
-    //input和output的矩阵
+function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName,pos){
     //insertPos表示新行的位置，默认值为-1，表示在最后插入，0表示在首行，1表示在中间某行
     //在最后插入时，即insertPos为-1时，默认不显示行号
     if(!showTableName){
         t1_name = ''
         t2_name = ''
     }
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute('id', `mainsvg${name}`);
-    svg.setAttribute('width', svgSize.width);
-    svg.setAttribute('height', svgSize.height);
-    svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    document.getElementById('glyphs').appendChild(svg)
+    // var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    // svg.setAttribute('id', `mainsvg${name}`);
+    // svg.setAttribute('width', svgSize.width);
+    // svg.setAttribute('height', svgSize.height);
+    // svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+    // document.getElementById('glyphs').appendChild(svg)
 
-    let width = d3.select(`#mainsvg${name}`).attr('width') - 20
-    let height = d3.select(`#mainsvg${name}`).attr('height')
+    // let width = d3.select(`#mainsvg${name}`).attr('width') - 20
+    // let height = d3.select(`#mainsvg${name}`).attr('height')
+    // let colWidth = insertPos == -1 ? width / (m2[0].length * 2 + 1) : width / (m2[0].length * 2 + 2)
+    // let colHeight = height / (m1.length + 5)
+    // let colFontSize = fontSize.colFontSize
+    // let cellFontSize = fontSize.cellFontSize
+    // const g = d3.select(`#mainsvg${name}`).append('g')
+    //     .attr('transform',`translate(10,10)`)
+
+    let width = svgSize.width
+    let height = svgSize.height
     let colWidth = insertPos == -1 ? width / (m2[0].length * 2 + 1) : width / (m2[0].length * 2 + 2)
-    let colHeight = height / (m1.length + 5)
+    let colHeight = height / (m1.length + 3)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
-    const g = d3.select(`#mainsvg${name}`).append('g')
-        .attr('transform',`translate(10,10)`)
+
+    const g = d3.select(`#mainsvg`).append('g')
+        .attr('transform',`translate(${pos[0]},${pos[1]})`)
+        .attr("id",`glyph${name}`)
 
     let inputX = insertPos == -1 ? 0 : 0.5 * colWidth
     drawTable(g,m1,[],[inputX,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'row')
@@ -49,26 +58,37 @@ function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName
 }
 
 
-function create_row_insert(m1, m2, rule, t1_name, t2_name,inColor,outColor,inIdx,outIdx,name,showTableName) {
+function create_row_insert(m1, m2, rule, t1_name, t2_name,inColor,outColor,inIdx,outIdx,name,showTableName,pos) {
     if(!showTableName){
         t1_name = ''
         t2_name = ''
     }
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute('id', `mainsvg${name}`);
-    svg.setAttribute('width', svgSize.width);
-    svg.setAttribute('height', svgSize.height);
-    svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    document.getElementById('glyphs').appendChild(svg)
+    // var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    // svg.setAttribute('id', `mainsvg${name}`);
+    // svg.setAttribute('width', svgSize.width);
+    // svg.setAttribute('height', svgSize.height);
+    // svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+    // document.getElementById('glyphs').appendChild(svg)
 
-    let width = d3.select(`#mainsvg${name}`).attr('width') - 20
-    let height = d3.select(`#mainsvg${name}`).attr('height')
-    let colWidth = width / (2 * m1[0].length + 2)
-    let colHeight = height / (m1.length + 5)
+    // let width = d3.select(`#mainsvg${name}`).attr('width') - 20
+    // let height = d3.select(`#mainsvg${name}`).attr('height')
+    // let colWidth = width / (2 * m1[0].length + 2)
+    // let colHeight = height / (m1.length + 5)
+    // let colFontSize = fontSize.colFontSize
+    // let cellFontSize = fontSize.cellFontSize
+    // const g = d3.select(`#mainsvg${name}`).append('g')
+    //     .attr('transform',`translate(10,10)`)
+
+    let width = svgSize.width
+    let height = svgSize.height
+    let colWidth =  width / (2 * m1[0].length + 2)
+    let colHeight = height / (m1.length + 3)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
-    const g = d3.select(`#mainsvg${name}`).append('g')
-        .attr('transform',`translate(10,10)`)
+
+    const g = d3.select(`#mainsvg`).append('g')
+        .attr('transform',`translate(${pos[0]},${pos[1]})`)
+        .attr("id",`glyph${name}`)
 
     let inDx = 0.5 * colWidth
     let outDx = 0.5 * colWidth

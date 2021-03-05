@@ -124,7 +124,7 @@
                 </el-switch>
               </div>
             </el-row>
-            <div id="glyphs">Here is a set of glyphs!</div>
+            <div id="glyphs" style="width:1750px;height:650px;overflow:auto;">Here is the glyphs</div>
           </el-footer>
         </el-container>
       </el-col>
@@ -231,7 +231,8 @@ import {
 } from "@/assets/js/utils/genDataForCombineTables";
 import { getCsv } from "@/assets/js/utils/common/getCsv";
 import {getLayout} from '@/assets/js/utils/renderTree/getLayout'
-import {drawNodeAndEdge} from '@/assets/js/utils/renderTree/renderNodeAndEdge'
+import {drawSvgAndEdge} from '@/assets/js/utils/renderTree/renderNodeAndEdge'
+import {drawNode} from '@/assets/js/utils/renderTree/render'
 import {svgSize,nodeSize} from '@/assets/js/config/config'
 
 const request_api = ""
@@ -409,27 +410,24 @@ export default {
             })
             // let nodePos = getLayout(specsToHandle)
             let graph = getLayout(specsToHandle)
-            
             // this.svg = res.svg
             let nodePos = {}
             const ELK = require('elkjs')
             const elk = new ELK()
             elk.layout(graph)
             .then(data =>{
+              let svgWidth = 0,svgHeight = 0
               for(let idx = 0;idx < data.children.length;idx++){
                 nodePos[data.children[idx].id] = [data.children[idx].x,data.children[idx].y]
+                svgWidth = Math.max(parseInt(svgWidth),data.children[idx].x)
+                svgHeight = Math.max(parseInt(svgHeight),data.children[idx].y)
               }
-              let svg = drawNodeAndEdge(specsToHandle,nodePos)
-              this.$store.commit("setSvg",svg)
-            //   let g = drawNode(nodePos,['n1','n2','n3','n4','n5','n6','n7'])
-              // console.log(svg)
-              console.log(nodePos)
-            //   drawEdge(g,specs,nodePos)
+              let g = drawSvgAndEdge(specsToHandle,nodePos,
+                svgWidth + parseInt(svgSize.width) + 50,svgHeight + parseInt(svgSize.height) + 50)
+              this.$store.commit("setG",g)
               return nodePos
-              // console.log(typeof("123"))
             }).then((nodePos)=>{
-              console.log("specsToHandle:")
-              console.log(nodePos)
+         
               this.preparation(specsToHandle,nodePos)
             })
             .catch(console.error)
@@ -454,6 +452,9 @@ export default {
       this.show_table_name = state;
     },
     async preparation(transform_specs,nodePos) {
+
+      let tableInf = {}
+
       for (let i = 0; i < transform_specs.length; i++) {
         let pos = []
         if(typeof(transform_specs[i].input_table_file) === 'string' 
@@ -461,7 +462,7 @@ export default {
             pos = [
               (nodePos[transform_specs[i].input_table_file][0] + nodeSize.width 
               + nodePos[transform_specs[i].output_table_file][0]) / 2 - svgSize.width / 2,
-              (nodePos[transform_specs[i].input_table_file][1] + nodeSize.width 
+              (nodePos[transform_specs[i].input_table_file][1] + nodeSize.height 
               + nodePos[transform_specs[i].output_table_file][1]) / 2 - svgSize.height ,
             ]
         }else if(typeof(transform_specs[i].input_table_file) === 'string'){
@@ -502,19 +503,29 @@ export default {
           output_table_name2;
         let replace_value;
         let res;
+
         if (transform_specs[i].input_table_file && transform_specs[i].input_table_file[0] !== '*') {
           if (typeof transform_specs[i].input_table_file === "string") {
             dataIn1_csv = await getCsv(
               `${request_api}/data/${transform_specs[i].input_table_file}?a=${Math.random()}`
             );
+            if(!tableInf[transform_specs[i].input_table_file]){
+              tableInf[transform_specs[i].input_table_file] = [transform_specs[i].input_table_name,dataIn1_csv.length,dataIn1_csv[0].length]
+            }
           } else {
             dataIn1_csv = await getCsv(
               `${request_api}/data/${transform_specs[i].input_table_file[0]}?a=${Math.random()}`
             );
+            if(!tableInf[transform_specs[i].input_table_file[0]]){
+              tableInf[transform_specs[i].input_table_file[0]] = [transform_specs[i].input_table_name[0],dataIn1_csv.length,dataIn1_csv[0].length]
+            }
             if (transform_specs[i].input_table_file.length > 1)
               dataIn2_csv = await getCsv(
                 `${request_api}/data/${transform_specs[i].input_table_file[1]}?a=${Math.random()}`
               );
+              if(!tableInf[transform_specs[i].input_table_file[1]]){
+                tableInf[transform_specs[i].input_table_file[1]] = [transform_specs[i].input_table_name[1],dataIn2_csv.length,dataIn2_csv[0].length]
+              }
           }
         }
         if (transform_specs[i].output_table_file && transform_specs[i].output_table_file[0] !== '#') {
@@ -522,14 +533,23 @@ export default {
             dataOut1_csv = await getCsv(
               `${request_api}/data/${transform_specs[i].output_table_file}?a=${Math.random()}`
             );
+            if(!tableInf[transform_specs[i].output_table_file]){
+              tableInf[transform_specs[i].output_table_file] = [transform_specs[i].output_table_name,dataOut1_csv.length,dataOut1_csv[0].length]
+            }
           } else {
             dataOut1_csv = await getCsv(
               `${request_api}/data/${transform_specs[i].output_table_file[0]}?a=${Math.random()}`
             );
+            if(!tableInf[transform_specs[i].output_table_file[0]]){
+              tableInf[transform_specs[i].output_table_file[0]] = [transform_specs[i].output_table_name[0],dataOut1_csv.length,dataOut1_csv[0].length]
+            }
             if (transform_specs[i].output_table_file.length > 1)
               dataOut2_csv = await getCsv(
-                `${request_api}/data/${transform_specs[i].output_table_file[1]}?a=${Math.random()}`
-              );
+              `${request_api}/data/${transform_specs[i].output_table_file[1]}?a=${Math.random()}`
+            );
+            if(!tableInf[transform_specs[i].output_table_file[1]]){
+              tableInf[transform_specs[i].output_table_file[1]] = [transform_specs[i].output_table_name[1],dataOut2_csv.length,dataOut2_csv[0].length]
+            }
           }
         }
         if (transform_specs[i].input_explict_col) {
@@ -625,7 +645,8 @@ export default {
               output_table_name,
               input_explict_col,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "create_columns_extract":
@@ -643,7 +664,8 @@ export default {
               output_table_name,
               input_explict_col,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "create_columns_mutate":
@@ -662,7 +684,8 @@ export default {
               res.inExp,
               res.outExp,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "create_columns_create":
@@ -678,7 +701,8 @@ export default {
               input_table_name,
               output_table_name,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "create_rows_create":
@@ -698,7 +722,8 @@ export default {
               output_table_name,
               1,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "create_rows_insert":
@@ -718,7 +743,8 @@ export default {
               res.inIdx,
               res.outIdx,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "delete_tables":
@@ -728,7 +754,8 @@ export default {
               rule,
               input_table_name,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "delete_columns_select_keep":
@@ -745,7 +772,8 @@ export default {
               output_table_name,
               res.outColors,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "delete_columns_select_remove":
@@ -762,7 +790,8 @@ export default {
               output_table_name,
               res.outColors,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "delete_columns_duplicate":
@@ -782,7 +811,8 @@ export default {
               input_table_name,
               output_table_name,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "delete_columns_dropna":
@@ -797,7 +827,8 @@ export default {
               res.outColors,
               [res.Row, res.Col],
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "delete_rows_filter":
@@ -806,7 +837,6 @@ export default {
               dataOut1_csv,
               input_explict_col
             );
-            console.log(res)
             delete_row(
               res.m1,
               res.m2,
@@ -814,7 +844,9 @@ export default {
               input_table_name,
               output_table_name,
               res.outColors,
-              this.show_table_name
+              i,
+              this.show_table_name,
+              pos
             );
             break;
           // case 'delete_rows_filter_keep':
@@ -842,7 +874,8 @@ export default {
               res.inColors,
               res.outColors,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "delete_rows_slice":
@@ -859,7 +892,8 @@ export default {
               output_table_name,
               res.outColors,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_tables_rearrange":
@@ -877,7 +911,8 @@ export default {
               res.inColors,
               res.outColors,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_tables_sort":
@@ -896,7 +931,8 @@ export default {
               output_table_name,
               res.outColor,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_columns_replace_na":
@@ -914,7 +950,8 @@ export default {
               input_explict_col,
               res.naRow,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_columns_replace":
@@ -934,7 +971,8 @@ export default {
               input_explict_col,
               res.naRow,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_columns_mutate":
@@ -953,7 +991,8 @@ export default {
               input_explict_col,
               output_explict_col,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_columns_extract":
@@ -972,7 +1011,8 @@ export default {
               input_explict_col,
               input_explict_col,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_columns_merge":
@@ -991,7 +1031,8 @@ export default {
               input_explict_col,
               output_explict_col,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_columns_rename":
@@ -1009,7 +1050,8 @@ export default {
               res.expAfter,
               res.expAfter,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "combine_columns_merge":
@@ -1029,7 +1071,8 @@ export default {
               res.newOutExpOrImp,
               res.outColors,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "combine_columns_mutate":
@@ -1049,7 +1092,8 @@ export default {
               res.newOutExpOrImp,
               res.outColors,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           // case 'combine_rows_sum':
@@ -1078,7 +1122,8 @@ export default {
               input_table_name,
               output_table_name,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "combine_rows_interpolate":
@@ -1095,7 +1140,8 @@ export default {
               output_table_name,
               res.naPos,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_rows_edit":
@@ -1112,7 +1158,8 @@ export default {
               output_table_name,
               res.rowIndex,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "separate_tables_subset":
@@ -1132,7 +1179,8 @@ export default {
               res.outColor1,
               res.outColor2,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "separate_tables_decompose":
@@ -1146,7 +1194,8 @@ export default {
               rule,
               input_table_name,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "separate_tables_decompose_q":
@@ -1167,7 +1216,8 @@ export default {
               res.outColor1,
               res.outColor2,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "separate_tables_split":
@@ -1187,7 +1237,8 @@ export default {
               res.colors1,
               res.colors2,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "separate_columns":
@@ -1206,7 +1257,8 @@ export default {
               res.inExp,
               res.outExp,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "separate_rows":
@@ -1223,7 +1275,8 @@ export default {
               output_table_name,
               res.outColors,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "combine_tables_extend":
@@ -1242,7 +1295,8 @@ export default {
               output_table_name,
               res.outColors,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "combine_tables_left_join":
@@ -1295,7 +1349,8 @@ export default {
               res.inColor2,
               res.outColor,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             ),
               this.show_table_name;
             break;
@@ -1318,7 +1373,8 @@ export default {
               res.inColors2,
               res.outColor,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_tables_fold":
@@ -1336,7 +1392,8 @@ export default {
               output_table_name,
               input_explict_col.length,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
           case "transform_tables_unfold":
@@ -1364,11 +1421,15 @@ export default {
               output_table_name,
               diffVals.size,
               i,
-              this.show_table_name
+              this.show_table_name,
+              pos
             );
             break;
         }
       }
+
+      drawNode(this.$store.state.g,transform_specs,nodePos,tableInf)
+
     },
   },
   /* # 同时监听到两个值的变化再执行方法

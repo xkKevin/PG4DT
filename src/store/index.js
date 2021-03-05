@@ -4,11 +4,11 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state:{
-        svg:'',
+        g:'',
     },
     mutations:{
-        setSvg(state,svg){
-            state.svg = svg
+        setG(state,g){
+            state.g = g
         },
     }
 })

@@ -1,16 +1,5 @@
 import {nodeSize} from '@/assets/js/config/config'
-function drawNode(g,specs,nodePos){
-    // var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    // svg.setAttribute('id', `mainsvg`);
-    // svg.setAttribute('width', 2000);
-    // svg.setAttribute('height', 900);
-    // svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    // document.getElementById("graphs").appendChild(svg)
-
-    // let width = d3.select(`#mainsvg`).attr('width') - 20
-    // let height = d3.select('#mainsvg').attr('height')
-    // const g = d3.select('#mainsvg').append('g')
-    //     .attr('transform',`translate(10,10)`)
+function drawNode(g,specs,nodePos,specsInf){
     let nodeName = []
     for(let idx = 0;idx < specs.length;idx++){
         if(typeof(specs[idx].input_table_file) === "string"){
@@ -38,29 +27,50 @@ function drawNode(g,specs,nodePos){
         .attr('width',nodeSize.width)
         .attr('height',nodeSize.height)
         .attr('fill','red')
+        .attr('opacity',0.6)
 
-        g.append('text')
-        .attr('x',nodePos[nodeName[idx]][0])
-        .attr('y',nodePos[nodeName[idx]][1])
-        // .attr('width',nodeSize.width)
-        // .attr('height',nodeSize.width)
-        .attr('dx',nodeSize.width / 2)
-        .attr('dy',nodeSize.height * 0.8)
-        .attr('text-anchor', 'middle')
-        .attr('fill','balck')
-        .attr('font-size',`1em`)
-        .text(nodeName[idx].split('.')[0])
+        if(nodeName[idx][0] !== '*' && nodeName[idx][0] !== '#'){
+            g.append('text')
+            .attr('x',nodePos[nodeName[idx]][0])
+            .attr('y',nodePos[nodeName[idx]][1])
+            .attr('dx',nodeSize.width / 2)
+            .attr('dy',nodeSize.height / 7 * 2)
+            .attr('text-anchor', 'middle')
+            .attr('fill','balck')
+            .attr('font-size',`0.8em`)
+            .text(`L${parseInt(nodeName[idx].replace(/[^0-9]/ig,""),10)}`)
 
-        // g.append('text')
-        // .attr('x',pos[0] + col * colWidth)
-        // .attr('y',pos[1] + row * colHeight)
-        // .attr('dx',colWidth / 2)
-        // .attr('dy',colHeight / 3 * 2)
-        // .attr('text-anchor', 'middle')
-        // .text(matrix[row][col].length > maxCharsPerCol ?
-        //     matrix[row][col].slice(0,maxCharsPerCol) : matrix[row][col])
-        // .attr('fill','white')
-        // .attr('font-size',`${colFontSize}em`)
+            g.append('text')
+            .attr('x',nodePos[nodeName[idx]][0])
+            .attr('y',nodePos[nodeName[idx]][1])
+            .attr('dx',nodeSize.width / 2)
+            .attr('dy',nodeSize.height / 7 * 4)
+            .attr('text-anchor', 'middle')
+            .attr('fill','balck')
+            .attr('font-size',`0.8em`)
+            .text(`${specsInf[nodeName[idx]][0]}`)
+
+            g.append('text')
+            .attr('x',nodePos[nodeName[idx]][0])
+            .attr('y',nodePos[nodeName[idx]][1])
+            .attr('dx',nodeSize.width / 2)
+            .attr('dy',nodeSize.height / 7 * 6)
+            .attr('text-anchor', 'middle')
+            .attr('fill','balck')
+            .attr('font-size',`0.8em`)
+            .text(`${specsInf[nodeName[idx]][1]}*${specsInf[nodeName[idx]][2]}`)
+
+        }else{
+            g.append('text')
+            .attr('x',nodePos[nodeName[idx]][0])
+            .attr('y',nodePos[nodeName[idx]][1])
+            .attr('dx',nodeSize.width / 2)
+            .attr('dy',nodeSize.height * 0.7)
+            .attr('text-anchor', 'middle')
+            .attr('fill','balck')
+            .attr('font-size',`2em`)
+            .text(`Ø`)
+        }
     }
 }
 

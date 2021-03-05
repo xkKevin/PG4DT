@@ -1,4 +1,4 @@
-import {nodeSize} from '@/assets/js/config/config'
+import {nodeSize,svgSize} from '@/assets/js/config/config'
 function getLayout(specs){
 
     let nodeName = [],edges = []
@@ -44,11 +44,12 @@ function getLayout(specs){
     nodeName.forEach(nodeName => {
         children.push({id: nodeName, width: nodeSize.width, height: nodeSize.height})
     })
+
     let graph = {
         id: "root",
         "layoutOptions": {
-            "elk.padding": "[top=300.0,left=50.0,bottom=0.0,right=35.0]",
-            "spacing.nodeNodeBetweenLayers": "300.0",
+            "elk.padding": `[top=${parseInt(svgSize.height) + 20},left=50.0,bottom=0.0,right=35.0]`,
+            "spacing.nodeNodeBetweenLayers": parseInt(svgSize.width) + 40,
             "spacing.edgeNodeBetweenLayers": "200.0",
             "nodePlacement.strategy": "NETWORK_SIMPLEX",
             "algorithm": "layered",
@@ -56,11 +57,11 @@ function getLayout(specs){
             "crossingMinimization.semiInteractive": "true",
             "spacing.edgeNode": "25.0",
             "spacing.edgeEdge": "20.0",
-            "spacing.nodeNode": "200.0",
+            "spacing.nodeNode": parseInt(svgSize.height) + 20,//control the gap in direction of y 
             "separateConnectedComponents": "true",
             "spacing.componentComponent": "200.0",
-            "width": '2000',
-            "height": '900'
+            // "width": '2000',
+            // "height": '700'
         },
     }
     graph['children'] = children

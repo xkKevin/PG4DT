@@ -6,7 +6,7 @@ import {drawOperationName} from "../utils/common/operationName";
 import {drawTableForColumn} from "../utils/common/createTableForColumn";
 import {fontSize, svgSize} from "../config/config";
 
-export function separate_columns(m1, m2, rule, t1_name, t2_name, inExpOrImp, outExpOrImp,name,showTableName){
+export function separate_columns(m1, m2, rule, t1_name, t2_name, inExpOrImp, outExpOrImp,name,showTableName,pos){
     //输入：
     //input和output的矩阵
     //input矩阵中的哪些列进行sum操作
@@ -14,21 +14,32 @@ export function separate_columns(m1, m2, rule, t1_name, t2_name, inExpOrImp, out
         t1_name = ''
         t2_name = ''
     }
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute('id', `mainsvg${name}`);
-    svg.setAttribute('width', svgSize.width);
-    svg.setAttribute('height', svgSize.height);
-    svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    document.getElementById('glyphs').appendChild(svg)
+    // var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    // svg.setAttribute('id', `mainsvg${name}`);
+    // svg.setAttribute('width', svgSize.width);
+    // svg.setAttribute('height', svgSize.height);
+    // svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+    // document.getElementById('glyphs').appendChild(svg)
 
-    let width = d3.select(`#mainsvg${name}`).attr('width') - 20
-    let height = d3.select(`#mainsvg${name}`).attr('height')
+    // let width = d3.select(`#mainsvg${name}`).attr('width') - 20
+    // let height = d3.select(`#mainsvg${name}`).attr('height')
+    // let colWidth = width / (m1[0].length + m2[0].length + 1)
+    // let colHeight = height / (m1.length + 5)
+    // let colFontSize = fontSize.colFontSize
+    // let cellFontSize = fontSize.cellFontSize
+    // const g = d3.select(`#mainsvg${name}`).append('g')
+    //     .attr('transform',`translate(10,10)`)
+
+    let width = svgSize.width
+    let height = svgSize.height
     let colWidth = width / (m1[0].length + m2[0].length + 1)
-    let colHeight = height / (m1.length + 5)
+    let colHeight =  height / (m1.length + 3)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
-    const g = d3.select(`#mainsvg${name}`).append('g')
-        .attr('transform',`translate(10,10)`)
+
+    const g = d3.select(`#mainsvg`).append('g')
+        .attr('transform',`translate(${pos[0]},${pos[1]})`)
+        .attr("id",`glyph${name}`)
 
     drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
 
