@@ -230,9 +230,10 @@ import {
   generateDataForTablesExtend,
 } from "@/assets/js/utils/genDataForCombineTables";
 import { getCsv } from "@/assets/js/utils/common/getCsv";
-import {getLayout} from '@/assets/js/utils/renderTree/getLayout'
+import {getLayout,getGraphs} from '@/assets/js/utils/renderTree/getLayout'
 import {drawSvgAndEdge} from '@/assets/js/utils/renderTree/renderNodeAndEdge'
 import {drawNode} from '@/assets/js/utils/renderTree/render'
+import {getComponents} from '@/assets/js/utils/renderTree/getComponents'
 import {svgSize,nodeSize} from '@/assets/js/config/config'
 
 const request_api = ""
@@ -259,51 +260,8 @@ export default {
       language: "r",
       all_langs: ["r", "python"],
       tableData: [
-        /*
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄sladfj ",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄",
-        },
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄sladfj ",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄",
-        },
-        */
       ],
       tableHead: [
-        /*"date", "name", "address"*/
       ],
       show_table_name: true,
     };
@@ -408,42 +366,51 @@ export default {
                   nullOutfileCount += '#'
                 }
             })
-            // let nodePos = getLayout(specsToHandle)
-            let graph = getLayout(specsToHandle)
-            // this.svg = res.svg
+
+            let {groups,edges} = getComponents(specsToHandle)
+            console.log("groups and edges: ",groups,edges)
+            let graphs = getGraphs(groups,edges)
+            console.log("graphs: ",graphs)
+
+            let svgWidth = 0,svgHeight = 0
+
             let nodePos = {}
             const ELK = require('elkjs')
-            const elk = new ELK()
-            elk.layout(graph)
-            .then(data =>{
-              let svgWidth = 0,svgHeight = 0
-              for(let idx = 0;idx < data.children.length;idx++){
-                nodePos[data.children[idx].id] = [data.children[idx].x,data.children[idx].y]
-                svgWidth = Math.max(parseInt(svgWidth),data.children[idx].x)
-                svgHeight = Math.max(parseInt(svgHeight),data.children[idx].y)
+            let proms = []
+            for(let idx = 0;idx < graphs.length;idx++){
+              let tempElk = new Promise((resolve, reject)=>{
+                let elk = new ELK()
+                elk.layout(graphs[idx]).then(data =>{
+                  for(let idx = 0;idx < data.children.length;idx++){
+                    nodePos[data.children[idx].id] = [data.children[idx].x,data.children[idx].y]
+                  }
+                }).then(()=>{
+                  resolve()
+                })
+              })
+              proms.push(tempElk)
+            }
+            Promise.all(proms).then(() =>{
+              //在高度方向上给不同的component设置偏移量，由上一组的maxY确定
+              let yOffset = 0
+              for(let group = 0; group < groups.length; group++){
+                let maxY = 0
+                groups[group].nodeGroup.forEach(tableName => {
+                  maxY = Math.max(nodePos[tableName][1],maxY) 
+                  nodePos[tableName][1] = nodePos[tableName][1] + yOffset
+                  svgWidth = Math.max(svgWidth,nodePos[tableName][0])
+                  svgHeight = Math.max(svgHeight,nodePos[tableName][1])
+                })
+                yOffset = yOffset + maxY + 1.2 * parseInt(nodeSize.height)
               }
               let g = drawSvgAndEdge(specsToHandle,nodePos,
-                svgWidth + parseInt(svgSize.width) + 50,svgHeight + parseInt(svgSize.height) + 50)
+                  svgWidth + parseInt(svgSize.width) + 50,svgHeight + parseInt(svgSize.height) + 50)
               this.$store.commit("setG",g)
-              return nodePos
-            }).then((nodePos)=>{
-         
+    
               this.preparation(specsToHandle,nodePos)
             })
-            .catch(console.error)
-            // console.log("middle:")
-            // console.log(nodePos)
-            // console.log(specsToHandle)
-            
-            // this.preparation(response.data.transform_specs);
-            // return {specsToHandle,nodePos}
           }
         })
-        // .then(nodePos => {
-        //   console.log("second then")
-        //   console.log(nodePos)
-        //   this.preparation(specsToHandle,nodePos)
-        // })
         .catch((error) => {
           console.log(error);
         });
@@ -487,8 +454,6 @@ export default {
             (nodePos[transform_specs[i].output_table_file][1] + nodeSize.height / 2 + meetingPosY) / 2 - svgSize.height,
           ]
         }
-
-        console.log(pos)
 
         let rule = transform_specs[i].operation_rule;
         let dataIn1_csv, dataIn2_csv, dataOut1_csv, dataOut2_csv;
@@ -627,7 +592,6 @@ export default {
         switch (transform_specs[i].type) {
           case "create_tables":
             res = generateDataForCreateTable(dataOut1_csv);
-            console.log("pos: ",pos)
             create_table(res, rule, output_table_name, i, this.show_table_name,pos);
             break;
           case "create_columns_merge":
@@ -1334,7 +1298,6 @@ export default {
               input_explict_col,
               'NA'
             );
-            console.log(res)
             combine_tables_full_join(
               res.m1,
               res.m2,

@@ -69,4 +69,41 @@ function getLayout(specs){
     return graph
 }
 
-export {getLayout}
+function getGraphs(nodeGroups,edgeGroups){
+    let graphs = []
+    for(let node = 0; node < nodeGroups.length; node++){
+        let edgeCount = 1
+        let graph = {
+            id: "root",
+            "layoutOptions": {
+                "elk.padding": `[top=${parseInt(svgSize.height) + 20},left=50.0,bottom=0.0,right=35.0]`,
+                "spacing.nodeNodeBetweenLayers": parseInt(svgSize.width) + 40,
+                "spacing.edgeNodeBetweenLayers": "200.0",
+                "nodePlacement.strategy": "NETWORK_SIMPLEX",
+                "algorithm": "layered",
+                "spacing.edgeEdgeBetweenLayers": "300.0",
+                "crossingMinimization.semiInteractive": "true",
+                "spacing.edgeNode": "25.0",
+                "spacing.edgeEdge": "20.0",
+                "spacing.nodeNode": parseInt(svgSize.height) + 20,//control the gap in direction of y 
+            },
+        }
+        let children = [],edges = []
+        nodeGroups[node].nodeGroup.forEach(nodeName =>{
+            children.push({id: nodeName, width: nodeSize.width, height: nodeSize.height})
+        })
+        edgeGroups[nodeGroups[node].key].forEach(edge =>{
+            let tempEdge = {id:`e${edgeCount}`,sources:[edge[0]],targets:[edge[1]]}
+            edges.push(tempEdge)
+            edgeCount += 1
+        })
+        graph['children'] = children
+        graph['edges'] = edges
+
+        graphs.push(graph)
+    }
+    return graphs    
+}
+
+
+export {getLayout,getGraphs}

@@ -12,7 +12,6 @@ function drawSvgAndEdge(specs,nodePos,svgWidth,svgHeight){
     // let height = d3.select('#mainsvg').attr('height')
     const g = d3.select('#mainsvg').append('g')
         // .attr('transform',`translate(10,10)`)
-
     drawEdge(g,specs,nodePos)
     // drawNode(g,specs,nodePos)
 
