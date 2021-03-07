@@ -78,13 +78,9 @@ function getGraphs(nodeGroups,edgeGroups){
             "layoutOptions": {
                 "elk.padding": `[top=${parseInt(svgSize.height) + 20},left=50.0,bottom=0.0,right=35.0]`,
                 "spacing.nodeNodeBetweenLayers": parseInt(svgSize.width) + 40,
-                "spacing.edgeNodeBetweenLayers": "200.0",
+                // "spacing.edgeNodeBetweenLayers": "200.0",
                 "nodePlacement.strategy": "NETWORK_SIMPLEX",
                 "algorithm": "layered",
-                "spacing.edgeEdgeBetweenLayers": "300.0",
-                "crossingMinimization.semiInteractive": "true",
-                "spacing.edgeNode": "25.0",
-                "spacing.edgeEdge": "20.0",
                 "spacing.nodeNode": parseInt(svgSize.height) + 20,//control the gap in direction of y 
             },
         }

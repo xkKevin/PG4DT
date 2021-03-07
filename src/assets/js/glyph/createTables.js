@@ -1,6 +1,5 @@
 import * as d3 from 'd3'
 import {drawDashRect} from "../utils/common/dashedRect"
-import {drawTableForCreateTable} from "../utils/common/createTableForCreateTable"
 import {drawIcon} from "../utils/common/icon"
 import {drawOperationName} from "../utils/common/operationName";
 import {drawTableForColumn} from "../utils/common/createTableForColumn";
@@ -28,8 +27,8 @@ export function create_table(matrix,rule,t1_name,name,showTableName,pos){
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(matrix[0].length + 0.1) * colWidth,(1 + matrix.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
-    drawTableForCreateTable(g,matrix,[(matrix[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t1_name,colFontSize)
-
+    // drawTableForCreateTable(g,matrix,[(matrix[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t1_name,colFontSize)
+    drawTableForColumn(g,matrix,[(matrix[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t1_name,colFontSize)
     let yOfLine = (matrix.length + 2) * colHeight
     drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }

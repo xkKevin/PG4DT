@@ -124,7 +124,7 @@
                 </el-switch>
               </div>
             </el-row>
-            <div id="glyphs" style="width:1750px;height:650px;overflow:auto;">Here is the glyphs</div>
+            <div id="glyphs" style="width:1750px;height:650px;">Here is the glyphs</div>
           </el-footer>
         </el-container>
       </el-col>
@@ -405,6 +405,8 @@ export default {
               }
               let g = drawSvgAndEdge(specsToHandle,nodePos,
                   svgWidth + parseInt(svgSize.width) + 50,svgHeight + parseInt(svgSize.height) + 50)
+              // let g = drawSvgAndEdge(specsToHandle,nodePos,
+              //     1750,650)
               this.$store.commit("setG",g)
     
               this.preparation(specsToHandle,nodePos)
@@ -1438,4 +1440,5 @@ footer.el-footer {
 .el-icon-arrow-down {
   font-size: 12px;
 }
+
 </style>
