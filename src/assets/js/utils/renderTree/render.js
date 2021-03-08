@@ -1,6 +1,6 @@
 import {nodeSize,lineAttr,nodeColor,fontSize} from '@/assets/js/config/config'
 import * as d3 from 'd3'
-function drawNode(g,specs,nodePos,specsInf){
+function drawNode(g,specs,nodePos,specsInf,showTableFunc){
     let nodeName = []
     for(let idx = 0;idx < specs.length;idx++){
         if(typeof(specs[idx].input_table_file) === "string"){
@@ -45,7 +45,7 @@ function drawNode(g,specs,nodePos,specsInf){
             .text(`L${parseInt(nodeName[idx].replace(/[^0-9]/ig,""),10)}`)
 
             //最多显示八个字符
-            let letters = 8
+            let letters = 10
             let showText = ''
             if(letters >= specsInf[nodeName[idx]][0].length){
                 showText = specsInf[nodeName[idx]][0]
@@ -80,6 +80,10 @@ function drawNode(g,specs,nodePos,specsInf){
             })
             .on("mouseout",function(event){
                 g.select(`#table_name_${specsInf[nodeName[idx]][0]}`).remove()
+            })
+            .on('click',function(event){
+                console.log("in func")
+                showTableFunc(nodeName[idx])
             })
 
             g.append('text')

@@ -1,5 +1,6 @@
 <template>
   <div id="showGlyphs">
+    <remote-script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></remote-script>
     <el-row type="flex" justify="center">
       <el-col :span="23" :offset="0">
         <el-container>
@@ -132,6 +133,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from "axios";
 import * as d3 from "d3";
@@ -230,11 +232,12 @@ import {
   generateDataForTablesExtend,
 } from "@/assets/js/utils/genDataForCombineTables";
 import { getCsv } from "@/assets/js/utils/common/getCsv";
-import {getLayout,getGraphs} from '@/assets/js/utils/renderTree/getLayout'
+import {getGraphs} from '@/assets/js/utils/renderTree/getLayout'
 import {drawSvgAndEdge} from '@/assets/js/utils/renderTree/renderNodeAndEdge'
 import {drawNode} from '@/assets/js/utils/renderTree/render'
 import {getComponents} from '@/assets/js/utils/renderTree/getComponents'
 import {svgSize,nodeSize} from '@/assets/js/config/config'
+import '@/assets/js/utils/common/importJs.js'
 
 const request_api = ""
 
@@ -305,19 +308,25 @@ export default {
     },
     getTableData(table_file) {
       // this.$message('click on item ' + command);
-      if (table_file.startsWith("table")) {
-        this.$message({
-          message: "The table does not exist.",
-          type: "error", // success/warning/info/error
-        });
-      } else {
-        const table_path = `${request_api}/data/${table_file}?a=${Math.random()}`;
-        d3.csv(table_path).then((data) => {
-          this.table_name = table_file;
-          this.tableData = data;
-          this.tableHead = data.columns;
-        });
-      }
+      // if (table_file.startsWith("table")) {
+      //   this.$message({
+      //     message: "The table does not exist.",
+      //     type: "error", // success/warning/info/error
+      //   });
+      // } else {
+      //   const table_path = `${request_api}/data/${table_file}?a=${Math.random()}`;
+      //   d3.csv(table_path).then((data) => {
+      //     this.table_name = table_file;
+      //     this.tableData = data;
+      //     this.tableHead = data.columns;
+      //   });
+      // }
+      const table_path = `${request_api}/data/${table_file}?a=${Math.random()}`;
+      d3.csv(table_path).then((data) => {
+        this.table_name = table_file;
+        this.tableData = data;
+        this.tableHead = data.columns;
+      });
     },
     getScriptData(script_content = "", language = "") {
       const path = `${request_api}/getScriptData`;
@@ -334,6 +343,7 @@ export default {
     },
     generateGlyphs() {
       // console.log(this.editor.getValue(), this.language);
+      
       const path = `${request_api}/generate_transform_specs`;
       let specsToHandle = []
       axios
@@ -1393,31 +1403,19 @@ export default {
         }
       }
 
-      drawNode(this.$store.state.g,transform_specs,nodePos,tableInf)
+      drawNode(this.$store.state.g,transform_specs,nodePos,tableInf,this.getTableData)
+      var panZoomTiger = svgPanZoom('#mainsvg');
+      console.log("pan-zoom: ",panZoomTiger)
 
     },
   },
-  /* # 同时监听到两个值的变化再执行方法
-  computed: {
-    address() {
-      const { script_content, language } = this;
-      return { script_content, language };
-    },
-  },
-  watch: {
-    address(val) {
-      console.log(val);
-      this.changeModel(val.script_content, val.language)
-    },
-  },
-  */
   mounted() {
     this.initData();
   },
 };
 </script>
 
-<style>
+<style scoped>
 
 .el-col,
 .el-header,
