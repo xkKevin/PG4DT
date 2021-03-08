@@ -82,7 +82,6 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
                 g.select(`#table_name_${specsInf[nodeName[idx]][0]}`).remove()
             })
             .on('click',function(event){
-                console.log("in func")
                 showTableFunc(nodeName[idx])
             })
 

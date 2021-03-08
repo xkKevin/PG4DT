@@ -125,7 +125,7 @@
                 </el-switch>
               </div>
             </el-row>
-            <div id="glyphs" style="width:1750px;height:650px;">Here is the glyphs</div>
+            <div id="glyphs" style="height:600px">Here is the glyphs</div>
           </el-footer>
         </el-container>
       </el-col>
@@ -413,10 +413,10 @@ export default {
                 })
                 yOffset = yOffset + maxY + 1.2 * parseInt(nodeSize.height)
               }
-              let g = drawSvgAndEdge(specsToHandle,nodePos,
-                  svgWidth + parseInt(svgSize.width) + 50,svgHeight + parseInt(svgSize.height) + 50)
               // let g = drawSvgAndEdge(specsToHandle,nodePos,
-              //     1750,650)
+              //     svgWidth + parseInt(svgSize.width) + 50,svgHeight + parseInt(svgSize.height) + 50)
+              let g = drawSvgAndEdge(specsToHandle,nodePos,
+                  '100%','100%')
               this.$store.commit("setG",g)
     
               this.preparation(specsToHandle,nodePos)
@@ -442,7 +442,7 @@ export default {
               (nodePos[transform_specs[i].input_table_file][0] + nodeSize.width 
               + nodePos[transform_specs[i].output_table_file][0]) / 2 - svgSize.width / 2,
               (nodePos[transform_specs[i].input_table_file][1] + nodeSize.height 
-              + nodePos[transform_specs[i].output_table_file][1]) / 2 - svgSize.height ,
+              + nodePos[transform_specs[i].output_table_file][1]) / 2 - svgSize.height - 10
             ]
         }else if(typeof(transform_specs[i].input_table_file) === 'string'){
           let meetingPosY = nodePos[transform_specs[i].input_table_file][1] + nodeSize.height / 2
@@ -452,7 +452,7 @@ export default {
               nodePos[transform_specs[i].input_table_file][0] - nodeSize.width)
           pos = [
             (nodePos[transform_specs[i].input_table_file][0] + nodeSize.width + meetingPosX) / 2 - svgSize.width / 2,
-            (nodePos[transform_specs[i].input_table_file][1] + nodeSize.height / 2 + meetingPosY) / 2 - svgSize.height,
+            (nodePos[transform_specs[i].input_table_file][1] + nodeSize.height / 2 + meetingPosY) / 2 - svgSize.height - 10
           ]
         }else{
           let meetingPosY = nodePos[transform_specs[i].output_table_file][1] + nodeSize.height / 2
@@ -463,7 +463,7 @@ export default {
               nodePos[transform_specs[i].input_table_file[1]][0]))
           pos = [
             (nodePos[transform_specs[i].output_table_file][0] + meetingPosX) / 2 - svgSize.width / 2,
-            (nodePos[transform_specs[i].output_table_file][1] + nodeSize.height / 2 + meetingPosY) / 2 - svgSize.height,
+            (nodePos[transform_specs[i].output_table_file][1] + nodeSize.height / 2 + meetingPosY) / 2 - svgSize.height - 10
           ]
         }
 
