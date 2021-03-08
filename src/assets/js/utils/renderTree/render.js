@@ -22,18 +22,24 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
 
     nodeName = Array.from(new Set(nodeName))
     for(let idx = 0;idx < nodeName.length;idx++){
-        g.append('rect')
+     
+
+        // .attr('opacity',nodeColor.alpha)
+        let nodeRect = g.append('rect')
         .attr('x',nodePos[nodeName[idx]][0])
         .attr('y',nodePos[nodeName[idx]][1])
         .attr('width',nodeSize.width)
         .attr('height',nodeSize.height)
         // .attr('fill',nodeColor.background)
-        .attr('fill',"none")
+        .attr('fill',"transparent")
         .attr("stroke","black")
         .attr("stroke-width","2")
-        // .attr('opacity',nodeColor.alpha)
-
+        
+        
         if(nodeName[idx][0] !== '*' && nodeName[idx][0] !== '#'){
+            nodeRect.on('click',function(event){
+                showTableFunc(nodeName[idx])
+            })
             g.append('text')
             .attr('x',nodePos[nodeName[idx]][0])
             .attr('y',nodePos[nodeName[idx]][1])
@@ -43,7 +49,9 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
             .attr('fill','balck')
             .attr('font-size',`0.8em`)
             .text(`L${parseInt(nodeName[idx].replace(/[^0-9]/ig,""),10)}`)
-
+            .on('click',function(event){
+                showTableFunc(nodeName[idx])
+            })
             //最多显示八个字符
             let letters = 10
             let showText = ''
@@ -84,7 +92,7 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
             .on('click',function(event){
                 showTableFunc(nodeName[idx])
             })
-
+           
             g.append('text')
             .attr('x',nodePos[nodeName[idx]][0])
             .attr('y',nodePos[nodeName[idx]][1])
@@ -94,7 +102,9 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
             .attr('fill','balck')
             .attr('font-size',`0.8em`)
             .text(`${specsInf[nodeName[idx]][1] - 1}*${specsInf[nodeName[idx]][2]}`)
-
+            .on('click',function(event){
+                showTableFunc(nodeName[idx])
+            })
         }else{
             g.append('text')
             .attr('x',nodePos[nodeName[idx]][0])
@@ -141,6 +151,13 @@ function drawEdge(g,specs,nodePos){
                 + 0.8 * (Math.min(nodePos[specs[idx].output_table_file[0]][0], nodePos[specs[idx].output_table_file[1]][0]) - 
                 nodePos[specs[idx].input_table_file][0] - nodeSize.width)
 
+            g.append("circle")
+            .attr("cx", meetingPosX)
+            .attr("cy", meetingPosY)
+            .attr("r", 2 * lineAttr.strokeWidth)
+            .style("fill", lineAttr.color)       
+            .style("stroke", "black")    
+
             g.append('line')
             .attr('x1',nodePos[specs[idx].input_table_file][0] + nodeSize.width)
             .attr('y1',nodePos[specs[idx].input_table_file][1] + nodeSize.height / 2)
@@ -171,6 +188,13 @@ function drawEdge(g,specs,nodePos){
             let meetingPosX = Math.max(nodePos[specs[idx].input_table_file[0]][0],nodePos[specs[idx].input_table_file[1]][0])
                 + nodeSize.width + 0.2 * (nodePos[specs[idx].output_table_file][0] - nodeSize.width 
                 - Math.max(nodePos[specs[idx].input_table_file[0]][0],nodePos[specs[idx].input_table_file[1]][0]))
+           
+            g.append("circle")
+            .attr("cx", meetingPosX)
+            .attr("cy", meetingPosY)
+            .attr("r", 2 * lineAttr.strokeWidth)
+            .style("fill", lineAttr.color)       
+            .style("stroke", "black")     
 
             g.append('line')
             .attr('x1',nodePos[specs[idx].input_table_file[0]][0] + nodeSize.width)
