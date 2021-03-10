@@ -313,9 +313,9 @@ def generate_transform_specs(data_path, script_name):
                     specs["output_explict_col"] = remove_quote(p_match_c.findall(params['none'][pi])[0].strip().split(','))
                 pi += 1
             if params.get('sep'):
-                specs["operation_rule"] = "Separate Column: " + params.get('sep')
+                specs["operation_rule"] = "Separate Columns: " + params.get('sep')
             else:
-                specs["operation_rule"] = '''Separate Column: "[^[:alnum:]]+"'''
+                specs["operation_rule"] = '''Separate Columns: "[^[:alnum:]]+"'''
             
             var2table[output_tbl] = specs["output_table_file"]
         
@@ -393,23 +393,29 @@ def generate_transform_specs(data_path, script_name):
             keep_col = []
             for i in range(1, len(params['none'])):
                 if params['none'][i].startswith('-'):
-                    remove_col.append(params['none'][i][1:])
+                    col = params['none'][i][1:]
+                    if str.isdigit(col):
+                        col = col_states[var2num(specs["input_table_name"])][int(col)-1]
+                    remove_col.append(col)
                 else:
-                    keep_col.append(params['none'][i])
+                    col = params['none'][i]
+                    if str.isdigit(col):
+                        col = col_states[var2num(specs["input_table_name"])][int(col)-1]
+                    keep_col.append(col)
             remove_col = remove_quote(remove_col)
             keep_col = remove_quote(keep_col)
             if remove_col:
                 specs["type"] = 'delete_columns_select_remove'
                 specs["input_explict_col"] = remove_col
-                specs["operation_rule"] = 'Delete Column: ' + ','.join(remove_col)
+                specs["operation_rule"] = 'Delete Columns: ' + ','.join(remove_col)
             elif len(keep_col) < len(col_states[var2num(specs["input_table_name"])]):
                 specs["type"] = 'delete_columns_select_keep'
                 specs["input_explict_col"] = keep_col
-                specs["operation_rule"] = 'Keep Column: ' + ','.join(keep_col)
+                specs["operation_rule"] = 'Keep Columns: ' + ','.join(keep_col)
             else:
                 specs["type"] = 'transform_tables_rearrange'
                 specs["input_explict_col"] = keep_col
-                specs["operation_rule"] = 'Rearrange Column'
+                specs["operation_rule"] = 'Rearrange Columns'
                 
             var2table[output_tbl] = specs["output_table_file"]
         
@@ -674,7 +680,7 @@ def generate_transform_specs(data_path, script_name):
                         continue
                     specs["output_explict_col"].append(pk)
 
-                specs["operation_rule"] = 'Create Column: ' + ",".join(specs["output_explict_col"])
+                specs["operation_rule"] = 'Create Columns: ' + ",".join(specs["output_explict_col"])
             else:
                 specs["type"] = 'create_tables'
                 specs["operation_rule"] = 'Create Manually'
@@ -713,6 +719,7 @@ def generate_transform_specs(data_path, script_name):
 
         else: # default, could also just omit condition or 'if True'
             print("The function, %s, is not currently supported!" % func)
+            var2table[output_tbl] = "table%d.csv" % line_num
             
         # print(func, specs)
         if specs:

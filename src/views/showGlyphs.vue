@@ -4,11 +4,11 @@
     <el-row type="flex" justify="center">
       <el-col :span="23" :offset="0">
         <el-container>
-          <el-header height="80px">
+          <el-header height="70px">
             <!-- Header content -->
             <h2 style="text-align: center">PG4DT System</h2>
           </el-header>
-          <el-row style="height: 550px">
+          <el-row style="height: 450px">
             <el-col
               :span="12"
               :offset="0"
@@ -44,7 +44,7 @@
                   </el-dropdown>
                 </div>
               </el-row>
-              <div id="monaco" style="height: 500px; margin-top: 10px"></div>
+              <div id="monaco" style="height: 400px; margin-top: 10px"></div>
             </el-col>
             <el-col
               :span="12"
@@ -82,7 +82,7 @@
                 </div>
               </el-row>
 
-              <el-table height="505" :data="tableData" fit>
+              <el-table height="405" :data="tableData" fit>
                 <el-table-column type="index"> </el-table-column>
                 <el-table-column
                   v-for="item in tableHead"
@@ -252,7 +252,7 @@ export default {
       all_tables: [
         "benchmark5.txt",
         "benchmark19.txt",
-        "test.txt",
+        "test.csv",
         "table1.csv",
         "table2.csv",
         "table3.csv",
