@@ -4,7 +4,7 @@ export function drawLine(g,startPos,endPos,dashed = false) {
         .attr("y1", startPos[1])
         .attr("x2", endPos[0])
         .attr("y2", endPos[1])
-        .attr("stroke", "black")
+        .attr("stroke", "gray")
         .attr("stroke-width", "1px")
 
     if(dashed)

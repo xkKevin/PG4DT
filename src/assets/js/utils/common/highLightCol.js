@@ -21,7 +21,7 @@ export function drawHighLightCol(g,matrix,expOrImpCols,pos,colWidth,colHeight,bo
         g.append('rect')
             .attr('width',(highlightCols[group][1] - highlightCols[group][0] + 1) * colWidth)
             .attr('height',colHeight * matrix.length)
-            .attr('stroke-width','2px')
+            .attr('stroke-width','4px')
             .attr('stroke',borderColor)
             .attr('fill','none')
             .attr('x',pos[0] + highlightCols[group][0] * colWidth)

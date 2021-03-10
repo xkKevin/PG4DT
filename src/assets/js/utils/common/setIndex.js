@@ -9,6 +9,6 @@ export function drawIndex(g,pos,ids,colWidth,colHeight,cellFontSize){
             .attr('text-anchor', 'middle')
             .text(`${ids[row]}`)
             .attr('fill','black')
-            .attr('font-size',`${cellFontSize}em`)
+            .attr('font-size',`${cellFontSize}px`)
     }
 }

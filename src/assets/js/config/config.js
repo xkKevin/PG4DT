@@ -3,13 +3,13 @@ const svgSize = {
     'height':'150'
 }
 const fontSize = {
-    'colFontSize':0.7,
-    'cellFontSize':0.6
+    'colFontSize':7,
+    'cellFontSize':7
 }
 
 const nodeSize = {
     'width':80,
-    'height':60
+    'height':40
 }
 
 const nodeColor = {
@@ -19,13 +19,13 @@ const nodeColor = {
 }
 
 const lineAttr = {
-    'color':'black',
+    'color':'gray',
     'strokeWidth':2
 }
 
 const tableRender = {
     'firstRowColor':'black',
     'colors':['#5AABAC','#F07A66','#F8BA4B','#AAA1CC','#445050','#C9C9C9'],
-    'opacity':0.8
+    'opacity':1
 }
 export {svgSize,fontSize,nodeSize,lineAttr,nodeColor,tableRender}

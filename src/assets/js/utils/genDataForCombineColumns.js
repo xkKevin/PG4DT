@@ -28,9 +28,11 @@ export function generateDataForMergeColumns(dataIn1_csv, dataOut1_csv, inExpOrIm
     for(let row = 1;row <= Math.min(3,dataIn1_csv.length - 1);row ++){
         let tempRow = []
         for(let col = 0;col < dataIn1_csv[0].length;col++){
-            if(inExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
-            else
-                tempRow.push('')
+            if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
+                if(inExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataIn1_csv[row][col])
+                else
+                    tempRow.push('')
+            }
         }
         m1.push(tempRow)
     }
@@ -38,9 +40,11 @@ export function generateDataForMergeColumns(dataIn1_csv, dataOut1_csv, inExpOrIm
     for(let row = 1;row <= Math.min(3,dataOut1_csv.length - 1);row ++){
         let tempRow = []
         for(let col = 0;col < dataOut1_csv[0].length;col++){
-            if(outExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataOut1_csv[row][col])
-            else
-                tempRow.push('')
+            if(m2[0].indexOf(dataOut1_csv[0][col]) !== -1){
+                if(outExpOrImpCol.indexOf(col) !== -1)tempRow.push(dataOut1_csv[row][col])
+                else
+                    tempRow.push('')
+            }
         }
         m2.push(tempRow)
     }

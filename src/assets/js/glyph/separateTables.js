@@ -11,22 +11,6 @@ function separate_tables_subset(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColor1,
         t2_name = ''
         t3_name = ''
     }
-    // var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    // // svg.setAttribute('style', 'border: 1px solid black');
-    // svg.setAttribute('id', `mainsvg${name}`);
-    // svg.setAttribute('width', svgSize.width);
-    // svg.setAttribute('height', svgSize.height);
-    // svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    // document.getElementById('glyphs').append(svg)
-
-    // let width = d3.select(`#mainsvg${name}`).attr('width') - 20
-    // let height = d3.select(`#mainsvg${name}`).attr('height')
-    // let colWidth = width / (2 * m1[0].length + 1)
-    // let colHeight = height / (m1.length + 7)
-    // let colFontSize = fontSize.colFontSize
-    // let cellFontSize = fontSize.cellFontSize
-    // const g = d3.select(`#mainsvg${name}`).append('g')
-    //     .attr('transform',`translate(10,10)`)
 
     let width = svgSize.width
     let height = svgSize.height
@@ -38,7 +22,25 @@ function separate_tables_subset(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColor1,
     const g = d3.select(`#mainsvg`).append('g')
         .attr('transform',`translate(${pos[0]},${pos[1]})`)
         .attr("id",`glyph${name}`)
-
+        g.append('rect')
+        .attr('x',-10)
+        .attr('y',0)
+        .attr('width',parseInt(width) + 20)
+        .attr('height',parseInt(height))
+        .attr('stroke','gray')
+        .attr('fill','transparent')
+        g.append("path")
+        .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
+        .attr('fill','none')
+        .attr('stroke','white')
+        .attr('stroke-width',"1px")
+        g.append("path")
+        .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
+        // .attr('d',"M0,0 L8,4 L0,8 L4,4 L0,0")
+        .attr('fill','white')
+        .attr('stroke','gray')
+        .attr('stroke-width',"1px")
+        .style("stroke-linecap", "round")
 
     drawTableForRow(g,m1,[0,2 * colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
 
@@ -57,23 +59,6 @@ function separate_tables_decompose(m1,m2s,rule,t1_name,name,showTableName,pos){
     if(!showTableName){
         t1_name = ''
     }
-    // var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    // // svg.setAttribute('style', 'border: 1px solid black');
-    // svg.setAttribute('id', `mainsvg${name}`);
-    // svg.setAttribute('width', svgSize.width);
-    // svg.setAttribute('height', svgSize.height);
-    // svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    // document.getElementById('glyphs').append(svg)
-
-    // let width = d3.select(`#mainsvg${name}`).attr('width') - 20
-    // let height = d3.select(`#mainsvg${name}`).attr('height')
-    // let colWidth = width / (2 * m1[0].length + 1)
-    // let colHeight = height / (m1.length + m2s.length + 5)
-    // let colFontSize = fontSize.colFontSize
-    // let cellFontSize = fontSize.cellFontSize
-    // const g = d3.select(`#mainsvg${name}`).append('g')
-    //     .attr('transform',`translate(10,10)`)
-
     let width = svgSize.width
     let height = svgSize.height
     let colWidth = width / (2 * m1[0].length + 1)
@@ -84,7 +69,25 @@ function separate_tables_decompose(m1,m2s,rule,t1_name,name,showTableName,pos){
     const g = d3.select(`#mainsvg`).append('g')
         .attr('transform',`translate(${pos[0]},${pos[1]})`)
         .attr("id",`glyph${name}`)
-
+        g.append('rect')
+        .attr('x',-10)
+        .attr('y',0)
+        .attr('width',parseInt(width) + 20)
+        .attr('height',parseInt(height))
+        .attr('stroke','gray')
+        .attr('fill','transparent')
+        g.append("path")
+        .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
+        .attr('fill','none')
+        .attr('stroke','white')
+        .attr('stroke-width',"1px")
+        g.append("path")
+        .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
+        // .attr('d',"M0,0 L8,4 L0,8 L4,4 L0,0")
+        .attr('fill','white')
+        .attr('stroke','gray')
+        .attr('stroke-width',"1px")
+        .style("stroke-linecap", "round")
     drawTableForRow(g,m1,[0, colHeight + (m2s.length - 1) / 2 * colHeight * 2],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
 
     let arrowUrl = require('../../images/arrow.png')
@@ -105,22 +108,6 @@ function separate_tables_split(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColors1,
         t2_name = ''
         t3_name = ''
     }
-    // var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    // // svg.setAttribute('style', 'border: 1px solid black');
-    // svg.setAttribute('id', `mainsvg${name}`);
-    // svg.setAttribute('width', svgSize.width);
-    // svg.setAttribute('height', svgSize.height);
-    // svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-    // document.getElementById('glyphs').append(svg)
-
-    // let width = d3.select(`#mainsvg${name}`).attr('width') - 20
-    // let height = d3.select(`#mainsvg${name}`).attr('height')
-    // let colWidth = width / (m1[0].length + m2[0].length + m3[0].length + 1.5)
-    // let colHeight = height / (m1.length + 5)
-    // let colFontSize = fontSize.colFontSize
-    // let cellFontSize = fontSize.cellFontSize
-    // const g = d3.select(`#mainsvg${name}`).append('g')
-    //     .attr('transform',`translate(10,10)`)
 
     let width = svgSize.width
     let height = svgSize.height
@@ -132,6 +119,32 @@ function separate_tables_split(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColors1,
     const g = d3.select(`#mainsvg`).append('g')
         .attr('transform',`translate(${pos[0]},${pos[1]})`)
         .attr("id",`glyph${name}`)
+
+    g.append('rect')
+    .attr('x',-10)
+    .attr('y',0)
+    .attr('width',parseInt(width) + 20)
+    .attr('height',parseInt(height))
+    .attr('stroke','gray')
+    .attr('fill','transparent')
+
+    // var arrow_path = "M0,0 L8,4 L0,8 L4,4 L0,0";
+    // arrowMarker.append("path")
+    //     .attr("d",arrow_path)
+    //     .attr("fill","gray");
+    g.append("path")
+    .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
+    .attr('fill','none')
+    .attr('stroke','white')
+    .attr('stroke-width',"1px")
+
+    g.append("path")
+    .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
+    // .attr('d',"M0,0 L8,4 L0,8 L4,4 L0,0")
+    .attr('fill','white')
+    .attr('stroke','gray')
+    .attr('stroke-width',"1px")
+    .style("stroke-linecap", "round")
 
     drawTableForColumn(g,m1,[0, colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     let arrowUrl = require('../../images/arrow.png')

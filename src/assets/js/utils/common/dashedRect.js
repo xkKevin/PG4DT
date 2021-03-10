@@ -4,8 +4,8 @@ export function drawDashRect(g,pos,height,width) {
         .attr('y',pos[1])
         .attr('width',width)
         .attr('height',height)
-        .attr('fill','none')
-        .attr("stroke", "black")
+        .attr('fill','white')
+        .attr("stroke", "gray")
         .attr("stroke-width", "1px")
         .style("stroke-dasharray","4,4")
 }

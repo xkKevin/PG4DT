@@ -107,14 +107,18 @@ function generateDataForTableSort(dataIn1_csv,dataOut1_csv,sortedCol,order) {
         colVal.push(m1[row][colInM1])
     }
     let valBeforeSort = Array.from(colVal)
-    if(order.indexOf("desc") !== -1){
+    if(order.indexOf("desc") === -1){
         //暂定为只对数值类型进行排序
-        colVal.sort((a,b)=>{
-            return b - a
+        colVal = colVal.sort(function(a,b){
+            return parseInt(a) - parseInt(b)
+        })
+    }else{
+        colVal = colVal.sort(function(a,b){
+            return parseInt(b) - parseInt(a)
         })
     }
-    else
-        colVal.sort()
+
+    console.log("sorted: ",colVal)
 
     for(let row = 1;row < m2.length;row ++){
         m2[row][colInM1] = colVal[row - 1]

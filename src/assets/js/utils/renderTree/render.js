@@ -1,4 +1,4 @@
-import {nodeSize,lineAttr,nodeColor,fontSize} from '@/assets/js/config/config'
+import {nodeSize,lineAttr} from '@/assets/js/config/config'
 import * as d3 from 'd3'
 function drawNode(g,specs,nodePos,specsInf,showTableFunc){
     let nodeName = []
@@ -22,9 +22,7 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
 
     nodeName = Array.from(new Set(nodeName))
     for(let idx = 0;idx < nodeName.length;idx++){
-     
-
-        // .attr('opacity',nodeColor.alpha)
+  
         let nodeRect = g.append('rect')
         .attr('x',nodePos[nodeName[idx]][0])
         .attr('y',nodePos[nodeName[idx]][1])
@@ -32,28 +30,32 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
         .attr('height',nodeSize.height)
         // .attr('fill',nodeColor.background)
         .attr('fill',"transparent")
-        .attr("stroke","black")
+        .attr("stroke","gray")
         .attr("stroke-width","2")
-        
+        .attr('rx',`${nodeSize.height / 15}`)
         
         if(nodeName[idx][0] !== '*' && nodeName[idx][0] !== '#'){
             nodeRect.on('click',function(event){
                 showTableFunc(nodeName[idx])
             })
+
+            let lineNum = nodeName[idx].replace(/[^0-9]/ig,"")
+            let letterWidth = nodeSize.width / (lineNum.length + 2)
+            let midInY = (nodeSize.height - letterWidth) / 2 + letterWidth
             g.append('text')
             .attr('x',nodePos[nodeName[idx]][0])
-            .attr('y',nodePos[nodeName[idx]][1])
-            .attr('dx',nodeSize.width / 2)
-            .attr('dy',nodeSize.height / 7 * 2)
+            .attr('y',nodePos[nodeName[idx]][1] + midInY)
+            .attr('dx',nodeSize.width / 4)
+            // .attr('dy',nodeSize.height / 7 * 2)
             .attr('text-anchor', 'middle')
             .attr('fill','balck')
-            .attr('font-size',`0.8em`)
-            .text(`L${parseInt(nodeName[idx].replace(/[^0-9]/ig,""),10)}`)
+            .attr('font-size',`${letterWidth}px`)
+            .text(`L${parseInt(lineNum,10)}`)
             .on('click',function(event){
                 showTableFunc(nodeName[idx])
             })
-            //最多显示八个字符
-            let letters = 10
+            //最多显示六个字符
+            let letters = 6
             let showText = ''
             if(letters >= specsInf[nodeName[idx]][0].length){
                 showText = specsInf[nodeName[idx]][0]
@@ -61,23 +63,21 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
                 showText = specsInf[nodeName[idx]][0].slice(0,letters - 3)
                 showText += '...'
             }
+     
             g.append('text')
-            .attr('x',nodePos[nodeName[idx]][0])
-            .attr('y',nodePos[nodeName[idx]][1])
-            .attr('dx',nodeSize.width / 2)
-            .attr('dy',nodeSize.height / 7 * 4)
-            .attr('text-anchor', 'middle')
+            .attr('x',`${nodePos[nodeName[idx]][0] + nodeSize.width / 2}px`)
+            .attr('y',nodePos[nodeName[idx]][1] + nodeSize.height / 2 - 5)
+            .attr('text-anchor', 'start')
             .attr('fill','balck')
-            .attr('font-size',`${nodeSize.width / letters}px`)
+            .attr('font-size',`${nodeSize.width / (letters + 2)}px`)
             .text(showText)
-            // .style("pointer-events","visible")
             .on("mouseover",function(event){
                 if(d3.select(`#table_name_${specsInf[nodeName[idx]][0]}`)['_groups'][0][0] === null){
                     g.append('text')
                     .attr('x',nodePos[nodeName[idx]][0])
                     .attr('y',nodePos[nodeName[idx]][1])
                     .attr('dx',1.1 * nodeSize.width)
-                    .attr('dy',nodeSize.height)
+                    .attr('dy',1.1 * nodeSize.height)
                     .attr('text-anchor', 'start')
                     .attr('fill','balck')
                     .attr('font-size',`${2 * nodeSize.width / letters}px`)
@@ -94,25 +94,24 @@ function drawNode(g,specs,nodePos,specsInf,showTableFunc){
             })
            
             g.append('text')
-            .attr('x',nodePos[nodeName[idx]][0])
-            .attr('y',nodePos[nodeName[idx]][1])
-            .attr('dx',nodeSize.width / 2)
-            .attr('dy',nodeSize.height / 7 * 6)
-            .attr('text-anchor', 'middle')
-            .attr('fill','balck')
-            .attr('font-size',`0.8em`)
-            .text(`${specsInf[nodeName[idx]][1] - 1}*${specsInf[nodeName[idx]][2]}`)
+            .attr('x',nodePos[nodeName[idx]][0] + nodeSize.width / 2)
+            .attr('y',nodePos[nodeName[idx]][1] + nodeSize.height - 5)
+            .attr('text-anchor', 'start')
+            .attr('fill','gray')
+            .attr('font-size',`${nodeSize.width / (letters + 2)}px`)
+            .text(`${specsInf[nodeName[idx]][1] - 1}R*${specsInf[nodeName[idx]][2]}C`)
             .on('click',function(event){
                 showTableFunc(nodeName[idx])
             })
         }else{
+            nodeRect.style('stroke-dasharray', '5,5');
             g.append('text')
             .attr('x',nodePos[nodeName[idx]][0])
             .attr('y',nodePos[nodeName[idx]][1])
             .attr('dx',nodeSize.width / 2)
-            .attr('dy',nodeSize.height * 0.7)
+            .attr('dy',nodeSize.height * 0.8)
             .attr('text-anchor', 'middle')
-            .attr('fill','balck')
+            .attr('fill','gray')
             .attr('font-size',`2em`)
             .text(`Ø`)
         }
@@ -133,7 +132,7 @@ function drawEdge(g,specs,nodePos){
     var arrow_path = "M0,0 L8,4 L0,8 L4,4 L0,0";
     arrowMarker.append("path")
         .attr("d",arrow_path)
-        .attr("fill","#000");
+        .attr("fill","gray");
     for(let idx = 0;idx < specs.length;idx++){
         if(typeof(specs[idx].input_table_file) === 'string'
          && typeof(specs[idx].output_table_file) === 'string'){
@@ -156,7 +155,7 @@ function drawEdge(g,specs,nodePos){
             .attr("cy", meetingPosY)
             .attr("r", 2 * lineAttr.strokeWidth)
             .style("fill", lineAttr.color)       
-            .style("stroke", "black")    
+            .style("stroke", lineAttr.color)    
 
             g.append('line')
             .attr('x1',nodePos[specs[idx].input_table_file][0] + nodeSize.width)

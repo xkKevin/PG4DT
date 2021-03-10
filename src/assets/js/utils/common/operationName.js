@@ -5,5 +5,5 @@ export function drawOperationName(g,pos,name,dy='1.2em',colFontSize) {
         .attr("y", pos[1])
         .attr('text-anchor','middle')
         .attr('dy',dy)
-        .attr('font-size',`${colFontSize}em`)
+        .attr('font-size',`${colFontSize}px`)
 }

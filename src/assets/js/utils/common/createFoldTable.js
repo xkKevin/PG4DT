@@ -5,8 +5,8 @@
 //deletePos表示删除列的位置
 import {tableRender} from '@/assets/js/config/config'
 export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colFontSize = 1.5,cellFontSize = 1,inExpLen = 2) {
-    let maxCharsPerCol = Math.floor(colWidth / 16 / colFontSize)
-    let maxCharsPerCell = Math.floor(colWidth / 16 / cellFontSize)
+    let maxCharsPerCol = Math.floor(colWidth /colFontSize)
+    let maxCharsPerCell = Math.floor(colWidth / cellFontSize)
     let colors = tableRender.colors
     g.append('text')
         .attr('x',pos[0])
@@ -15,7 +15,7 @@ export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colF
         .attr('text-anchor', 'start')
         .text(table_name)
         .attr('fill','black')
-        .attr('font-size',`${colFontSize}em`)
+        .attr('font-size',`${colFontSize}px`)
     for(let row = 0; row < matrix.length; row++){
         if(row === 0){
             for(let col = 0; col < matrix[0].length; col ++){
@@ -39,7 +39,7 @@ export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colF
                     .text(matrix[row][col].length > maxCharsPerCol ?
                         matrix[row][col].slice(0,maxCharsPerCol) : matrix[row][col])
                     .attr('fill','white')
-                    .attr('font-size',`${colFontSize}em`)
+                    .attr('font-size',`${colFontSize}px`)
             }
         }
         else{
@@ -54,7 +54,7 @@ export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colF
                     .attr('stroke','black')
                     .attr('x',pos[0] + col * colWidth)
                     .attr('y',pos[1] + row * colHeight)
-                    .attr('opacity',0.8)
+                    // .attr('opacity',0.8)
                 g.append('text')
                     .attr('x',pos[0] + col * colWidth)
                     .attr('y',pos[1] + row * colHeight)
@@ -64,7 +64,7 @@ export function drawTableForFold(g,matrix,pos,colWidth,colHeight,table_name,colF
                     .text(matrix[row][col].length > maxCharsPerCell ?
                         matrix[row][col].slice(0,maxCharsPerCell) : matrix[row][col])
                     .attr('fill','white')
-                    .attr('font-size',`${cellFontSize}em`)
+                    .attr('font-size',`${cellFontSize}px`)
             }
         }
     }

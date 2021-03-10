@@ -431,6 +431,7 @@ export default {
       this.show_table_name = state;
     },
     async preparation(transform_specs,nodePos) {
+      console.log("spces: ",transform_specs)
 
       let tableInf = {}
 
@@ -438,11 +439,13 @@ export default {
         let pos = []
         if(typeof(transform_specs[i].input_table_file) === 'string' 
           && typeof(transform_specs[i].output_table_file) === 'string'){
+            let dy = Math.abs(nodePos[transform_specs[i].input_table_file][1] - nodePos[transform_specs[i].output_table_file][1])
+               > svgSize.height / 2 ? svgSize.height / 2 : 0
             pos = [
               (nodePos[transform_specs[i].input_table_file][0] + nodeSize.width 
               + nodePos[transform_specs[i].output_table_file][0]) / 2 - svgSize.width / 2,
               (nodePos[transform_specs[i].input_table_file][1] + nodeSize.height 
-              + nodePos[transform_specs[i].output_table_file][1]) / 2 - svgSize.height - 10
+              + nodePos[transform_specs[i].output_table_file][1]) / 2 - svgSize.height + dy - 10
             ]
         }else if(typeof(transform_specs[i].input_table_file) === 'string'){
           let meetingPosY = nodePos[transform_specs[i].input_table_file][1] + nodeSize.height / 2
@@ -899,6 +902,7 @@ export default {
               input_explict_col,
               rule
             );
+            console.log("sort res: ",res)
             transform_tables_sort(
               res.m1,
               res.m2,
@@ -1058,6 +1062,9 @@ export default {
               input_explict_col,
               output_explict_col
             );
+
+            console.log("res: ",res)
+
             combine_columns_merge(
               res.m1,
               res.m2,

@@ -5,8 +5,8 @@
 //deletePos表示删除列的位置
 import {tableRender} from '@/assets/js/config/config'
 export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_name,colFontSize = 1.5,cellFontSize = 1,direction = 'col',insertPos = -1,deletePos = -1,keepPos = -1) {
-    let maxCharsPerCol = Math.floor(colWidth / 16 / colFontSize)
-    let maxCharsPerCell = Math.floor(colWidth / 16 / cellFontSize)
+    let maxCharsPerCol = Math.floor(colWidth / colFontSize)
+    let maxCharsPerCell = Math.floor(colWidth / cellFontSize)
     let colors = tableRender.colors
     g.append('text')
         .attr('x',pos[0])
@@ -15,7 +15,7 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
         .attr('text-anchor', 'start')
         .text(table_name)
         .attr('fill','black')
-        .attr('font-size',`${colFontSize}em`)
+        .attr('font-size',`${colFontSize}px`)
     for(let row = 0; row < matrix.length; row++){
         //dCol表示删除列时，output glyph中当前列需要左移的位置
         if(row === 0){
@@ -44,7 +44,7 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
                         .text(matrix[row][col].length > maxCharsPerCol ?
                             matrix[row][col].slice(0,maxCharsPerCol) : matrix[row][col])
                         .attr('fill','white')
-                        .attr('font-size',`${colFontSize}em`)
+                        .attr('font-size',`${colFontSize}px`)
                 }
             }
         }
@@ -71,7 +71,7 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
                     .attr('stroke','black')
                     .attr('x',pos[0] + (col - dCol)* colWidth)
                     .attr('y',pos[1] + row * colHeight)
-                    .attr('opacity',0.8)
+                    // .attr('opacity',0.8)
                 //只有存在explicit/implicit并且当前列不是contextual列时，才会显示单元格的内容
                 if(expOrImpCols.length != 1 && expOrImpCols.indexOf(col) != -1) {
                     g.append('text')
@@ -83,7 +83,7 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
                         .text(matrix[row][col].length > maxCharsPerCell ?
                             matrix[row][col].slice(0,maxCharsPerCell) : matrix[row][col])
                         .attr('fill','white')
-                        .attr('font-size',`${cellFontSize}em`)
+                        .attr('font-size',`${cellFontSize}px`)
                 }
             }
         }
