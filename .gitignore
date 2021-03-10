@@ -28,3 +28,8 @@ pnpm-debug.log*
 /backend/data/colnames.txt
 /backend/data/*_exec.txt
 /backend/data/*test.txt
+
+
+# frontend
+public
+src
