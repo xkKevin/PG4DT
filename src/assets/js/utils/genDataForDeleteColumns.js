@@ -45,13 +45,11 @@ function generateDataForKeepColumns(dataIn1_csv, dataOut1_csv, inExpOrImpCol){
         }
         m2.push(tempRow)
     }
-
-    for(let col = 0;col < m1[0].length;col ++){
-        if(inExpOrImpCol.indexOf(col) === -1)m1[0][col] = ''
-    }
-
     for(let col = 0;col < m2[0].length;col++){
         outColors.push(m1[0].indexOf(m2[0][col]))
+    }
+    for(let col = 0;col < m1[0].length;col ++){
+        if(inExpOrImpCol.indexOf(dataIn1_csv[0].indexOf(m1[0][col])) === -1)m1[0][col] = ''
     }
     return {m1,m2,outColors}
 }

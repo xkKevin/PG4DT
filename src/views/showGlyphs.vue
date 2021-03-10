@@ -743,6 +743,7 @@ export default {
               dataOut1_csv,
               input_explict_col
             );
+            console.log("input exp col: ",input_explict_col)
             delete_column(
               res.m1,
               res.m2,
