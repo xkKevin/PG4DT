@@ -5,8 +5,9 @@ import {drawIcon} from "../utils/common/icon"
 import {drawOperationName} from "../utils/common/operationName";
 import {drawTableForColumn} from "../utils/common/createTableForColumn";
 import {fontSize, svgSize} from "../config/config";
+import {drawPcentBar} from "../utils/common/pcentBar"
 
-function transform_columns_replace_na(m1,m2,rule,t1_name,t2_name,inExpOrImp,naPos = [],name,showTableName,pos){
+function transform_columns_replace_na(m1,m2,rule,t1_name,t2_name,inExpOrImp,naPos = [],name,showTableName,pos,xPercents,yPercents){
     if(!showTableName){
         t1_name = ''
         t2_name = ''
@@ -31,10 +32,6 @@ function transform_columns_replace_na(m1,m2,rule,t1_name,t2_name,inExpOrImp,naPo
     .attr('stroke','gray')
     .attr('fill','transparent')
 
-    // var arrow_path = "M0,0 L8,4 L0,8 L4,4 L0,0";
-    // arrowMarker.append("path")
-    //     .attr("d",arrow_path)
-    //     .attr("fill","gray");
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
     .attr('fill','none')
@@ -51,12 +48,13 @@ function transform_columns_replace_na(m1,m2,rule,t1_name,t2_name,inExpOrImp,naPo
     
 
     drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,[],naPos,inExpOrImp)
+    drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
 
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize)
-
+    drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
 
     let inColLenAndMid = drawHighLightCol(g,m1,inExpOrImp,[0,colHeight],colWidth,colHeight)
     let yOfLine = (m1.length + 2) * colHeight
@@ -72,7 +70,7 @@ function transform_columns_replace_na(m1,m2,rule,t1_name,t2_name,inExpOrImp,naPo
     drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }
 
-function transform_columns_mutate(m1,m2,rule,t1_name,t2_name,inExpOrImp,outExpOrImp,name,showTableName,pos){
+function transform_columns_mutate(m1,m2,rule,t1_name,t2_name,inExpOrImp,outExpOrImp,name,showTableName,pos,xPercents,yPercents){
     if(!showTableName){
         t1_name = ''
         t2_name = ''
@@ -108,13 +106,13 @@ function transform_columns_mutate(m1,m2,rule,t1_name,t2_name,inExpOrImp,outExpOr
         .attr('stroke-width',"1px")
         .style("stroke-linecap", "round")
     drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
-
+    drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加加号和箭头
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize)
-
+    drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
 
     let inColLenAndMid = drawHighLightCol(g,m1,inExpOrImp,[0,colHeight],colWidth,colHeight)
     let yOfLine = (m1.length + 2) * colHeight

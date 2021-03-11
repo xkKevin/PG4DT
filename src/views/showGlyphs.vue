@@ -608,7 +608,8 @@ export default {
         switch (transform_specs[i].type) {
           case "create_tables":
             res = generateDataForCreateTable(dataOut1_csv);
-            create_table(res, rule, output_table_name, i, this.show_table_name,pos);
+            create_table(res, rule, output_table_name, i, this.show_table_name,pos,
+              res[0].length / dataOut1_csv[0].length,res.length / dataOut1_csv.length);
             break;
           case "create_columns_merge":
             res = generateDataForCreateColumns(
@@ -626,7 +627,9 @@ export default {
               input_explict_col,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "create_columns_extract":
@@ -645,7 +648,9 @@ export default {
               input_explict_col,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "create_columns_mutate":
@@ -665,7 +670,9 @@ export default {
               res.outExp,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "create_columns_create":
@@ -682,7 +689,9 @@ export default {
               output_table_name,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "create_rows_create":
@@ -705,8 +714,11 @@ export default {
               1,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [m1[0].length / dataIn1_csv[0].length,m2[0].length / dataOut1_csv[0].length],
+              [m1.length / dataIn1_csv.length, m2.length / dataOut1_csv.length]
             );
+           
             break;
           case "create_rows_insert":
             res = generateDataForInsertRows(
@@ -726,7 +738,9 @@ export default {
               res.outIdx,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_tables":
@@ -737,7 +751,9 @@ export default {
               input_table_name,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length]
             );
             break;
           case "delete_columns_select_keep":
@@ -746,7 +762,7 @@ export default {
               dataOut1_csv,
               input_explict_col
             );
-            console.log("input exp col: ",input_explict_col)
+
             delete_column(
               res.m1,
               res.m2,
@@ -756,7 +772,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_columns_select_remove":
@@ -774,7 +792,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_columns_duplicate":
@@ -795,7 +815,9 @@ export default {
               output_table_name,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_columns_dropna":
@@ -811,7 +833,9 @@ export default {
               [res.Row, res.Col],
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_rows_filter":
@@ -829,7 +853,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           // case 'delete_rows_filter_keep':
@@ -859,7 +885,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "delete_rows_slice":
@@ -877,7 +905,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_tables_rearrange":
@@ -896,7 +926,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_tables_sort":
@@ -917,7 +949,9 @@ export default {
               res.outColor,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_replace_na":
@@ -936,7 +970,9 @@ export default {
               res.naRow,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_replace":
@@ -957,7 +993,9 @@ export default {
               res.naRow,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_mutate":
@@ -977,7 +1015,9 @@ export default {
               output_explict_col,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_extract":
@@ -997,7 +1037,9 @@ export default {
               input_explict_col,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_merge":
@@ -1017,7 +1059,9 @@ export default {
               output_explict_col,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_columns_rename":
@@ -1036,7 +1080,9 @@ export default {
               res.expAfter,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "combine_columns_merge":
@@ -1057,7 +1103,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "combine_columns_mutate":
@@ -1081,7 +1129,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           // case 'combine_rows_sum':
@@ -1105,7 +1155,9 @@ export default {
               output_table_name,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "combine_rows_interpolate":
@@ -1123,7 +1175,9 @@ export default {
               res.naPos,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "transform_rows_edit":
@@ -1141,7 +1195,9 @@ export default {
               res.rowIndex,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "separate_tables_subset":
@@ -1162,7 +1218,9 @@ export default {
               res.outColor2,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataIn2_csv[0].length,res.m3[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv,res.m3.length / dataOut1_csv.length]
             );
             break;
           case "separate_tables_decompose":
@@ -1177,7 +1235,10 @@ export default {
               input_table_name,
               i,
               this.show_table_name,
-              pos
+              pos,
+              //没有仔细看，可能有问题
+                [res.m1[0].length / dataIn1_csv[0].length,res.tables[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.tables.length / dataOut1_csv.length]
             );
             break;
           case "separate_tables_decompose_q":
@@ -1199,7 +1260,10 @@ export default {
               res.outColor2,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOu1_csv[0].length,res.m3[0].length / dataOut2_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOu1_csv,res.m3.length / dataOut2_csv.length]
+            
             );
             break;
           case "separate_tables_split":
@@ -1220,7 +1284,10 @@ export default {
               res.colors2,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOu1_csv[0].length,res.m3[0].length / dataOut2_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOu1_csv,res.m3.length / dataOut2_csv.length]
+            
             );
             break;
           case "separate_columns":
@@ -1240,7 +1307,9 @@ export default {
               res.outExp,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "separate_rows":
@@ -1258,7 +1327,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length,res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
           case "combine_tables_extend":
@@ -1304,7 +1375,9 @@ export default {
               res.outColors,
               i,
               this.show_table_name,
-              pos
+              pos,
+                [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
             );
             break;
           case "combine_tables_left_join":
@@ -1331,7 +1404,10 @@ export default {
               res.outColor,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+            
             );
             break;
           case "combine_tables_full_join":
@@ -1357,7 +1433,10 @@ export default {
               res.outColor,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+            
             ),
               this.show_table_name;
             break;
@@ -1381,7 +1460,10 @@ export default {
               res.outColor,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataIn2_csv[0].length, res.m3[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataIn2_csv.length, res.m3.length / dataOut1_csv.length]
+            
             );
             break;
           case "transform_tables_fold":
@@ -1400,7 +1482,10 @@ export default {
               input_explict_col.length,
               i,
               this.show_table_name,
-              pos
+              pos,
+               [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
+            
             );
             break;
           case "transform_tables_unfold":
@@ -1429,7 +1514,9 @@ export default {
               diffVals.size,
               i,
               this.show_table_name,
-              pos
+              pos,
+              [res.m1[0].length / dataIn1_csv[0].length, res.m2[0].length / dataOut1_csv[0].length],
+              [res.m1.length / dataIn1_csv.length, res.m2.length / dataOut1_csv.length]
             );
             break;
         }

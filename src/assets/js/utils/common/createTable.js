@@ -5,8 +5,8 @@
 //deletePos表示删除列的位置
 import {tableRender} from '@/assets/js/config/config'
 export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_name,colFontSize = 1.5,cellFontSize = 1,direction = 'col',insertPos = -1,deletePos = -1,keepPos = -1) {
-    let maxCharsPerCol = Math.floor(colWidth / colFontSize)
-    let maxCharsPerCell = Math.floor(colWidth / cellFontSize)
+    // let maxCharsPerCol = Math.floor(colWidth / colFontSize)
+    // let maxCharsPerCell = Math.floor(colWidth / cellFontSize)
     let colors = tableRender.colors
     g.append('text')
         .attr('x',pos[0])
@@ -35,16 +35,6 @@ export function drawTable(g,matrix,expOrImpCols,pos,colWidth,colHeight,table_nam
                     .attr('x',pos[0] + (col -dCol)* colWidth)
                     .attr('y',pos[1] + row * colHeight)
                 if(expOrImpCols.indexOf(col) !== -1){
-                    // g.append('text')
-                    //     .attr('x',pos[0] + (col -dCol) * colWidth)
-                    //     .attr('y',pos[1] + row * colHeight)
-                    //     .attr('dx',colWidth / 2)
-                    //     .attr('dy',colHeight / 3 * 2)
-                    //     .attr('text-anchor', 'middle')
-                    //     .text(matrix[row][col].length > maxCharsPerCol ?
-                    //         matrix[row][col].slice(0,maxCharsPerCol) : matrix[row][col])
-                    //     .attr('fill','white')
-                    //     .attr('font-size',`${colFontSize}px`)
                     if(matrix[row][col].length <= 5){
                         g.append('text')
                         .attr('x',pos[0] + col * colWidth)

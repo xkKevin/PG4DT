@@ -7,8 +7,9 @@ import {fontSize, svgSize} from "../config/config";
 import {drawTable} from "../utils/common/createTable";
 import {drawHighLightCol} from "../utils/common/highLightCol";
 import {drawLine} from "../utils/common/dashedLine";
+import {drawPcentBar} from '../utils/common/pcentBar'
 
-function delete_column(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName,pos) {
+function delete_column(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName,pos,xPercents,yPercents) {
     //输入：
     //input和output的矩阵
     //input矩阵中的哪些列进行sum操作
@@ -54,12 +55,15 @@ function delete_column(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName,p
         .style("stroke-linecap", "round")
     // drawTable(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'col')
     drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
+    drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加加号和箭头
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     // drawTable(g,m2,expOrImpCols,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col')
     drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColors)
+    drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
+
     drawDashRect(g,[(m1[0].length + m2[0].length + 1) * colWidth,colHeight],m1.length * colHeight,colWidth)
 
     let yOfLine = (m1.length + 2) * colHeight
@@ -67,7 +71,7 @@ function delete_column(m1,m2,rule,t1_name,t2_name,outColors,name,showTableName,p
     drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }
 
-function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name,showTableName,pos) {
+function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name,showTableName,pos,xPercents,yPercents) {
     //输入：
     //
     //
@@ -113,12 +117,14 @@ function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name,showTa
         if(m1[0][col] == duplicatedVal)expOrImpCols.push(col)
     }
     drawTable(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'col')
-
+    drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加箭头
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     drawTable(g,m2,oriExpOrImpCols,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col')
+    drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
+    
     drawDashRect(g,[(m1[0].length + 1) * colWidth,colHeight],m2.length * colHeight,m1[0].length * colWidth)
 
     let inColLenAndMid = drawHighLightCol(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight)
@@ -141,7 +147,7 @@ function delete_duplicate(m1,m2,oriExpOrImpCols,rule,t1_name,t2_name,name,showTa
     drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)
 }
 
-function delete_dropna(m1,m2,rule,t1_name,t2_name,inColors,outColors,naPos,name,showTableName,pos) {
+function delete_dropna(m1,m2,rule,t1_name,t2_name,inColors,outColors,naPos,name,showTableName,pos,xPercents,yPercents) {
     if(!showTableName){
         t1_name = ''
         t2_name = ''
@@ -181,12 +187,15 @@ function delete_dropna(m1,m2,rule,t1_name,t2_name,inColors,outColors,naPos,name,
 
     // drawTable(g,m1,expOrImpCols,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'col')
     drawTableForColumn(g,m1,[0,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,inColors,naPos)
+    drawPcentBar(g,[0,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     // 添加加号和箭头
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth, colHeight,arrowUrl)
 
     // drawTable(g,m1,[],[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'col',-1,expOrImpCols[0])
     drawTableForColumn(g,m2,[(m1[0].length + 1) * colWidth,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColors)
+    drawPcentBar(g,[(m1[0].length + 1) * colWidth,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
+
     drawDashRect(g,[(m1[0].length + 1) * colWidth,colHeight],m1.length * colHeight,(m2[0].length + 1) * colWidth)
 
     let yOfLine = (m1.length + 2) * colHeight

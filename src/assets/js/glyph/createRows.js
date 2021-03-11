@@ -1,13 +1,13 @@
 import * as d3 from 'd3'
-import {drawTable} from "../utils/common/createTable";
 import {drawIcon} from "../utils/common/icon";
 import {drawIndex} from "../utils/common/setIndex";
 import {drawOperationName} from "../utils/common/operationName";
 import {drawDashRect} from "../utils/common/dashedRect";
 import {fontSize, svgSize} from "../config/config";
 import {drawTableForRow} from "../utils/common/createTableForRow";
+import { drawPcentBar } from '../utils/common/pcentBar';
 
-function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName,pos){
+function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName,pos,xPercents,yPercents){
     //insertPos表示新行的位置，默认值为-1，表示在最后插入，0表示在首行，1表示在中间某行
     //在最后插入时，即insertPos为-1时，默认不显示行号
     if(!showTableName){
@@ -47,6 +47,8 @@ function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName
     let inputX = insertPos === -1 ? 0 : 0.5 * colWidth
     // drawTable(g,m1,[],[inputX,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'row')
     drawTableForRow(g,m1,[inputX,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
+    drawPcentBar(g,[inputX,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
+   
     drawDashRect(g,[inputX,(m1.length + 1) * colHeight],colHeight,m1[0].length * colWidth)
     let plusUrl = require('../../images/plus.png')
     drawIcon(g,[inputX + (m1[0].length - 0.8) * colWidth / 2,(m1.length + 1.1) * colHeight],0.8 * colWidth,0.8 * colHeight,plusUrl)
@@ -55,6 +57,8 @@ function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName
     let outputX = insertPos === -1 ? (m1[0].length + 1) * colWidth : (m1[0].length + 1.5)* colWidth
     // drawTable(g,m2,[],[inputX + outputX,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'row',insertPos)
     drawTableForRow(g,m2,[inputX + outputX,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize)
+    drawPcentBar(g,[inputX + outputX,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
+   
     if(insertPos != -1){
         drawIndex(g,[0,colHeight * 2],m1.length - 1,colWidth / 2,colHeight,cellFontSize)
         drawIndex(g,[(m1[0].length + 1.2) * colWidth,colHeight * 2],m2.length - 1,colWidth,colHeight,cellFontSize)
@@ -63,7 +67,7 @@ function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName
 }
 
 
-function create_row_insert(m1, m2, rule, t1_name, t2_name,inColor,outColor,inIdx,outIdx,name,showTableName,pos) {
+function create_row_insert(m1, m2, rule, t1_name, t2_name,inColor,outColor,inIdx,outIdx,name,showTableName,pos,xPercents,yPercents) {
     if(!showTableName){
         t1_name = ''
         t2_name = ''
@@ -109,6 +113,7 @@ function create_row_insert(m1, m2, rule, t1_name, t2_name,inColor,outColor,inIdx
     let outDx = 0.5 * colWidth
     drawIndex(g,[0,2 * colHeight],inIdx,0.5 * colWidth,colHeight,cellFontSize)
     drawTableForRow(g,m1,[inDx,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,inColor)
+    drawPcentBar(g,[inDx,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
     drawDashRect(g,[inDx,(m1.length + 1) * colHeight],colHeight,m1[0].length * colWidth)
 
     let plusUrl = require('../../images/plus.png')
@@ -119,6 +124,7 @@ function create_row_insert(m1, m2, rule, t1_name, t2_name,inColor,outColor,inIdx
 
     drawIndex(g,[inDx + (m1[0].length + 1) * colWidth,2 * colHeight],outIdx,0.5 * colWidth,colHeight,cellFontSize)
     drawTableForRow(g,m2,[(m1[0].length + 1) * colWidth + inDx + outDx,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColor)
+    drawPcentBar(g,[(m1[0].length + 1) * colWidth + inDx + outDx,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
 
     let yOfLine = (m2.length + 2) * colHeight
     drawOperationName(g,[width / 2,yOfLine],rule,'1.2em',colFontSize)

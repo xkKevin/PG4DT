@@ -4,8 +4,9 @@ import {drawIndex} from "../utils/common/setIndex";
 import {drawOperationName} from "../utils/common/operationName";
 import {drawTableForRow} from "../utils/common/createTableForRow";
 import {fontSize, svgSize} from "../config/config";
+import {drawPcentBar} from "../utils/common/pcentBar"
 
-export function transform_rows_edit(m1,m2,rule,t1_name,t2_name,idx,name,showTableName,pos) {
+export function transform_rows_edit(m1,m2,rule,t1_name,t2_name,idx,name,showTableName,pos,xPercents,yPercents) {
     if(!showTableName){
         t1_name = ''
         t2_name = ''
@@ -50,10 +51,14 @@ export function transform_rows_edit(m1,m2,rule,t1_name,t2_name,idx,name,showTabl
 
     let inputX = 0.5 * colWidth
     drawTableForRow(g,m1,[inputX,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
+    drawPcentBar(g,[inputX,colHeight],m1[0].length * colWidth,m1.length * colHeight,colHeight,xPercents[0],yPercents[0])
+
     let arrowUrl = require('../../images/arrow.png')
     drawIcon(g,[(m1[0].length + 0.05) * colWidth + inputX,(1 + m1.length / 2) * colHeight - colHeight / 2],0.8 * colWidth,colHeight,arrowUrl)
     let outputX = (m1[0].length + 1.5)* colWidth
     drawTableForRow(g,m2,[inputX + outputX,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize)
+    drawPcentBar(g,[inputX + outputX,colHeight],m2[0].length * colWidth,m2.length * colHeight,colHeight,xPercents[1],yPercents[1])
+    
     drawIndex(g,[0,colHeight * 2],idx,colWidth / 2,colHeight,cellFontSize)
     drawIndex(g,[(m1[0].length + 1.2) * colWidth,colHeight * 2],idx,colWidth,colHeight,cellFontSize)
 
