@@ -44,15 +44,17 @@ function create_row(m1,m2,rule,t1_name,t2_name,insertPos = -1,name,showTableName
         .attr('stroke','gray')
         .attr('stroke-width',"1px")
         .style("stroke-linecap", "round")
-    let inputX = insertPos == -1 ? 0 : 0.5 * colWidth
-    drawTable(g,m1,[],[inputX,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'row')
+    let inputX = insertPos === -1 ? 0 : 0.5 * colWidth
+    // drawTable(g,m1,[],[inputX,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,'row')
+    drawTableForRow(g,m1,[inputX,colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
     drawDashRect(g,[inputX,(m1.length + 1) * colHeight],colHeight,m1[0].length * colWidth)
     let plusUrl = require('../../images/plus.png')
     drawIcon(g,[inputX + (m1[0].length - 0.8) * colWidth / 2,(m1.length + 1.1) * colHeight],0.8 * colWidth,0.8 * colHeight,plusUrl)
     let arrowUrl = require('../../images/arrow.png')
-    drawIcon(g,[(m1[0].length + 0.05) * colWidth + inputX,(1 + m2.length / 2) * colHeight - colHeight / 2],0.8 * colWidth,colHeight,arrowUrl)
-    let outputX = insertPos == -1 ? (m1[0].length + 1) * colWidth : (m1[0].length + 1.5)* colWidth
-    drawTable(g,m2,[],[inputX + outputX,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'row',insertPos)
+    drawIcon(g,[(m1[0].length + 0.05) * colWidth + inputX * 1.6,(1 + m2.length / 2) * colHeight - colHeight / 2],0.8 * colWidth,colHeight,arrowUrl)
+    let outputX = insertPos === -1 ? (m1[0].length + 1) * colWidth : (m1[0].length + 1.5)* colWidth
+    // drawTable(g,m2,[],[inputX + outputX,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,'row',insertPos)
+    drawTableForRow(g,m2,[inputX + outputX,colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize)
     if(insertPos != -1){
         drawIndex(g,[0,colHeight * 2],m1.length - 1,colWidth / 2,colHeight,cellFontSize)
         drawIndex(g,[(m1[0].length + 1.2) * colWidth,colHeight * 2],m2.length - 1,colWidth,colHeight,cellFontSize)

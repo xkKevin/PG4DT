@@ -4,7 +4,7 @@ import {drawOperationName} from "../utils/common/operationName";
 import {drawTableForRow} from "../utils/common/createTableForRow";
 import {fontSize, svgSize} from "../config/config";
 
-function combine_tables_extend(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColors,name,showTableName,pos){
+function combine_tables_extend(m1,m2,m3,rule,t1_name,t2_name,t3_name, inColors1,inColors2,outColors,name,showTableName,pos){
     if(!showTableName){
         t1_name = ''
         t2_name = ''
@@ -13,7 +13,7 @@ function combine_tables_extend(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColors,n
 
     let width = svgSize.width
     let height = svgSize.height
-    let colWidth = width / (2 * m1[0].length + 1)
+    let colWidth = width / (Math.max(m1[0].length,m2[0].length) + m3[0].length + 1)
     let colHeight =  height / (m1.length + m2.length + 4)
     let colFontSize = fontSize.colFontSize
     let cellFontSize = fontSize.cellFontSize
@@ -40,13 +40,13 @@ function combine_tables_extend(m1,m2,m3,rule,t1_name,t2_name,t3_name,outColors,n
         .attr('stroke','gray')
         .attr('stroke-width',"1px")
         .style("stroke-linecap", "round")
-    drawTableForRow(g,m1,[0, colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize)
-    drawTableForRow(g,m2,[0, 2.5 * colHeight + m1.length * colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,outColors)
+    drawTableForRow(g,m1,[0, colHeight],colWidth,colHeight,t1_name,colFontSize,cellFontSize,inColors1)
+    drawTableForRow(g,m2,[0, 2.5 * colHeight + m1.length * colHeight],colWidth,colHeight,t2_name,colFontSize,cellFontSize,inColors2)
 
     let arrowUrl = require('../../images/arrow.png')
-    drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2 + colHeight * 2],0.8 * colWidth, colHeight,arrowUrl)
+    drawIcon(g,[(m1[0].length + 0.1) * colWidth,(1 + m1.length / 2) * colHeight - colHeight / 2 + colHeight * 3],0.8 * colWidth, colHeight,arrowUrl)
 
-    drawTableForRow(g,m3,[(m1[0].length + 1) * colWidth,2 * colHeight],colWidth,colHeight,t3_name,colFontSize,cellFontSize)
+    drawTableForRow(g,m3,[(m1[0].length + 1) * colWidth,4 * colHeight],colWidth,colHeight,t3_name,colFontSize,cellFontSize,outColors)
 
 
     let yOfLine = (m1.length + m2.length + 3) * colHeight

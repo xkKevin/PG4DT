@@ -173,7 +173,9 @@ function generateDataForCreateColumns_create(dataIn1_csv, dataOut1_csv, outExpOr
     for(let row = 1;row <= Math.min(3,dataIn1_csv.length - 1);row ++){
         let tempRow = []
         for(let col = 0;col < dataIn1_csv[0].length;col++){
-            if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1) tempRow.push('')
+            if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1) {
+                tempRow.push('')
+            }
         }
         m1.push(tempRow)
     }
@@ -181,7 +183,14 @@ function generateDataForCreateColumns_create(dataIn1_csv, dataOut1_csv, outExpOr
     for(let row = 1;row <= Math.min(3,dataOut1_csv.length - 1);row ++){
         let tempRow = []
         for(let col = 0;col < dataOut1_csv[0].length;col++){
-            if(m2[0].indexOf(dataOut1_csv[0][col]) !== -1)tempRow.push('')
+            if(m2[0].indexOf(dataOut1_csv[0][col]) !== -1){
+                if(outExpOrImpCol.indexOf(col) !== -1){
+                    tempRow.push(dataOut1_csv[row][col])
+                }
+                else{
+                    tempRow.push('')
+                }
+            }
         }
         m2.push(tempRow)
     }

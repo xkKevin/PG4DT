@@ -576,6 +576,13 @@ def generate_transform_specs(data_path, script_name):
             else:
                 specs["input_table_name"].append(params['none'][pi])
                 pi += 1
+            ######################################################
+            if params.get("by.x"):
+                specs["input_explict_col"] = []
+                specs["input_explict_col"].append(remove_quote(params["by.x"]))
+            if params.get("by.y"):
+                specs["input_explict_col"].append(remove_quote(params["by.y"]))
+            ######################################################
             specs["input_table_file"] = [var2table[specs["input_table_name"][0]], var2table[specs["input_table_name"][1]]]
             specs["output_table_name"] = output_tbl
             specs["output_table_file"] = "table%d.csv" % line_num

@@ -1,59 +1,41 @@
+import {extractCols} from "./common/extractContextualCols";
  function generateDataForTablesExtend(dataIn1_csv, dataIn2_csv,dataOut1_csv){
-    let m1 = [[]],m2 = [[]],m3 = [[]],outColors = []
+    let m1 = [[]],m2 = [[]],m3 = [[]]
     for(let col = 0;col < Math.min(dataIn1_csv[0].length,3);col++){
         m1[0].push('')
         m2[0].push('')
         m3[0].push('')
     }
 
-    if(dataIn1_csv.length >= 3){
-        for(let row = 0;row < 2;row++){
-            let tempRow = []
-            for(let col = 0;col < m1[0].length;col++){
-                tempRow.push('')
-            }
-            m1.push(tempRow)
-            m3.push(tempRow)
-        }
-        outColors = [2]
-        let tempRow = []
-        for(let col = 0;col < m1[0].length;col++){
-            tempRow.push('')
-        }
-        m2.push(tempRow)
-        m3.push(tempRow)
-    }else if(dataIn2_csv.length >= 3){
+    console.log("m1: ",m1,m2,m3)
+
+    for(let row = 1;row < Math.min(4,dataIn1_csv.length);row++){
         let tempRow = []
         for(let col = 0;col < m1[0].length;col++){
             tempRow.push('')
         }
         m1.push(tempRow)
         m3.push(tempRow)
-        for(let row = 0;row < 2;row++){
-            let tempRow = []
-            for(let col = 0;col < m1[0].length;col++){
-                tempRow.push('')
-            }
-            m2.push(tempRow)
-            m3.push(tempRow)
-        }
-        outColors = [1,2]
-    }else{
-        let tempRow = []
-        for(let col = 0;col < m1[0].length;col++){
-            tempRow.push('')
-        }
-        m1.push(tempRow)
-        m3.push(tempRow)
-        tempRow = []
-        for(let col = 0;col < m1[0].length;col++){
-            tempRow.push('')
-        }
-        m2.push(tempRow)
-        m3.push(tempRow)
-        outColors = [1]
     }
-    return {m1,m2,m3,outColors}
+
+
+    console.log("m1: ",m1,m2,m3)
+    for(let row = 1;row < Math.min(4,dataIn2_csv.length);row++){
+        let tempRow = []
+        for(let col = 0;col < m2[0].length;col++){
+            tempRow.push('')
+        }
+        m2.push(tempRow)
+        m3.push(tempRow)
+    }
+
+    console.log("m1: ",m1,m2,m3)
+    let inColors1 = [],inColors2 = [],outColors = []
+    for(let row = 1;row < m2.length;row++){
+        inColors2.push(m1.length - 2 + row)
+    }
+   
+    return {m1,m2,m3,inColors1,inColors2,outColors}
 }
 
 function cmpRows(r1,r2,inExpCols) {
@@ -876,5 +858,136 @@ function generateDataForInnerJoin(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOr
     return {m1,m2,m3,inColors2,outColor}
 }
 
-export {generateDataForInnerJoin,generateDataForFullJoin,generateDataForLeftJoin,generateDataForTablesExtend,generateDataForLeftJoin_2,generateDataForFullJoin_2}
+function generateDataForTablesExtend_withExplicitCol(dataIn1_csv, dataIn2_csv, dataOut1_csv,inExpOrImpCol){
+    // inExpOrImpCol保存的是值，不是下标
+    let contextualCols1 = extractCols(Array.from(dataIn1_csv[0]),[dataIn1_csv[0].indexOf(inExpOrImpCol[0])],[1,2,3])
+    let contextualCols2 = extractCols(Array.from(dataIn2_csv[0]),[dataIn2_csv[0].indexOf(inExpOrImpCol[1])],[1,2,3])
+    let m1 = [[]],m2 = [[]],m3 = [[]]
+    m1[0].push(inExpOrImpCol[0])
+    m2[0].push(inExpOrImpCol[1])
+    m3[0].push(inExpOrImpCol[0])
+    contextualCols1.forEach(val =>{
+        m1[0].push(val)
+        m3[0].push(val)
+    })
+
+    contextualCols2.forEach(val => {
+        m2[0].push(val)
+        m3[0].push(val)
+    })
+
+    m1[0].sort(function(a,b){
+        return dataIn1_csv[0].indexOf(a) - dataIn1_csv[0].indexOf(b)
+    })
+    m2[0].sort(function(a,b){
+        return dataIn2_csv[0].indexOf(a) - dataIn2_csv[0].indexOf(b)
+    })
+    m3[0].sort(function(a,b){
+        return dataOut1_csv[0].indexOf(a) - dataOut1_csv[0].indexOf(b)
+    })
+
+    let publicVals = {}
+    let inExp1 = dataIn1_csv[0].indexOf(inExpOrImpCol[0])
+    let inExp2 = dataIn2_csv[0].indexOf(inExpOrImpCol[1])
+    let outExp = dataOut1_csv[0].indexOf(inExpOrImpCol[0])
+    let valuesToShow = []
+    for(let row = 1;row < dataIn1_csv.length;row++){
+        if(publicVals[dataIn1_csv[row][inExp1]]){
+            publicVals[dataIn1_csv[row][inExp1]] += 1
+        }else{
+            publicVals[dataIn1_csv[row][inExp1]] = 1
+        }
+    }
+    for(let row = 1;row < dataIn2_csv.length;row++){
+        if(publicVals[dataIn2_csv[row][inExp2]]){
+            publicVals[dataIn2_csv[row][inExp2]] += 1
+        }else{
+            publicVals[dataIn2_csv[row][inExp2]] = 1
+        }
+    }
+    for(let key in publicVals){
+        if(publicVals[key] >= 2 && valuesToShow.length < 3){
+            valuesToShow.push(key)
+        }
+    }
+    // console.log("values to show: ",valuesToShow)
+    // console.log(inExpOrImpCol,inExp1,inExp2,outExp)
+    let hasHad1 = {},hasHad2 = {},hasHad3 ={}
+    let rows1 = [],rows2 = [],rows3 = []
+    let inColors1 = [],inColors2 = [],outColors = []
+    for(let row = 1;row < dataIn1_csv.length;row++){
+        if(hasHad1[dataIn1_csv[row][inExp1]])continue
+        if(valuesToShow.indexOf(dataIn1_csv[row][inExp1]) !== -1){
+            rows1.push(row)
+            inColors1.push(valuesToShow.indexOf(dataIn1_csv[row][inExp1]))
+            hasHad1[dataIn1_csv[row][inExp1]] = 1
+        }
+    }
+    for(let row = 1;row < dataIn2_csv.length;row++){
+        if(hasHad2[dataIn2_csv[row][inExp2]])continue
+        if(valuesToShow.indexOf(dataIn2_csv[row][inExp2]) !== -1){
+            rows2.push(row)
+            inColors2.push(valuesToShow.indexOf(dataIn2_csv[row][inExp2]))
+            hasHad2[dataIn2_csv[row][inExp2]] = 1
+        }
+    }
+    for(let row = 1;row < dataOut1_csv.length;row++){
+        if(hasHad3[dataOut1_csv[row][outExp]])continue
+        if(valuesToShow.indexOf(dataOut1_csv[row][outExp]) !== -1){
+            rows3.push(row)
+            outColors.push(valuesToShow.indexOf(dataOut1_csv[row][outExp]))
+            hasHad3[dataOut1_csv[row][outExp]] = 1
+        }
+    }
+    for(let idx = 0;idx < rows1.length;idx++){
+        let tempRow = []
+        for(let col = 0;col < dataIn1_csv[0].length;col++){
+            if(m1[0].indexOf(dataIn1_csv[0][col]) !== -1){
+                if(col === inExp1)tempRow.push(dataIn1_csv[rows1[idx]][col])
+                else{
+                    tempRow.push('')
+                }
+            }
+        }
+        m1.push(tempRow)
+    }
+    for(let idx = 0;idx < rows2.length;idx++){
+        let tempRow = []
+        for(let col = 0;col < dataIn2_csv[0].length;col++){
+            if(m2[0].indexOf(dataIn2_csv[0][col]) !== -1){
+                if(col === inExp2)tempRow.push(dataIn2_csv[rows2[idx]][col])
+                else{
+                    tempRow.push('')
+                }
+            }
+        }
+        m2.push(tempRow)
+    }
+    for(let idx = 0;idx < rows3.length;idx++){
+        let tempRow = []
+        for(let col = 0;col < dataOut1_csv[0].length;col++){
+            if(m3[0].indexOf(dataOut1_csv[0][col]) !== -1){
+                if(col === outExp)tempRow.push(dataOut1_csv[rows3[idx]][col])
+                else{
+                    tempRow.push('')
+                }
+            }
+        }
+        m3.push(tempRow)
+    }
+    for(let col = 0;col < m1[0].length;col++){
+        if(m1[0][col] !== inExpOrImpCol[0])m1[0][col] = ''
+    }
+    for(let col = 0;col < m2[0].length;col++){
+        if(m2[0][col] !== inExpOrImpCol[1])m2[0][col] = ''
+    }
+    for(let col = 0;col < m3[0].length;col++){
+        if(m3[0][col] !== inExpOrImpCol[0])m3[0][col] = ''
+    }
+    return {m1,m2,m3,inColors1,inColors2,outColors}
+}
+
+export {generateDataForInnerJoin,generateDataForFullJoin,generateDataForLeftJoin,
+    generateDataForTablesExtend,generateDataForLeftJoin_2,generateDataForFullJoin_2,
+    generateDataForTablesExtend_withExplicitCol}
 

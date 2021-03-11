@@ -46,7 +46,7 @@ export function create_table(matrix,rule,t1_name,name,showTableName,pos){
     .style("stroke-linecap", "round")
     // .attr('opacity','0.5')
 
-    drawDashRect(g,[0,colHeight],matrix.length * colHeight,matrix[0].length * colWidth)
+    drawDashRect(g,[0,colHeight],matrix.length * colHeight,matrix[0].length * colWidth,"white")
 
     // 添加加号和箭头
     let plusUrl = require('../../images/plus.png')

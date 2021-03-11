@@ -3,8 +3,8 @@ const svgSize = {
     'height':'150'
 }
 const fontSize = {
-    'colFontSize':7,
-    'cellFontSize':7
+    'colFontSize':5,
+    'cellFontSize':5
 }
 
 const nodeSize = {

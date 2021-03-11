@@ -30,16 +30,40 @@ export function drawTableForColumn(g,matrix,pos,colWidth,colHeight,table_name,co
                     .attr('x',pos[0] + col * colWidth)
                     .attr('y',pos[1] + row * colHeight)
 
-                g.append('text')
+                // g.append('text')
+                //     .attr('x',pos[0] + col * colWidth)
+                //     .attr('y',pos[1] + row * colHeight)
+                //     .attr('dx',colWidth / 2)
+                //     .attr('dy',colHeight / 3 * 2)
+                //     .attr('text-anchor', 'middle')
+                //     .text(matrix[row][col].length > maxCharsPerCol ?
+                //         matrix[row][col].slice(0,maxCharsPerCol) : matrix[row][col])
+                //     .attr('fill','white')
+                //     .attr('font-size',`${colFontSize}px`)
+                if(matrix[row][col].length <= 5){
+                    g.append('text')
                     .attr('x',pos[0] + col * colWidth)
                     .attr('y',pos[1] + row * colHeight)
                     .attr('dx',colWidth / 2)
                     .attr('dy',colHeight / 3 * 2)
                     .attr('text-anchor', 'middle')
-                    .text(matrix[row][col].length > maxCharsPerCol ?
-                        matrix[row][col].slice(0,maxCharsPerCol) : matrix[row][col])
+                    .text(matrix[row][col])
                     .attr('fill','white')
-                    .attr('font-size',`${colFontSize}px`)
+                    .attr('font-size',`${colWidth / 4}px`)
+                }else{
+                    let textToShow = matrix[row][col].slice(0,4)
+                    g.append('text')
+                    .attr('x',pos[0] + col * colWidth)
+                    .attr('y',pos[1] + row * colHeight)
+                    .attr('dx',colWidth / 2)
+                    .attr('dy',colHeight / 3 * 2)
+                    .attr('text-anchor', 'middle')
+                    .text(textToShow + '…')
+                    .attr('fill','white')
+                    .attr('font-size',`${colWidth / 4}px`)
+                    .append("svg:title")
+                    .text(matrix[row][col])
+                }
             }
         }
         else{
@@ -59,16 +83,40 @@ export function drawTableForColumn(g,matrix,pos,colWidth,colHeight,table_name,co
                     .attr('x',pos[0] + col * colWidth)
                     .attr('y',pos[1] + row * colHeight)
                     // .attr('opacity',0.8)
-                g.append('text')
+                // g.append('text')
+                //     .attr('x',pos[0] + col * colWidth)
+                //     .attr('y',pos[1] + row * colHeight)
+                //     .attr('dx',colWidth / 2)
+                //     .attr('dy',colHeight / 3 * 2)
+                //     .attr('text-anchor', 'middle')
+                //     .text(matrix[row][col].length > maxCharsPerCell ?
+                //         matrix[row][col].slice(0,maxCharsPerCell) : matrix[row][col])
+                //     .attr('fill','white')
+                //     .attr('font-size',`${cellFontSize}px`)
+                if(matrix[row][col].length <= 5){
+                    g.append('text')
                     .attr('x',pos[0] + col * colWidth)
                     .attr('y',pos[1] + row * colHeight)
                     .attr('dx',colWidth / 2)
                     .attr('dy',colHeight / 3 * 2)
                     .attr('text-anchor', 'middle')
-                    .text(matrix[row][col].length > maxCharsPerCell ?
-                        matrix[row][col].slice(0,maxCharsPerCell) : matrix[row][col])
+                    .text(matrix[row][col])
                     .attr('fill','white')
-                    .attr('font-size',`${cellFontSize}px`)
+                    .attr('font-size',`${colWidth / 4}px`)
+                }else{
+                    let textToShow = matrix[row][col].slice(0,4)
+                    g.append('text')
+                    .attr('x',pos[0] + col * colWidth)
+                    .attr('y',pos[1] + row * colHeight)
+                    .attr('dx',colWidth / 2)
+                    .attr('dy',colHeight / 3 * 2)
+                    .attr('text-anchor', 'middle')
+                    .text(textToShow + '…')
+                    .attr('fill','white')
+                    .attr('font-size',`${colWidth / 4}px`)
+                    .append("svg:title")
+                    .text(matrix[row][col])
+                }
             }
         }
     }

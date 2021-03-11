@@ -230,6 +230,7 @@ import {
   generateDataForInnerJoin,
   generateDataForLeftJoin_2,
   generateDataForTablesExtend,
+  generateDataForTablesExtend_withExplicitCol
 } from "@/assets/js/utils/genDataForCombineTables";
 import { getCsv } from "@/assets/js/utils/common/getCsv";
 import {getGraphs} from '@/assets/js/utils/renderTree/getLayout'
@@ -378,9 +379,8 @@ export default {
             })
 
             let {groups,edges} = getComponents(specsToHandle)
-            console.log("groups and edges: ",groups,edges)
+            
             let graphs = getGraphs(groups,edges)
-            console.log("graphs: ",graphs)
 
             let svgWidth = 0,svgHeight = 0
 
@@ -420,6 +420,7 @@ export default {
               this.$store.commit("setG",g)
     
               this.preparation(specsToHandle,nodePos)
+
             })
           }
         })
@@ -685,14 +686,16 @@ export default {
             );
             break;
           case "create_rows_create":
-            let m1 = [],
-              m2 = [];
-            dataIn1_csv.forEach((d) => {
-              if (m1.length <= 3) m1.push(d);
-            });
-            dataOut1_csv.forEach((d) => {
-              if (m2.length <= 4) m2.push(d);
-            });
+            let m1 = [],m2 = [];
+            for(let row = 0;row <= Math.min(2,dataIn1_csv.length - 1) ;row++){
+              let tempRow = []
+              for(let col = 0;col < Math.min(3,dataIn1_csv[0].length);col++){
+                tempRow.push("")
+              }
+              m1.push(tempRow)
+              m2.push(tempRow)
+            }
+            m2.push(dataOut1_csv[dataOut1_csv.length - 1])
             create_row(
               m1,
               m2,
@@ -845,6 +848,7 @@ export default {
               dataOut1_csv,
               input_explict_col
             );
+            console.log(res)
             delete_duplicate_row_partColumn(
               res.m1,
               res.m2,
@@ -1086,18 +1090,12 @@ export default {
           //   break
           case "combine_rows_summarize":
             //这个操作再看看
-            if (input_explict_col.length === 0) {
-              input_explict_col = Array.from(
-                new Array(dataIn1_csv[0].length),
-                (x, i) => i
-              );
-            }
             res = generateDataForGroupSummarize(
               dataIn1_csv,
               dataOut1_csv,
               input_explict_col,
               output_explict_col,
-              input_implict_col
+              // input_implict_col
             );
             combine_rows_sum(
               res.m1,
@@ -1264,11 +1262,35 @@ export default {
             );
             break;
           case "combine_tables_extend":
-            res = generateDataForTablesExtend(
-              dataIn1_csv,
-              dataIn2_csv,
-              dataOut1_csv
-            );
+            res = {}
+            if(!transform_specs[i].input_explict_col){
+              res = generateDataForTablesExtend(
+                dataIn1_csv,
+                dataIn2_csv,
+                dataOut1_csv
+              );
+              let sameColName = ""
+              for(let col = 0;col < dataIn1_csv[0].length;col++){
+                if(dataIn2_csv[0].indexOf(dataIn1_csv[0][col]) !== -1){         
+                  sameColName = dataIn1_csv[0][col]
+                  res = generateDataForTablesExtend_withExplicitCol(
+                          dataIn1_csv,
+                          dataIn2_csv,
+                          dataOut1_csv,
+                          [sameColName,sameColName]
+                        );
+                  break
+                }
+              }
+            }else{
+              res = generateDataForTablesExtend_withExplicitCol(
+                dataIn1_csv,
+                dataIn2_csv,
+                dataOut1_csv,
+                transform_specs[i].input_explict_col
+              );
+            }
+            console.log("res: ",res)
             combine_tables_extend(
               res.m1,
               res.m2,
@@ -1277,6 +1299,8 @@ export default {
               input_table_name,
               input_table_name2,
               output_table_name,
+              res.inColors1,
+              res.inColors2,
               res.outColors,
               i,
               this.show_table_name,
@@ -1413,8 +1437,6 @@ export default {
 
       drawNode(this.$store.state.g,transform_specs,nodePos,tableInf,this.getTableData)
       var panZoomTiger = svgPanZoom('#mainsvg');
-      console.log("pan-zoom: ",panZoomTiger)
-
     },
   },
   mounted() {

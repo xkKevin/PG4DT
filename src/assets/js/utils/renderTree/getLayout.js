@@ -77,7 +77,7 @@ function getGraphs(nodeGroups,edgeGroups){
             id: "root",
             "layoutOptions": {
                 "elk.padding": `[top=${parseInt(svgSize.height) + 20},left=50.0,bottom=0.0,right=35.0]`,
-                "spacing.nodeNodeBetweenLayers": parseInt(svgSize.width) + 40,
+                "spacing.nodeNodeBetweenLayers": (parseInt(svgSize.width) + 40) * 1.2,
                 // "spacing.edgeNodeBetweenLayers": "200.0",
                 "nodePlacement.strategy": "NETWORK_SIMPLEX",
                 "algorithm": "layered",

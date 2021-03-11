@@ -20,18 +20,14 @@ function combine_rows_sum(m1,m2,rule,t1_name,t2_name,name,showTableName,pos){
     const g = d3.select(`#mainsvg`).append('g')
         .attr('transform',`translate(${pos[0]},${pos[1]})`)
         .attr("id",`glyph${name}`)
-        g.append('rect')
-        .attr('x',-10)
-        .attr('y',0)
-        .attr('width',parseInt(width) + 20)
-        .attr('height',parseInt(height))
-        .attr('stroke','gray')
-        .attr('fill','transparent')
+    g.append('rect')
+    .attr('x',-10)
+    .attr('y',0)
+    .attr('width',parseInt(width) + 20)
+    .attr('height',parseInt(height))
+    .attr('stroke','gray')
+    .attr('fill','transparent')
     
-        // var arrow_path = "M0,0 L8,4 L0,8 L4,4 L0,0";
-        // arrowMarker.append("path")
-        //     .attr("d",arrow_path)
-        //     .attr("fill","gray");
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
     .attr('fill','none')
@@ -40,7 +36,6 @@ function combine_rows_sum(m1,m2,rule,t1_name,t2_name,name,showTableName,pos){
 
     g.append("path")
     .attr("d",`M${parseInt(width) / 2 - 4},${parseInt(height)} L${parseInt(width) / 2},${parseInt(height) + 4} L${parseInt(width) / 2 + 4},${parseInt(height)}`)
-    // .attr('d',"M0,0 L8,4 L0,8 L4,4 L0,0")
     .attr('fill','white')
     .attr('stroke','gray')
     .attr('stroke-width',"1px")

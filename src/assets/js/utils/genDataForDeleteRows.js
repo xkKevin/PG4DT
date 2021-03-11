@@ -10,12 +10,6 @@ function cmpRows(r1,r2,inExpCols) {
     return flag
 }
 function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
-    // for(let col = 0;col < dataIn1_csv[0].length;col++){
-    //     if(inExpCols.indexOf(col) === -1 && dataIn1_csv[0].indexOf(dataIn1_csv[0][col]) !== col)dataIn1_csv[0][col] += '_'
-    // }
-    // for(let col = 0;col < dataOut1_csv[0].length;col++){
-    //     if(inExpCols.indexOf(col) === -1 && dataOut1_csv[0].indexOf(dataOut1_csv[0][col]) !== col)dataOut1_csv[0][col] += '_'
-    // }
     let contextualCols = extractCols(Array.from(dataIn1_csv[0]),inExpCols,inExpCols)
     let m1 = [[]],m2 = [[]]
     let outColors = []
@@ -61,7 +55,7 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
     }
 
     let sameRows = []
-    let diffRow = -1
+    let diffRow = []
 
     let row1 = 1,row2 = 1
     while(row1 < dataIn1_csv.length && row2 < dataOut1_csv.length){
@@ -69,15 +63,21 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
             if(sameRows.length !== 2)sameRows.push(row1)
             row2 += 1
         }else{
-            if(diffRow === -1)diffRow = row1
+            if(diffRow.length < 2)diffRow.push(row1)
         }
         if(sameRows.length === 2 && diffRow !== -1)break
         row1 += 1
     }
 
-    if(row2 === dataOut1_csv.length && diffRow === -1)diffRow = row1
+    if(row2 === dataOut1_csv.length && diffRow.length < 2)diffRow.push(row1)
     let rows = Array.from(sameRows)
-    rows.push(diffRow)
+    
+    if(sameRows.length === 2 && diffRow.length !== 0){
+        rows.push(diffRow[0])
+    }else{
+        diffRow.forEach(d => rows.push(d))
+    }
+    // rows.push(diffRow)
     rows.sort()
     for(let row = 0;row < rows.length;row++){
         let tempRow = []
@@ -90,19 +90,27 @@ function generateDataForRows(dataIn1_csv, dataOut1_csv,inExpCols){
             }
         }
         m1.push(tempRow)
-        if(rows[row] !== diffRow)m2.push(tempRow)
+        if(diffRow.indexOf(rows[row]) === -1)m2.push(tempRow)
     }
 
     if(sameRows.length > 1){
-        if(diffRow < sameRows[0]){
+        if(diffRow[0] < sameRows[0]){
             outColors = [1,2]
-        }else if(diffRow > sameRows[1]){
+        }else if(diffRow[0] > sameRows[1]){
             outColors = [0,1]
         }else{
             outColors = [0,2]
         }
+    }else if(diffRow.length > 1){
+        if(sameRows[0] < diffRow[0]){
+            outColors = [0]
+        }else if(sameRows[0] > diffRow[1]){
+            outColors = [2]
+        }else{
+            outColors = [1]
+        }
     }else{
-        if(diffRow < sameRows[0]){
+        if(diffRow[0] < sameRows[0]){
             outColors = [1]
         }else { 
             outColors = [0]
@@ -181,7 +189,7 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
 
     inExpCols.forEach(idx =>{
         m1[0].push(dataIn1_csv[0][idx])
-        m2[0].push(dataOut1_csv[0][idx])
+        m2[0].push(dataIn1_csv[0][idx])
     })
 
     contextualCols.forEach(val => {
@@ -193,7 +201,7 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
         return dataIn1_csv[0].indexOf(a) - dataIn1_csv[0].indexOf(b)
     })
     m2[0].sort(function(a,b){
-        return dataOut1_csv[0].indexOf(a) - dataOut1_csv[0].indexOf(b)
+        return dataIn1_csv[0].indexOf(a) - dataIn1_csv[0].indexOf(b)
     })
 
     let duplicated_rows = []
@@ -239,7 +247,7 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
             m1.push(tempRow)
             if(row !== 0)m2.push(tempRow)
         }
-        outColors = [0,2]
+        outColors = [0,1]
         if(dataIn1_csv[0].length === inExpCols.length)inColors = [0,0,1]
     }else{
         let rows = [duplicated_rows[0],duplicated_rows[1]]
@@ -263,6 +271,39 @@ function generateDataForDeleteDuplicateRows(dataIn1_csv, dataOut1_csv, inExpCols
         if(inExpCols.indexOf(dataIn1_csv[0].indexOf(m1[0][col])) === -1){
             m1[0][col] = ''
             m2[0][col] = ''
+        }
+    }
+    if(inExpCols.length === dataIn1_csv[0].length){
+        for(let row = 0;row < m1.length;row++){
+            let tempRow = []
+            for(let col = 0;col < Math.min(3,m1[0].length);col++){
+                if(row === 0)tempRow.push("")
+                else    
+                    tempRow.push(m1[row][col])
+            }
+            m1[row] = tempRow
+        }
+       
+        for(let row = 0;row < m2.length;row++){
+            let tempRow = []
+            for(let col = 0;col < Math.min(3,m2[0].length);col++){
+                if(row === 0)tempRow.push("")
+                else    
+                    tempRow.push(m2[row][col])
+            }
+            m2[row] = tempRow
+        }
+    }else{
+        if(dataIn1_csv[0].length !== dataOut1_csv[0].length){
+            for(let row = m2.length - 1;row >= 0;row--){
+                let tempRow = []
+                for(let col = 0;col < Math.min(3,m2[0].length);col++){
+                    if(m2[0][col] !== ''){ 
+                        tempRow.push(m2[row][col])
+                    } 
+                }
+                m2[row] = tempRow
+            }
         }
     }
     return {m1,m2,inColors,outColors}
