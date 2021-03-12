@@ -66,14 +66,26 @@ def custom_static_folder(filename):
     # 因为当前flask运行的目录就在backend下，因此可以直接访问data/目录
     return send_from_directory("data/", filename) # 这边接受的不会带参数
 
-@app.route('/api/getTables', methods=['post'])
-def getTables():
+@app.route('/api/getTablesAndParse', methods=['post'])
+def getTablesAndParse():
     try:
         print(request.form.to_dict())
         #使用io.StringIO和csv.reader解析从字符串中解析出csv
+        #execute a cmd 
+        script = '''library(tidyr)
+library(dplyr)
+p5_input1= read.table("benchmark5.txt", header = T, sep = ",")
+TBL_3=gather(p5_input1,MORPH394,P,-`ID`,-`T`)
+TBL_1=separate(TBL_3,`MORPH394`,into=c('MORPH469','Channel'))
+morpheus=select(TBL_1,-`MORPH469`)
+morpheus=as.data.frame(morpheus)
+morpheus=select(morpheus,1,3,2,4)'''
+        with open(data_path + 'code5.txt', 'w', encoding='utf-8') as f:
+            f.write(script)
         return "True"
     except BaseException:
         return "False"
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)

@@ -241,7 +241,7 @@ export default {
                     }
                     data['type'] = "output"
                     this.$axios({
-                        url: "/api/getTables",
+                        url: "/api/getTablesAndParse",
                         method: "post",
                         data: this.$qs.stringify(data),
                     }).then(res => {
@@ -259,7 +259,7 @@ export default {
                     }
                     data['type'] = "input"
                     this.$axios({
-                        url: "/api/getTables",
+                        url: "/api/getTablesAndParse",
                         method: "post",
                         data: this.$qs.stringify(data),
                     }).then(res => {
@@ -274,6 +274,7 @@ export default {
                 Promise.all([p1,p2]).then(()=>{
                     if(flag1 && flag2){
                         alert("解析成功")
+                        this.$router.push('/showGlyphs')
                     }
                     else{
                         alert("解析失败")
