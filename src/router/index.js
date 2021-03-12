@@ -22,6 +22,11 @@ const routes = [
     path: '/showGlyphs',
     name: 'ShowGlyphs',
     component: () => import('@/views/showGlyphs')
+  },
+  {
+    path: '/upload',
+    name: 'UploadTables',
+    component: () => import('@/views/InputTables')
   }
 ]
 

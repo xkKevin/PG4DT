@@ -1228,6 +1228,13 @@ export default {
               dataIn1_csv,
               input_explict_col
             );
+            let xPercents = [res.m1[0].length / dataIn1_csv[0]]
+            let yPercents = [res.m1.length / dataIn1_csv.length]
+            for(let idx = 0;idx < res.tables.length;idx++){
+              xPercents.push(1)
+              yPercents.push(1)
+            }
+
             separate_tables_decompose(
               res.m1,
               res.tables,
@@ -1236,9 +1243,8 @@ export default {
               i,
               this.show_table_name,
               pos,
-              //没有仔细看，可能有问题
-                [res.m1[0].length / dataIn1_csv[0].length,res.tables[0].length / dataOut1_csv[0].length],
-              [res.m1.length / dataIn1_csv.length, res.tables.length / dataOut1_csv.length]
+              xPercents,
+              yPercents
             );
             break;
           case "separate_tables_decompose_q":
